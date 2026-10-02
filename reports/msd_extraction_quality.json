@@ -1,0 +1,18 @@
+{
+  "h5_files": 10000,
+  "rows": 10000,
+  "year_zero_or_missing": 5320,
+  "duplicate_canonical_keys": 119,
+  "year_min": 0,
+  "year_max": 2010,
+  "missing_by_field": {
+    "track_id": 0,
+    "song_id": 0,
+    "title": 0,
+    "artist_name": 0,
+    "year": 0,
+    "duration": 0,
+    "tempo": 0,
+    "loudness": 0
+  }
+}
