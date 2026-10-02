@@ -1,73 +1,78 @@
-"""Extract the User 1 MSD metadata contract from an existing HDF5 tree."""
+"""Extract the required fields from the official MSD million-track summary HDF5."""
 
 from __future__ import annotations
 
 import argparse
 import json
 from pathlib import Path
-from typing import Any
 
 import h5py
 import pandas as pd
-from tqdm import tqdm
+from tqdm import trange
 
-from src.data.common import repo_path
+from src.data.common import append_manifest, repo_path
 from src.features.normalize_names import canonicalize_frame
 
-FIELDS = ("track_id", "song_id", "title", "artist_name", "year", "duration", "tempo", "loudness")
+
+def _decode(value: object) -> str:
+    return value.decode("utf-8", errors="replace") if isinstance(value, bytes) else str(value)
 
 
-def _decode(value: Any) -> Any:
-    if isinstance(value, bytes):
-        return value.decode("utf-8", errors="replace")
-    return value.item() if hasattr(value, "item") else value
-
-
-def _read_field(handle: h5py.File, field: str) -> Any:
-    found: list[Any] = []
-    def visitor(_: str, obj: Any) -> None:
-        if isinstance(obj, h5py.Dataset) and obj.dtype.names and field in obj.dtype.names and len(obj):
-            found.append(obj[0][field])
-    handle.visititems(visitor)
-    return _decode(found[0]) if found else None
-
-
-def extract_file(path: Path) -> dict[str, Any]:
-    with h5py.File(path, "r") as handle:
-        row = {field: _read_field(handle, field) for field in FIELDS}
-    row["source_h5"] = str(path)
-    return row
+def extract_summary(input_path: Path, chunk_size: int = 100_000) -> pd.DataFrame:
+    """Return one row per MSD summary-file track with Mode B descriptors."""
+    chunks: list[pd.DataFrame] = []
+    with h5py.File(input_path, "r") as handle:
+        metadata = handle["metadata/songs"]
+        analysis = handle["analysis/songs"]
+        musicbrainz = handle["musicbrainz/songs"]
+        if not (len(metadata) == len(analysis) == len(musicbrainz)):
+            raise ValueError("MSD summary tables have inconsistent row counts")
+        for start in trange(0, len(metadata), chunk_size, desc="Extracting MSD summary"):
+            stop = min(start + chunk_size, len(metadata))
+            meta = metadata[start:stop]
+            audio = analysis[start:stop]
+            years = musicbrainz[start:stop]
+            chunks.append(
+                pd.DataFrame(
+                    {
+                        "track_id": [_decode(value) for value in audio["track_id"]],
+                        "song_id": [_decode(value) for value in meta["song_id"]],
+                        "title": [_decode(value) for value in meta["title"]],
+                        "artist_name": [_decode(value) for value in meta["artist_name"]],
+                        "year": years["year"],
+                        "duration": audio["duration"],
+                        "tempo": audio["tempo"],
+                        "loudness": audio["loudness"],
+                    }
+                )
+            )
+    return canonicalize_frame(pd.concat(chunks, ignore_index=True))
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--input-root", required=True, help="Extracted MSD directory")
-    parser.add_argument("--output", default="data/interim/msd_tracks.parquet")
+    parser.add_argument("--input", default="data/raw/msd_full/msd_summary_file.h5")
+    parser.add_argument("--output", default="data/interim/msd_summary_tracks.parquet")
+    parser.add_argument("--source-url", default="http://millionsongdataset.com/sites/default/files/AdditionalFiles/msd_summary_file.h5")
     args = parser.parse_args()
-    input_root = repo_path(args.input_root)
-    files = sorted(input_root.rglob("*.h5"))
-    if not files:
-        raise FileNotFoundError(f"No .h5 files found under {input_root}")
-    rows = [extract_file(path) for path in tqdm(files, desc="Extracting MSD HDF5")]
-    tracks = canonicalize_frame(pd.DataFrame(rows))
-    for column in ("year", "duration", "tempo", "loudness"):
-        tracks[column] = pd.to_numeric(tracks[column], errors="coerce")
-    output = repo_path(args.output)
-    output.parent.mkdir(parents=True, exist_ok=True)
-    tracks.to_parquet(output, index=False)
+    input_path, output_path = repo_path(args.input), repo_path(args.output)
+    if not input_path.is_file():
+        raise FileNotFoundError(input_path)
+    tracks = extract_summary(input_path)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    tracks.to_parquet(output_path, index=False)
+    append_manifest(input_path, source="Million Song Dataset summary file", source_url=args.source_url, row_count=len(tracks))
     quality = {
-        "h5_files": len(files),
         "rows": len(tracks),
-        "year_zero_or_missing": int(tracks["year"].isna().sum() + tracks["year"].eq(0).sum()),
-        "duplicate_canonical_keys": int(tracks.duplicated("canonical_key", keep=False).sum()),
-        "year_min": None if tracks["year"].dropna().empty else int(tracks["year"].min()),
-        "year_max": None if tracks["year"].dropna().empty else int(tracks["year"].max()),
-        "missing_by_field": tracks[list(FIELDS)].isna().sum().to_dict(),
+        "year_zero_or_missing": int(tracks.year.isna().sum() + tracks.year.eq(0).sum()),
+        "duplicate_canonical_rows": int(tracks.duplicated("canonical_key", keep=False).sum()),
+        "year_min": int(tracks.year.min()),
+        "year_max": int(tracks.year.max()),
     }
-    report = repo_path("reports/msd_extraction_quality.json")
+    report = repo_path("reports/msd_summary_quality.json")
     report.parent.mkdir(parents=True, exist_ok=True)
-    report.write_text(json.dumps(quality, indent=2, default=str) + "\n", encoding="utf-8")
-    print(f"Wrote {len(tracks):,} MSD tracks to {output}")
+    report.write_text(json.dumps(quality, indent=2) + "\n", encoding="utf-8")
+    print(f"Wrote {len(tracks):,} MSD summary tracks to {output_path}")
 
 
 if __name__ == "__main__":

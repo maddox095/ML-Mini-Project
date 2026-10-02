@@ -24,4 +24,4 @@ reports/figures/*
 !reports/artist_score_audit.csv
 !reports/data_quality.csv
 !reports/feature_availability.csv
-!reports/msd_extraction_quality.json
+!reports/msd_summary_quality.json

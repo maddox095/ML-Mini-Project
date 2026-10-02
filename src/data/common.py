@@ -33,7 +33,7 @@ def sha256(path: Path, chunk_size: int = 1024 * 1024) -> str:
 
 
 def append_manifest(path: Path, *, source: str, source_url: str, row_count: int | str = "") -> None:
-    """Append an input observation without mutating the raw input itself."""
+    """Register an input once per immutable artifact checksum."""
     manifest = ROOT / "data/raw/MANIFEST.csv"
     manifest.parent.mkdir(parents=True, exist_ok=True)
     write_header = not manifest.exists()
@@ -46,6 +46,11 @@ def append_manifest(path: Path, *, source: str, source_url: str, row_count: int 
         "sha256": sha256(path),
         "row_count": row_count,
     }
+    if manifest.exists():
+        with manifest.open(newline="", encoding="utf-8") as handle:
+            for existing in csv.DictReader(handle):
+                if existing.get("artifact") == record["artifact"] and existing.get("sha256") == record["sha256"]:
+                    return
     with manifest.open("a", newline="", encoding="utf-8") as handle:
         writer = csv.DictWriter(handle, fieldnames=record.keys())
         if write_header:
