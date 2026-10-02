@@ -1,0 +1,44 @@
+{
+  "source": "data/interim/model_table.parquet",
+  "source_sha256": "fe9dd0b5c6e5683e2ca1bd9c3dba69cc9bdef55a987052039cdc7a45e68541a7",
+  "seed": 42,
+  "features": [
+    "tempo",
+    "loudness",
+    "duration",
+    "artist_score"
+  ],
+  "target": "hit",
+  "splits": {
+    "stratified_partition": {
+      "test": {
+        "rows": 1000,
+        "hits": 500,
+        "non_hits": 500,
+        "artists": 833
+      },
+      "train": {
+        "rows": 3000,
+        "hits": 1500,
+        "non_hits": 1500,
+        "artists": 2090
+      },
+      "shared_artists": 263
+    },
+    "artist_disjoint_partition": {
+      "test": {
+        "rows": 976,
+        "hits": 484,
+        "non_hits": 492,
+        "artists": 665
+      },
+      "train": {
+        "rows": 3024,
+        "hits": 1516,
+        "non_hits": 1508,
+        "artists": 1995
+      },
+      "shared_artists": 0
+    }
+  }
+}
