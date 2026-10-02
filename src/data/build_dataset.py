@@ -1,170 +1,187 @@
-"""Build the auditable, leakage-safe User 1 handoff table (Mode B by default)."""
+"""Build the User 1 Mode B handoff from full MSD summary data."""
 
 from __future__ import annotations
 
 import argparse
-from dataclasses import dataclass
+import json
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
-from rapidfuzz import fuzz, process
 
 from src.data.common import load_config, repo_path
+from src.data.load_billboard import parse_billboard
 from src.features.normalize_names import canonicalize_frame
 
 
-@dataclass(frozen=True)
-class BuildResult:
-    model_table: pd.DataFrame
-    match_audit: pd.DataFrame
-    artist_score_audit: pd.DataFrame
-    quality: pd.DataFrame
-    feature_availability: pd.DataFrame
+def _unique(frame: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
+    ordered = frame.sort_values(["canonical_key", "year", "track_id"], na_position="last")
+    duplicates = ordered[ordered.duplicated("canonical_key", keep=False)].copy()
+    return ordered.drop_duplicates("canonical_key", keep="first").copy(), duplicates
 
 
-def _unique_tracks(tracks: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
-    """Deterministically retain a single MSD row for each canonical identity."""
-    stable = tracks.sort_values(["canonical_key", "year", "track_id"], na_position="last").copy()
-    duplicates = stable[stable.duplicated("canonical_key", keep=False)].copy()
-    return stable.drop_duplicates("canonical_key", keep="first").copy(), duplicates
+def _load_billboard_history(raw_path: Path, history_start: str, history_end: str) -> pd.DataFrame:
+    with raw_path.open(encoding="utf-8") as handle:
+        payload = json.load(handle)
+    return parse_billboard(payload, history_start, history_end)
 
 
-def _first_billboard_events(entries: pd.DataFrame) -> pd.DataFrame:
-    ordered = entries.sort_values(["canonical_key", "chart_date", "rank"], na_position="last")
-    first = ordered.drop_duplicates("canonical_key", keep="first").copy()
-    return first.rename(columns={"chart_date": "first_chart_date"})
-
-
-def _fuzzy_overlap_audit(candidates: pd.DataFrame, hit_events: pd.DataFrame, title_threshold: float, artist_threshold: float) -> pd.DataFrame:
-    """Surface only strong fuzzy candidate overlaps; never silently relabel them."""
-    hit_titles = hit_events["title_key"].tolist()
-    by_title = hit_events.set_index("title_key", drop=False)
-    rows: list[dict[str, object]] = []
-    for candidate in candidates.itertuples(index=False):
-        match = process.extractOne(candidate.title_key, hit_titles, scorer=fuzz.ratio, score_cutoff=title_threshold)
-        if not match:
-            continue
-        hit = by_title.iloc[match[2]]
-        artist_score = fuzz.ratio(candidate.artist_key, hit.artist_key)
-        if artist_score >= artist_threshold:
-            rows.append({"track_id": candidate.track_id, "artist_name": candidate.artist_name, "title": candidate.title, "artist_key": candidate.artist_key, "title_key": candidate.title_key, "match_method": "fuzzy_overlap_candidate", "match_score": round((match[1] + artist_score) / 2, 2), "matched_artist": hit.artist_name, "matched_title": hit.title, "duplicate_status": "review_or_remove", "resolution": "not_used_as_negative"})
-    return pd.DataFrame(rows)
-
-
-def _artist_scores(table: pd.DataFrame, history: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
-    """Assign artist_score using strictly earlier Billboard events, with evidence."""
-    events = history.sort_values(["artist_key", "first_chart_date", "title"]).copy()
-    by_artist = {key: group for key, group in events.groupby("artist_key", sort=False)}
-    scored, evidence, scores = table.copy(), [], []
-    for row in scored.itertuples(index=False):
-        row_date = pd.Timestamp(row.reference_date)
+def _prior_artist_score(table: pd.DataFrame, history: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
+    history = history.sort_values(["artist_key", "chart_date", "title"])
+    by_artist = {key: group for key, group in history.groupby("artist_key", sort=False)}
+    scores, audit = [], []
+    for row in table.itertuples(index=False):
         prior = by_artist.get(row.artist_key, pd.DataFrame())
         if not prior.empty:
-            prior = prior.loc[prior["first_chart_date"] < row_date]
+            prior = prior.loc[(prior.chart_date < row.reference_date) & (prior.canonical_key != row.canonical_key)]
         if prior.empty:
             scores.append(0)
-            evidence.append({"canonical_key": row.canonical_key, "artist_name": row.artist_name, "row_date": row_date, "artist_score": 0, "prior_hit_title": None, "prior_hit_date": None, "chronology_valid": True})
+            audit.append({"canonical_key": row.canonical_key, "artist_name": row.artist_name, "row_date": row.reference_date, "artist_score": 0, "prior_hit_title": None, "prior_hit_date": None, "chronology_valid": True})
         else:
-            hit = prior.iloc[-1]
+            evidence = prior.iloc[-1]
             scores.append(1)
-            evidence.append({"canonical_key": row.canonical_key, "artist_name": row.artist_name, "row_date": row_date, "artist_score": 1, "prior_hit_title": hit.title, "prior_hit_date": hit.first_chart_date, "chronology_valid": bool(hit.first_chart_date < row_date)})
-    scored["artist_score"] = scores
-    return scored, pd.DataFrame(evidence)
+            audit.append({"canonical_key": row.canonical_key, "artist_name": row.artist_name, "row_date": row.reference_date, "artist_score": 1, "prior_hit_title": evidence.title, "prior_hit_date": evidence.chart_date, "chronology_valid": bool(evidence.chart_date < row.reference_date)})
+    result = table.copy()
+    result["artist_score"] = scores
+    return result, pd.DataFrame(audit)
 
 
-def _quality_table(tracks: pd.DataFrame, candidates: pd.DataFrame, positives: pd.DataFrame, negatives: pd.DataFrame, final: pd.DataFrame, duplicates: pd.DataFrame) -> pd.DataFrame:
-    rows = [("msd_input_rows", len(tracks)), ("msd_in_window_candidates", len(candidates)), ("canonical_msd_duplicate_rows", len(duplicates)), ("positive_rows_feature_matched", len(positives)), ("negative_rows_after_overlap_removal", len(negatives)), ("final_rows", len(final)), ("final_hit_rows", int(final.hit.sum())), ("final_non_hit_rows", int((final.hit == 0).sum())), ("conflicting_label_identities", int(final.groupby("canonical_key").hit.nunique().gt(1).sum()))]
-    quality = pd.DataFrame(rows, columns=["metric", "value"])
-    for name, count in final.isna().sum().items():
-        quality.loc[len(quality)] = [f"missing::{name}", int(count)]
-    for year, count in final["reference_date"].dt.year.value_counts().sort_index().items():
-        quality.loc[len(quality)] = [f"year::{year}", int(count)]
-    return quality
-
-
-def build_handoff(msd_tracks: pd.DataFrame, billboard_entries: pd.DataFrame, config: dict) -> BuildResult:
-    """Create the model-ready interim table and every User 1 audit artifact."""
-    strip_versions = config["matching"].get("strip_title_versions", False)
-    tracks = canonicalize_frame(msd_tracks, strip_versions=strip_versions)
-    entries = canonicalize_frame(billboard_entries, strip_versions=strip_versions)
-    entries["chart_date"] = pd.to_datetime(entries["chart_date"], errors="coerce")
-    entries = entries.dropna(subset=["chart_date"])
-    start, end = pd.Timestamp(config["date_window"]["start"]), pd.Timestamp(config["date_window"]["end"])
-    tracks["year"] = pd.to_numeric(tracks["year"], errors="coerce")
-    candidates = tracks.loc[tracks.year.between(start.year, end.year)].copy()
-    candidates, duplicates = _unique_tracks(candidates)
-    hit_events = _first_billboard_events(entries.loc[entries.chart_date.between(start, end)].copy())
-
-    # Positives must join to MSD to use only the stated, current-compliant Mode-B features.
-    positive = hit_events.merge(candidates, on="canonical_key", how="inner", suffixes=("_billboard", "_msd"))
-    positive = positive.rename(columns={"artist_name_msd": "artist_name", "title_msd": "title"})
-    positive["artist_key"] = positive["artist_key_msd"]
-    positive["title_key"] = positive["title_key_msd"]
-    positive["reference_date"], positive["hit"], positive["source"] = positive["first_chart_date"], 1, "billboard_matched_to_msd"
-    positive["match_method"], positive["match_score"] = "exact", 100.0
-
-    exact_overlap = candidates.merge(hit_events[["canonical_key"]], on="canonical_key", how="inner")
-    negative = candidates.loc[~candidates.canonical_key.isin(hit_events.canonical_key)].copy()
-    fuzzy = pd.DataFrame()
-    if config["matching"].get("fuzzy_enabled", True):
-        fuzzy = _fuzzy_overlap_audit(negative, hit_events, config["matching"]["fuzzy_title_threshold"], config["matching"]["fuzzy_artist_threshold"])
-        if not fuzzy.empty:
-            negative = negative.loc[~negative.track_id.isin(fuzzy.track_id)].copy()
-    # MSD has only a year. Jan 1 is conservative: prior history must predate that year.
-    negative["reference_date"] = pd.to_datetime(negative.year.astype("Int64").astype(str) + "-01-01", errors="coerce")
-    negative["hit"], negative["source"] = 0, "msd_non_hit_candidate"
-    negative["match_method"], negative["match_score"] = "no_billboard_overlap", np.nan
-    if config["balancing"].get("enabled", True):
-        desired = int(round(len(positive) * float(config["balancing"].get("negative_to_positive_ratio", 1.0))))
-        negative = negative.sample(n=min(desired, len(negative)), random_state=config["seed"]).copy()
-    keep = ["track_id", "song_id", "title", "artist_name", "artist_key", "title_key", "canonical_key", "year", "duration", "tempo", "loudness", "reference_date", "hit", "source", "match_method", "match_score"]
-    final = pd.concat([positive.reindex(columns=keep), negative.reindex(columns=keep)], ignore_index=True)
-    final, artist_audit = _artist_scores(final, hit_events)
-    final = final.sort_values(["reference_date", "canonical_key", "hit"]).reset_index(drop=True)
-    if final.empty:
-        raise ValueError("No rows produced: check the date window and MSD/Billboard identity coverage")
-    if final.groupby("canonical_key").hit.nunique().max() > 1:
-        raise AssertionError("Conflicting labels remain for a canonical identity")
-    if not set(final.hit.unique()).issubset({0, 1}):
-        raise AssertionError("Target contains values other than 0/1")
-    if not artist_audit["chronology_valid"].all():
-        raise AssertionError("Artist Score audit contains future evidence")
-
-    audit_columns = ["track_id", "artist_name", "title", "artist_key", "title_key", "match_method", "match_score", "duplicate_status", "resolution"]
-    exact_audit = exact_overlap.assign(match_method="exact_overlap", match_score=100.0, duplicate_status="billboard_hit", resolution="removed_from_negative_pool").reindex(columns=audit_columns)
-    positive_audit = positive.assign(duplicate_status="positive_feature_matched", resolution="included_as_positive").reindex(columns=audit_columns)
-    duplicate_audit = duplicates.assign(match_method="duplicate_msd_identity", match_score=np.nan, duplicate_status="duplicate", resolution="deterministic_first_row_retained").reindex(columns=audit_columns)
-    audit = pd.concat([exact_audit, positive_audit, duplicate_audit, fuzzy], ignore_index=True, sort=False)
+def build_dataset(msd: pd.DataFrame, billboard_history: pd.DataFrame, config: dict) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    labels = config["label_window"]
+    start, end = pd.Timestamp(labels["start"]), pd.Timestamp(labels["end"])
+    history_window = config["artist_history_window"]
+    history_start, history_end = pd.Timestamp(history_window["start"]), pd.Timestamp(history_window["end"])
+    if not history_start <= start <= end <= history_end:
+        raise ValueError("Artist history window must contain the complete label window")
+    msd = canonicalize_frame(msd, strip_versions=config["matching"]["strip_title_versions"])
+    input_rows = len(msd)
+    msd["year"] = pd.to_numeric(msd.year, errors="coerce")
+    valid_identity = msd.artist_key.ne("") & msd.title_key.ne("")
     features = config.get("mode_b_features", ["tempo", "loudness", "duration"])
-    availability = pd.DataFrame({"feature": features, "source": "Million Song Dataset", "missing_rows": [int(final[f].isna().sum()) for f in features], "model_input": True})
-    quality = _quality_table(tracks, candidates, positive, negative, final, duplicates)
-    return BuildResult(final, audit, artist_audit, quality, availability)
+    for feature in features:
+        msd[feature] = pd.to_numeric(msd[feature], errors="coerce")
+    valid_features = np.isfinite(msd[features]).all(axis=1) & msd.duration.gt(0) & msd.tempo.gt(0)
+    msd = msd.loc[valid_identity & valid_features].copy()
+    candidates = msd.loc[msd.year.between(start.year, end.year)].copy()
+    candidates, duplicates = _unique(candidates)
+    history = canonicalize_frame(billboard_history, strip_versions=config["matching"]["strip_title_versions"])
+    history["chart_date"] = pd.to_datetime(history.chart_date, errors="coerce")
+    history = history.loc[history.chart_date.between(history_start, history_end) & history.artist_key.ne("") & history.title_key.ne("")].copy()
+    labels_df = history.loc[history.chart_date.between(start, end)].sort_values(["canonical_key", "chart_date", "rank"])
+    hits = labels_df.drop_duplicates("canonical_key", keep="first").rename(columns={"chart_date": "first_chart_date"})
+
+    positives = hits.merge(candidates, on="canonical_key", how="inner", suffixes=("_billboard", "_msd"))
+    positives["artist_name"] = positives["artist_name_msd"]
+    positives["title"] = positives["title_msd"]
+    positives["artist_key"] = positives["artist_key_msd"]
+    positives["title_key"] = positives["title_key_msd"]
+    positives["reference_date"] = positives["first_chart_date"]
+    positives["hit"] = 1
+    positives["source"] = "billboard_matched_to_msd_summary"
+    positives["match_method"] = "exact"
+    positives["match_score"] = 100.0
+
+    unmatched = hits.loc[~hits.canonical_key.isin(candidates.canonical_key)].copy()
+    unmatched["match_method"] = "unresolved_exact"
+    unmatched["match_score"] = np.nan
+    unmatched["resolution"] = "not_included_without_feature_match"
+    exact_overlap = candidates.loc[candidates.canonical_key.isin(history.canonical_key)].copy()
+    negatives = candidates.loc[~candidates.canonical_key.isin(history.canonical_key)].copy()
+    negatives["reference_date"] = pd.to_datetime(negatives.year.astype("Int64").astype(str) + "-01-01", errors="coerce")
+    negatives["hit"] = 0
+    negatives["source"] = "msd_summary_non_hit_candidate"
+    negatives["match_method"] = "no_exact_billboard_overlap"
+    negatives["match_score"] = np.nan
+
+    negative_pool_size = len(negatives)
+    target = int(config["balancing"]["target_rows_per_class"])
+    if target <= 0:
+        raise ValueError("target_rows_per_class must be positive")
+    n = min(target, len(positives), len(negatives))
+    if n == 0:
+        raise ValueError("Cannot build a handoff without both positive and negative candidates")
+    if not config["balancing"].get("enabled", True):
+        raise ValueError("This handoff requires balancing.enabled=true")
+    positives = positives.sample(n=n, random_state=config["seed"])
+    negatives = negatives.sample(n=n, random_state=config["seed"])
+    # The official summary file exposes ``danceability`` and ``energy``, but
+    # those fields are zero for this release.  They are therefore deliberately
+    # excluded from the modelling handoff rather than presented as features.
+    # Matching provenance is written to match_audit.csv only.  It would leak
+    # the target if included in the model handoff.
+    columns = ["track_id", "song_id", "title", "artist_name", "artist_key", "title_key", "canonical_key", "year", "duration", "tempo", "loudness", "reference_date", "hit"]
+    final = pd.concat([positives.reindex(columns=columns), negatives.reindex(columns=columns)], ignore_index=True)
+    final, artist_audit = _prior_artist_score(final, history)
+    if final.groupby("canonical_key").hit.nunique().gt(1).any():
+        raise AssertionError("Conflicting labels remain after overlap removal")
+    if not artist_audit.chronology_valid.all():
+        raise AssertionError("Artist Score contains future information")
+    audit = pd.concat(
+        [
+            positives.assign(resolution="included_as_positive").reindex(columns=["canonical_key", "artist_name", "title", "match_method", "match_score", "resolution"]),
+            exact_overlap.assign(match_method="exact_overlap", match_score=100.0, resolution="removed_from_negative_pool").reindex(columns=["canonical_key", "artist_name", "title", "match_method", "match_score", "resolution"]),
+            unmatched.reindex(columns=["canonical_key", "artist_name", "title", "match_method", "match_score", "resolution"]),
+            duplicates.assign(match_method="duplicate_msd_identity", match_score=np.nan, resolution="deterministic_first_row_retained").reindex(columns=["canonical_key", "artist_name", "title", "match_method", "match_score", "resolution"]),
+        ], ignore_index=True
+    )
+    quality = pd.DataFrame(
+        [
+            ("msd_summary_rows", input_rows), ("invalid_identity_or_features_rows", input_rows - len(msd)), ("msd_candidates_in_label_window", len(candidates)),
+            ("unique_billboard_hits_in_label_window", len(hits)), ("positive_feature_matches_before_sampling", len(hits) - len(unmatched)),
+            ("unresolved_billboard_hits", len(unmatched)), ("negative_pool_before_balancing", negative_pool_size),
+            ("final_rows", len(final)), ("final_hits", int(final.hit.sum())), ("final_non_hits", int((final.hit == 0).sum())),
+            ("conflicting_label_identities", int(final.groupby("canonical_key").hit.nunique().gt(1).sum())),
+        ], columns=["metric", "value"]
+    )
+    return final.sort_values(["reference_date", "canonical_key"]).reset_index(drop=True), audit, artist_audit, quality
 
 
-def write_eda(result: BuildResult, path: Path, config: dict) -> None:
-    table, numeric = result.model_table, config.get("mode_b_features", [])
-    lines = ["# User 1 EDA summary", "", f"- Reproduction mode: **{config['reproduction_mode']}** (MSD-native methodology reproduction).", f"- Rows: {len(table):,}; hits: {int(table.hit.sum()):,}; non-hits: {int((table.hit == 0).sum()):,}.", "- Artist Score uses a strictly earlier Billboard event; see `artist_score_audit.csv`.", "- Billboard outcome metadata is excluded from the model feature list.", "", "## Feature availability", "", result.feature_availability.to_markdown(index=False), "", "## Numeric descriptive statistics", "", table.groupby("hit")[numeric].describe().transpose().to_markdown(), "", "## Correlation notes", "", "Correlations are descriptive only. No Billboard rank, peak, or weeks-on-chart field is a feature.", "", table[numeric + ["artist_score", "hit"]].corr(numeric_only=True).round(3).to_markdown(), ""]
-    path.write_text("\n".join(lines), encoding="utf-8")
+def write_eda(table: pd.DataFrame, report_path: Path, features: list[str]) -> None:
+    """Write the initial, non-model EDA required for the User 1 handoff."""
+    summary = table.groupby("hit")[features].describe().transpose().round(3).to_markdown()
+    correlations = table[features + ["artist_score", "hit"]].corr(numeric_only=True).round(3).to_markdown()
+    lines = [
+        "# User 1 EDA summary", "",
+        f"- Rows: {len(table):,}; hits: {int(table.hit.sum()):,}; non-hits: {int((table.hit == 0).sum()):,}.",
+        "- Mode B uses MSD-derived features; this is a methodology reproduction, not an exact Spotify-feature reproduction.",
+        "- `artist_score` uses Billboard events from 1986 onward that occur strictly before the song reference date.",
+        "- Chart rank, peak position, and weeks on chart are excluded from the model table.", "",
+        "## Numeric descriptive statistics by class", "", summary, "",
+        "## Correlation notes", "",
+        "Correlations are descriptive only and must not be interpreted as causal effects.", "", correlations, "",
+    ]
+    report_path.write_text("\n".join(lines), encoding="utf-8")
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--msd", default="data/interim/msd_tracks.parquet")
-    parser.add_argument("--billboard", default="data/interim/billboard_entries.parquet")
+    parser.add_argument("--msd", default="data/interim/msd_summary_tracks.parquet")
+    parser.add_argument("--billboard-raw", default="data/raw/billboard/all.json")
     parser.add_argument("--config", default="configs/data.yaml")
     args = parser.parse_args()
     config = load_config(args.config)
-    result = build_handoff(pd.read_parquet(repo_path(args.msd)), pd.read_parquet(repo_path(args.billboard)), config)
-    interim, reports = repo_path("data/interim"), repo_path("reports")
-    interim.mkdir(parents=True, exist_ok=True); reports.mkdir(parents=True, exist_ok=True)
-    result.model_table.to_parquet(interim / "model_table.parquet", index=False)
-    result.match_audit.to_csv(reports / "match_audit.csv", index=False)
-    result.artist_score_audit.to_csv(reports / "artist_score_audit.csv", index=False)
-    result.quality.to_csv(reports / "data_quality.csv", index=False)
-    result.feature_availability.to_csv(reports / "feature_availability.csv", index=False)
-    write_eda(result, reports / "eda_summary.md", config)
-    print(f"Wrote User 1 handoff: {len(result.model_table):,} rows")
+    history_window = config["artist_history_window"]
+    history = _load_billboard_history(repo_path(args.billboard_raw), history_window["start"], history_window["end"])
+    final, audit, artist_audit, quality = build_dataset(pd.read_parquet(repo_path(args.msd)), history, config)
+    output = repo_path("data/interim")
+    reports = repo_path("reports")
+    output.mkdir(parents=True, exist_ok=True)
+    reports.mkdir(parents=True, exist_ok=True)
+    final.to_parquet(output / "model_table.parquet", index=False)
+    audit.to_csv(reports / "match_audit.csv", index=False)
+    artist_audit.to_csv(reports / "artist_score_audit.csv", index=False)
+    quality.to_csv(reports / "data_quality.csv", index=False)
+    features = config["mode_b_features"] + ["artist_score"]
+    pd.DataFrame(
+        {
+            "feature": features,
+            "source": ["Million Song Dataset summary file"] * (len(features) - 1) + ["Prior Billboard history"],
+            "missing_rows": [int(final[feature].isna().sum()) for feature in features],
+            "model_input": True,
+        }
+    ).to_csv(reports / "feature_availability.csv", index=False)
+    write_eda(final, reports / "eda_summary.md", features[:-1])
+    print(f"Wrote User 1 handoff: {len(final):,} rows")
 
 
 if __name__ == "__main__":

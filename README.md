@@ -28,38 +28,58 @@ records source URL, retrieval time, size, SHA-256, and rows in
 `data/raw/MANIFEST.csv`.
 
 ```bash
-# 1. Obtain and register the MSD subset (large download; do this intentionally).
-python -m src.data.download_msd --download
-# Or register a file already downloaded elsewhere:
-python -m src.data.download_msd --archive /absolute/path/msd_subset.tar.gz
-
-# Extract the archive yourself, then make the canonical MSD metadata table.
-python -m src.data.extract_msd --input-root data/raw/msd/extracted
-
+# 1. Download the full MSD summary HDF5 from the URL in configs/data.yaml,
+#    then save it as data/raw/msd_full/msd_summary_file.h5.
 # 2. Download and normalize the historical Billboard weekly archive.
 python -m src.data.load_billboard --download
 
-# 3. Construct the deterministic, audited User 1 handoff.
+# 3. Extract the full MSD summary and construct the audited handoff.
+python -m src.data.extract_msd
 python -m src.data.build_dataset
+pytest -q
 ```
 
-The final command creates `data/interim/model_table.parquet` plus
+The pipeline creates `data/interim/model_table.parquet` (4,000 balanced rows)
+plus
 `reports/match_audit.csv`, `reports/artist_score_audit.csv`,
 `reports/data_quality.csv`, `reports/feature_availability.csv`, and
 `reports/eda_summary.md`.
 
+The workflow uses the official million-track MSD summary file, a 1990-2018
+label window, and 1986-2018 Billboard history only for Artist Score. The raw
+summary HDF5 remains excluded from Git; its source and SHA-256 are recorded in
+`data/raw/MANIFEST.csv`.
+
+The model table contains the valid MSD summary descriptors `tempo`,
+`loudness`, and `duration`, plus chronological `artist_score`. The source
+file's `danceability` and `energy` columns are constant zero in this release,
+so they are explicitly excluded rather than treated as model inputs.
+
 ## Data rules that are enforced
 
 - Original artist/title strings are retained; normalized keys are comparison-only.
-- Matching is exact first. Fuzzy candidates are conservative and auditable; they
-  are never silently converted into labels.
+- The pipeline accepts only exact canonical artist/title identities; unresolved labels
+  remain visible in the matching audit rather than being guessed.
 - MSD candidates that match any Billboard hit are removed before sampling the
   non-hit pool. Balancing happens only after this cleanup and uses seed 42.
 - `artist_score=1` only when the audit identifies an earlier chart event for that
   same normalized artist. The job fails if chronology is invalid.
 - Chart rank, peak position, and weeks on chart are kept in raw audit data only;
   they are never model inputs.
+- Matching provenance (`source`, `match_method`, and `match_score`) is kept in
+  `reports/match_audit.csv` only and is never included in the model table.
 
 User 2 should consume only the accepted `model_table.parquet`, fit preprocessing
 inside training pipelines, and keep the prescribed 75/25 source-comparison split
 separate from a true held-out evaluation.
+
+Use only `tempo`, `loudness`, `duration`, and `artist_score` as model inputs;
+`hit` is the target. IDs, names, normalized keys, year, and reference dates are
+metadata. Positive reference dates use the first chart appearance in the label
+window; negative dates approximate release as January 1 of the MSD year, so
+dates must not be used as predictive features. Artist Score excludes the current
+song's earlier chart appearances. Known chart hits across the loaded history
+are excluded from the negative pool, and invalid identities, non-finite audio
+features, zero tempo, and nonpositive duration are rejected before sampling.
+An unmatched song is a non-hit candidate, not proof of never having charted;
+exact matching and the finite history window can still leave label noise.

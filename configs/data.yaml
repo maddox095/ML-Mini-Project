@@ -1,22 +1,23 @@
-# User 1 data contract.  Mode B is the safe default because no permitted
-# archival Spotify feature table is bundled with this repository.
+# Corrected User 1 rebuild using the official MSD million-track summary file.
 project: hitpredict-methodology-reproduction
-dataset_version: u1-mode-b-v1
+dataset_version: u1-mode-b
 reproduction_mode: B
 seed: 42
-date_window:
+label_window:
   start: "1990-01-01"
   end: "2018-12-31"
+artist_history_window:
+  start: "1986-01-01"
+  end: "2018-12-31"
 matching:
-  fuzzy_enabled: true
-  fuzzy_title_threshold: 96
-  fuzzy_artist_threshold: 96
-  strip_title_versions: false
+  # Only exact canonical identities are accepted in this reproducible handoff.
+  fuzzy_enabled: false
+  strip_title_versions: true
 balancing:
   enabled: true
-  negative_to_positive_ratio: 1.0
+  target_rows_per_class: 2000
 sources:
-  msd_subset_url: "http://millionsongdataset.com/sites/default/files/AdditionalFiles/msd_subset.tar.gz"
+  msd_summary_url: "http://millionsongdataset.com/sites/default/files/AdditionalFiles/msd_summary_file.h5"
   billboard_archive_url: "https://raw.githubusercontent.com/mhollingshead/billboard-hot-100/main/all.json"
 mode_b_features:
   - tempo

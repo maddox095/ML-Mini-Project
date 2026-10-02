@@ -1,55 +1,47 @@
 # User 1 EDA summary
 
-- Reproduction mode: **B** (MSD-native methodology reproduction).
-- Rows: 198; hits: 99; non-hits: 99.
-- Artist Score uses a strictly earlier Billboard event; see `artist_score_audit.csv`.
-- Billboard outcome metadata is excluded from the model feature list.
+- Rows: 4,000; hits: 2,000; non-hits: 2,000.
+- Mode B uses MSD-derived features; this is a methodology reproduction, not an exact Spotify-feature reproduction.
+- `artist_score` uses Billboard events from 1986 onward that occur strictly before the song reference date.
+- Chart rank, peak position, and weeks on chart are excluded from the model table.
 
-## Feature availability
+## Numeric descriptive statistics by class
 
-| feature   | source               |   missing_rows | model_input   |
-|:----------|:---------------------|---------------:|:--------------|
-| tempo     | Million Song Dataset |              0 | True          |
-| loudness  | Million Song Dataset |              0 | True          |
-| duration  | Million Song Dataset |              0 | True          |
-
-## Numeric descriptive statistics
-
-|                       |         0 |         1 |
-|:----------------------|----------:|----------:|
-| ('tempo', 'count')    |  99       |  99       |
-| ('tempo', 'mean')     | 123.902   | 122.164   |
-| ('tempo', 'std')      |  39.1228  |  29.4359  |
-| ('tempo', 'min')      |  57.091   |  61.971   |
-| ('tempo', '25%')      |  95.058   |  98.7265  |
-| ('tempo', '50%')      | 119.562   | 118.273   |
-| ('tempo', '75%')      | 140.197   | 140.284   |
-| ('tempo', 'max')      | 241.877   | 206.02    |
-| ('loudness', 'count') |  99       |  99       |
-| ('loudness', 'mean')  |  -8.50636 |  -6.61665 |
-| ('loudness', 'std')   |   3.87399 |   2.26092 |
-| ('loudness', 'min')   | -23.996   | -12.806   |
-| ('loudness', '25%')   | -11.206   |  -7.779   |
-| ('loudness', '50%')   |  -7.8     |  -6.295   |
-| ('loudness', '75%')   |  -5.3995  |  -5.2055  |
-| ('loudness', 'max')   |  -1.869   |  -1.81    |
-| ('duration', 'count') |  99       |  99       |
-| ('duration', 'mean')  | 251.299   | 268.067   |
-| ('duration', 'std')   |  81.2914  |  77.797   |
-| ('duration', 'min')   |  43.3628  | 160.313   |
-| ('duration', '25%')   | 206.511   | 224.574   |
-| ('duration', '50%')   | 239.882   | 249.391   |
-| ('duration', '75%')   | 298.174   | 288.039   |
-| ('duration', 'max')   | 540.473   | 652.408   |
+|                       |        0 |        1 |
+|:----------------------|---------:|---------:|
+| ('tempo', 'count')    | 2000     | 2000     |
+| ('tempo', 'mean')     |  125.424 |  121.566 |
+| ('tempo', 'std')      |   36.025 |   28.378 |
+| ('tempo', 'min')      |   10.456 |   41.158 |
+| ('tempo', '25%')      |   97.5   |   98.253 |
+| ('tempo', '50%')      |  121.979 |  120.081 |
+| ('tempo', '75%')      |  147.922 |  139.161 |
+| ('tempo', 'max')      |  248.64  |  235.019 |
+| ('loudness', 'count') | 2000     | 2000     |
+| ('loudness', 'mean')  |   -9.354 |   -6.936 |
+| ('loudness', 'std')   |    4.836 |    2.627 |
+| ('loudness', 'min')   |  -48.671 |  -21.077 |
+| ('loudness', '25%')   |  -11.71  |   -8.517 |
+| ('loudness', '50%')   |   -8.233 |   -6.508 |
+| ('loudness', '75%')   |   -5.82  |   -5.022 |
+| ('loudness', 'max')   |   -0.678 |   -0.726 |
+| ('duration', 'count') | 2000     | 2000     |
+| ('duration', 'mean')  |  246.723 |  254.123 |
+| ('duration', 'std')   |  120.462 |   62.97  |
+| ('duration', 'min')   |   13.009 |   14.471 |
+| ('duration', '25%')   |  184.999 |  216.306 |
+| ('duration', '50%')   |  229.877 |  242.037 |
+| ('duration', '75%')   |  284.022 |  275.089 |
+| ('duration', 'max')   | 2513.16  |  746.396 |
 
 ## Correlation notes
 
-Correlations are descriptive only. No Billboard rank, peak, or weeks-on-chart field is a feature.
+Correlations are descriptive only and must not be interpreted as causal effects.
 
 |              |   tempo |   loudness |   duration |   artist_score |    hit |
 |:-------------|--------:|-----------:|-----------:|---------------:|-------:|
-| tempo        |   1     |      0.141 |     -0.085 |          0.068 | -0.025 |
-| loudness     |   0.141 |      1     |      0.046 |          0.357 |  0.287 |
-| duration     |  -0.085 |      0.046 |      1     |          0.15  |  0.105 |
-| artist_score |   0.068 |      0.357 |      0.15  |          1     |  0.638 |
-| hit          |  -0.025 |      0.287 |      0.105 |          0.638 |  1     |
+| tempo        |   1     |      0.119 |     -0.026 |         -0.049 | -0.059 |
+| loudness     |   0.119 |      1     |     -0.02  |          0.221 |  0.297 |
+| duration     |  -0.026 |     -0.02  |      1     |          0.02  |  0.038 |
+| artist_score |  -0.049 |      0.221 |      0.02  |          1     |  0.662 |
+| hit          |  -0.059 |      0.297 |      0.038 |          0.662 |  1     |
