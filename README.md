@@ -83,3 +83,15 @@ are excluded from the negative pool, and invalid identities, non-finite audio
 features, zero tempo, and nonpositive duration are rejected before sampling.
 An unmatched song is a non-hit candidate, not proof of never having charted;
 exact matching and the finite history window can still leave label noise.
+
+## User 2 modeling handoff
+
+See [the handoff guide](docs/USER2_HANDOFF.md) for permitted features, loading
+code, evaluation guidance and label limitations. Create reproducible stratified
+75/25 and artist-disjoint partitions with:
+
+```bash
+python -m src.data.build_splits
+```
+
+Assignments and a dataset hash manifest are saved in `data/processed/`.
