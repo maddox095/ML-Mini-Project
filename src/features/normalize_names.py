@@ -12,7 +12,7 @@ from unidecode import unidecode
 _SPACE = re.compile(r"\s+")
 _PUNCT = re.compile(r"[^\w\s]")
 _TITLE_VERSION = re.compile(
-    r"\s*(?:\(|\[|-)?\s*(?:remaster(?:ed)?(?:\s+\d{4})?|radio\s+edit|"
+    r"(?:\s*[\(\[]\s*|\s+-\s*)(?:remaster(?:ed)?(?:\s+\d{4})?|radio\s+edit|"
     r"live|single\s+version|album\s+version)\s*(?:\)|\])?\s*$",
     flags=re.IGNORECASE,
 )
@@ -20,7 +20,7 @@ _TITLE_VERSION = re.compile(
 
 def normalize_key(value: Any, *, transliterate: bool = True) -> str:
     """Return a stable comparison key while leaving source strings untouched."""
-    if value is None or (isinstance(value, float) and pd.isna(value)):
+    if value is None or pd.isna(value):
         return ""
     text = unicodedata.normalize("NFKC", str(value)).casefold().strip()
     if transliterate:
@@ -32,7 +32,7 @@ def normalize_key(value: Any, *, transliterate: bool = True) -> str:
 
 def base_title(value: Any, *, strip_versions: bool = False) -> str:
     """Build a title key; suffix removal is opt-in and intentionally narrow."""
-    text = "" if value is None else str(value)
+    text = "" if value is None or pd.isna(value) else str(value)
     if strip_versions:
         text = _TITLE_VERSION.sub("", text)
     return normalize_key(text)

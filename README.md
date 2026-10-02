@@ -66,7 +66,20 @@ so they are explicitly excluded rather than treated as model inputs.
   same normalized artist. The job fails if chronology is invalid.
 - Chart rank, peak position, and weeks on chart are kept in raw audit data only;
   they are never model inputs.
+- Matching provenance (`source`, `match_method`, and `match_score`) is kept in
+  `reports/match_audit.csv` only and is never included in the model table.
 
 User 2 should consume only the accepted `model_table.parquet`, fit preprocessing
 inside training pipelines, and keep the prescribed 75/25 source-comparison split
 separate from a true held-out evaluation.
+
+Use only `tempo`, `loudness`, `duration`, and `artist_score` as model inputs;
+`hit` is the target. IDs, names, normalized keys, year, and reference dates are
+metadata. Positive reference dates use the first chart appearance in the label
+window; negative dates approximate release as January 1 of the MSD year, so
+dates must not be used as predictive features. Artist Score excludes the current
+song's earlier chart appearances. Known chart hits across the loaded history
+are excluded from the negative pool, and invalid identities, non-finite audio
+features, zero tempo, and nonpositive duration are rejected before sampling.
+An unmatched song is a non-hit candidate, not proof of never having charted;
+exact matching and the finite history window can still leave label noise.

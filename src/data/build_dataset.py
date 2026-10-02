@@ -33,7 +33,7 @@ def _prior_artist_score(table: pd.DataFrame, history: pd.DataFrame) -> tuple[pd.
     for row in table.itertuples(index=False):
         prior = by_artist.get(row.artist_key, pd.DataFrame())
         if not prior.empty:
-            prior = prior.loc[prior.chart_date < row.reference_date]
+            prior = prior.loc[(prior.chart_date < row.reference_date) & (prior.canonical_key != row.canonical_key)]
         if prior.empty:
             scores.append(0)
             audit.append({"canonical_key": row.canonical_key, "artist_name": row.artist_name, "row_date": row.reference_date, "artist_score": 0, "prior_hit_title": None, "prior_hit_date": None, "chronology_valid": True})
@@ -49,13 +49,24 @@ def _prior_artist_score(table: pd.DataFrame, history: pd.DataFrame) -> tuple[pd.
 def build_dataset(msd: pd.DataFrame, billboard_history: pd.DataFrame, config: dict) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     labels = config["label_window"]
     start, end = pd.Timestamp(labels["start"]), pd.Timestamp(labels["end"])
+    history_window = config["artist_history_window"]
+    history_start, history_end = pd.Timestamp(history_window["start"]), pd.Timestamp(history_window["end"])
+    if not history_start <= start <= end <= history_end:
+        raise ValueError("Artist history window must contain the complete label window")
     msd = canonicalize_frame(msd, strip_versions=config["matching"]["strip_title_versions"])
+    input_rows = len(msd)
     msd["year"] = pd.to_numeric(msd.year, errors="coerce")
+    valid_identity = msd.artist_key.ne("") & msd.title_key.ne("")
+    features = config.get("mode_b_features", ["tempo", "loudness", "duration"])
+    for feature in features:
+        msd[feature] = pd.to_numeric(msd[feature], errors="coerce")
+    valid_features = np.isfinite(msd[features]).all(axis=1) & msd.duration.gt(0) & msd.tempo.gt(0)
+    msd = msd.loc[valid_identity & valid_features].copy()
     candidates = msd.loc[msd.year.between(start.year, end.year)].copy()
     candidates, duplicates = _unique(candidates)
     history = canonicalize_frame(billboard_history, strip_versions=config["matching"]["strip_title_versions"])
     history["chart_date"] = pd.to_datetime(history.chart_date, errors="coerce")
-    history = history.dropna(subset=["chart_date"])
+    history = history.loc[history.chart_date.between(history_start, history_end) & history.artist_key.ne("") & history.title_key.ne("")].copy()
     labels_df = history.loc[history.chart_date.between(start, end)].sort_values(["canonical_key", "chart_date", "rank"])
     hits = labels_df.drop_duplicates("canonical_key", keep="first").rename(columns={"chart_date": "first_chart_date"})
 
@@ -74,8 +85,8 @@ def build_dataset(msd: pd.DataFrame, billboard_history: pd.DataFrame, config: di
     unmatched["match_method"] = "unresolved_exact"
     unmatched["match_score"] = np.nan
     unmatched["resolution"] = "not_included_without_feature_match"
-    exact_overlap = candidates.loc[candidates.canonical_key.isin(hits.canonical_key)].copy()
-    negatives = candidates.loc[~candidates.canonical_key.isin(hits.canonical_key)].copy()
+    exact_overlap = candidates.loc[candidates.canonical_key.isin(history.canonical_key)].copy()
+    negatives = candidates.loc[~candidates.canonical_key.isin(history.canonical_key)].copy()
     negatives["reference_date"] = pd.to_datetime(negatives.year.astype("Int64").astype(str) + "-01-01", errors="coerce")
     negatives["hit"] = 0
     negatives["source"] = "msd_summary_non_hit_candidate"
@@ -84,13 +95,21 @@ def build_dataset(msd: pd.DataFrame, billboard_history: pd.DataFrame, config: di
 
     negative_pool_size = len(negatives)
     target = int(config["balancing"]["target_rows_per_class"])
+    if target <= 0:
+        raise ValueError("target_rows_per_class must be positive")
     n = min(target, len(positives), len(negatives))
+    if n == 0:
+        raise ValueError("Cannot build a handoff without both positive and negative candidates")
+    if not config["balancing"].get("enabled", True):
+        raise ValueError("This handoff requires balancing.enabled=true")
     positives = positives.sample(n=n, random_state=config["seed"])
     negatives = negatives.sample(n=n, random_state=config["seed"])
     # The official summary file exposes ``danceability`` and ``energy``, but
     # those fields are zero for this release.  They are therefore deliberately
     # excluded from the modelling handoff rather than presented as features.
-    columns = ["track_id", "song_id", "title", "artist_name", "artist_key", "title_key", "canonical_key", "year", "duration", "tempo", "loudness", "reference_date", "hit", "source", "match_method", "match_score"]
+    # Matching provenance is written to match_audit.csv only.  It would leak
+    # the target if included in the model handoff.
+    columns = ["track_id", "song_id", "title", "artist_name", "artist_key", "title_key", "canonical_key", "year", "duration", "tempo", "loudness", "reference_date", "hit"]
     final = pd.concat([positives.reindex(columns=columns), negatives.reindex(columns=columns)], ignore_index=True)
     final, artist_audit = _prior_artist_score(final, history)
     if final.groupby("canonical_key").hit.nunique().gt(1).any():
@@ -107,7 +126,7 @@ def build_dataset(msd: pd.DataFrame, billboard_history: pd.DataFrame, config: di
     )
     quality = pd.DataFrame(
         [
-            ("msd_summary_rows", len(msd)), ("msd_candidates_in_label_window", len(candidates)),
+            ("msd_summary_rows", input_rows), ("invalid_identity_or_features_rows", input_rows - len(msd)), ("msd_candidates_in_label_window", len(candidates)),
             ("unique_billboard_hits_in_label_window", len(hits)), ("positive_feature_matches_before_sampling", len(hits) - len(unmatched)),
             ("unresolved_billboard_hits", len(unmatched)), ("negative_pool_before_balancing", negative_pool_size),
             ("final_rows", len(final)), ("final_hits", int(final.hit.sum())), ("final_non_hits", int((final.hit == 0).sum())),

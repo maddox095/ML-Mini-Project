@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
+import tempfile
 import urllib.request
 from pathlib import Path
 from typing import Any, Iterable
@@ -59,6 +61,28 @@ def parse_billboard(payload: Any, start: str, end: str) -> pd.DataFrame:
     return canonicalize_frame(pd.DataFrame(rows))
 
 
+def download_billboard(url: str, raw_path: Path, start: str, end: str) -> None:
+    """Publish a validated download without overwriting an existing raw file."""
+    raw_path.parent.mkdir(parents=True, exist_ok=True)
+    if raw_path.exists():
+        raise FileExistsError(f"Refusing to overwrite immutable raw file: {raw_path}")
+    temporary_path = None
+    try:
+        with tempfile.NamedTemporaryFile(dir=raw_path.parent, suffix=".download", delete=False) as output:
+            temporary_path = Path(output.name)
+            with urllib.request.urlopen(url, timeout=60) as response:
+                while chunk := response.read(1024 * 1024):
+                    output.write(chunk)
+        with temporary_path.open(encoding="utf-8") as handle:
+            parse_billboard(json.load(handle), start, end)
+        # A hard link publishes the complete file atomically and refuses to
+        # overwrite a file created by another download in the meantime.
+        os.link(temporary_path, raw_path)
+    finally:
+        if temporary_path is not None:
+            temporary_path.unlink(missing_ok=True)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--input", help="Existing all.json archive")
@@ -68,15 +92,14 @@ def main() -> None:
         parser.error("supply exactly one of --input or --download")
     config = load_config()
     url = config["sources"]["billboard_archive_url"]
+    history_window = config["artist_history_window"]
     raw_path = repo_path(args.input) if args.input else repo_path("data/raw/billboard/all.json")
     if args.download:
-        raw_path.parent.mkdir(parents=True, exist_ok=True)
-        if raw_path.exists():
-            raise FileExistsError(f"Refusing to overwrite immutable raw file: {raw_path}")
-        with urllib.request.urlopen(url) as response, raw_path.open("xb") as output:
-            output.write(response.read())
+        download_billboard(url, raw_path, history_window["start"], history_window["end"])
     with raw_path.open(encoding="utf-8") as handle:
-        billboard = parse_billboard(json.load(handle), config["date_window"]["start"], config["date_window"]["end"])
+        billboard = parse_billboard(
+            json.load(handle), history_window["start"], history_window["end"]
+        )
     output = repo_path("data/interim/billboard_entries.parquet")
     output.parent.mkdir(parents=True, exist_ok=True)
     billboard.to_parquet(output, index=False)

@@ -1,10 +1,11 @@
 metric,value
 msd_summary_rows,1000000
-msd_candidates_in_label_window,397211
+invalid_identity_or_features_rows,3389
+msd_candidates_in_label_window,396141
 unique_billboard_hits_in_label_window,10878
-positive_feature_matches_before_sampling,2539
-unresolved_billboard_hits,8339
-negative_pool_before_balancing,394672
+positive_feature_matches_before_sampling,2538
+unresolved_billboard_hits,8340
+negative_pool_before_balancing,393544
 final_rows,4000
 final_hits,2000
 final_non_hits,2000
