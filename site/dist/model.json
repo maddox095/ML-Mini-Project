@@ -1,0 +1,706 @@
+{
+  "model": "decision_tree",
+  "version": "final_suite_v1",
+  "features": [
+    "tempo",
+    "loudness",
+    "duration",
+    "artist_score"
+  ],
+  "threshold": 0.5,
+  "nodes": [
+    {
+      "feature": 3,
+      "threshold": 0.5,
+      "left": 1,
+      "right": 76,
+      "hit_probability": 0.5013227513227513
+    },
+    {
+      "feature": 1,
+      "threshold": -10.384000301361084,
+      "left": 2,
+      "right": 35,
+      "hit_probability": 0.2390139335476956
+    },
+    {
+      "feature": 1,
+      "threshold": -12.913500308990479,
+      "left": 3,
+      "right": 18,
+      "hit_probability": 0.09945750452079566
+    },
+    {
+      "feature": 1,
+      "threshold": -15.138000011444092,
+      "left": 4,
+      "right": 9,
+      "hit_probability": 0.04180064308681672
+    },
+    {
+      "feature": 2,
+      "threshold": 255.89505004882812,
+      "left": 5,
+      "right": 6,
+      "hit_probability": 0.011904761904761904
+    },
+    {
+      "feature": -2,
+      "threshold": -2.0,
+      "left": -1,
+      "right": -1,
+      "hit_probability": 0.0
+    },
+    {
+      "feature": 1,
+      "threshold": -18.560500144958496,
+      "left": 7,
+      "right": 8,
+      "hit_probability": 0.03571428571428571
+    },
+    {
+      "feature": -2,
+      "threshold": -2.0,
+      "left": -1,
+      "right": -1,
+      "hit_probability": 0.08333333333333333
+    },
+    {
+      "feature": -2,
+      "threshold": -2.0,
+      "left": -1,
+      "right": -1,
+      "hit_probability": 0.0
+    },
+    {
+      "feature": 1,
+      "threshold": -14.797999858856201,
+      "left": 10,
+      "right": 11,
+      "hit_probability": 0.07692307692307693
+    },
+    {
+      "feature": -2,
+      "threshold": -2.0,
+      "left": -1,
+      "right": -1,
+      "hit_probability": 0.19047619047619047
+    },
+    {
+      "feature": 2,
+      "threshold": 210.12852478027344,
+      "left": 12,
+      "right": 13,
+      "hit_probability": 0.05737704918032787
+    },
+    {
+      "feature": -2,
+      "threshold": -2.0,
+      "left": -1,
+      "right": -1,
+      "hit_probability": 0.0
+    },
+    {
+      "feature": 2,
+      "threshold": 296.7767028808594,
+      "left": 14,
+      "right": 17,
+      "hit_probability": 0.09333333333333334
+    },
+    {
+      "feature": 2,
+      "threshold": 250.86648559570312,
+      "left": 15,
+      "right": 16,
+      "hit_probability": 0.15555555555555556
+    },
+    {
+      "feature": -2,
+      "threshold": -2.0,
+      "left": -1,
+      "right": -1,
+      "hit_probability": 0.08
+    },
+    {
+      "feature": -2,
+      "threshold": -2.0,
+      "left": -1,
+      "right": -1,
+      "hit_probability": 0.25
+    },
+    {
+      "feature": -2,
+      "threshold": -2.0,
+      "left": -1,
+      "right": -1,
+      "hit_probability": 0.0
+    },
+    {
+      "feature": 2,
+      "threshold": 203.74158477783203,
+      "left": 19,
+      "right": 22,
+      "hit_probability": 0.17355371900826447
+    },
+    {
+      "feature": 2,
+      "threshold": 167.60118103027344,
+      "left": 20,
+      "right": 21,
+      "hit_probability": 0.038461538461538464
+    },
+    {
+      "feature": -2,
+      "threshold": -2.0,
+      "left": -1,
+      "right": -1,
+      "hit_probability": 0.0
+    },
+    {
+      "feature": -2,
+      "threshold": -2.0,
+      "left": -1,
+      "right": -1,
+      "hit_probability": 0.08571428571428572
+    },
+    {
+      "feature": 2,
+      "threshold": 295.23545837402344,
+      "left": 23,
+      "right": 32,
+      "hit_probability": 0.23780487804878048
+    },
+    {
+      "feature": 0,
+      "threshold": 123.86100006103516,
+      "left": 24,
+      "right": 29,
+      "hit_probability": 0.3113207547169811
+    },
+    {
+      "feature": 0,
+      "threshold": 92.45699691772461,
+      "left": 25,
+      "right": 26,
+      "hit_probability": 0.3939393939393939
+    },
+    {
+      "feature": -2,
+      "threshold": -2.0,
+      "left": -1,
+      "right": -1,
+      "hit_probability": 0.18181818181818182
+    },
+    {
+      "feature": 2,
+      "threshold": 243.9440460205078,
+      "left": 27,
+      "right": 28,
+      "hit_probability": 0.5
+    },
+    {
+      "feature": -2,
+      "threshold": -2.0,
+      "left": -1,
+      "right": -1,
+      "hit_probability": 0.391304347826087
+    },
+    {
+      "feature": -2,
+      "threshold": -2.0,
+      "left": -1,
+      "right": -1,
+      "hit_probability": 0.6190476190476191
+    },
+    {
+      "feature": 1,
+      "threshold": -11.559000015258789,
+      "left": 30,
+      "right": 31,
+      "hit_probability": 0.175
+    },
+    {
+      "feature": -2,
+      "threshold": -2.0,
+      "left": -1,
+      "right": -1,
+      "hit_probability": 0.25
+    },
+    {
+      "feature": -2,
+      "threshold": -2.0,
+      "left": -1,
+      "right": -1,
+      "hit_probability": 0.1
+    },
+    {
+      "feature": 0,
+      "threshold": 121.50900268554688,
+      "left": 33,
+      "right": 34,
+      "hit_probability": 0.10344827586206896
+    },
+    {
+      "feature": -2,
+      "threshold": -2.0,
+      "left": -1,
+      "right": -1,
+      "hit_probability": 0.0
+    },
+    {
+      "feature": -2,
+      "threshold": -2.0,
+      "left": -1,
+      "right": -1,
+      "hit_probability": 0.2
+    },
+    {
+      "feature": 2,
+      "threshold": 161.01831817626953,
+      "left": 36,
+      "right": 41,
+      "hit_probability": 0.2977913175932978
+    },
+    {
+      "feature": 2,
+      "threshold": 154.16118621826172,
+      "left": 37,
+      "right": 40,
+      "hit_probability": 0.02631578947368421
+    },
+    {
+      "feature": 2,
+      "threshold": 83.83955001831055,
+      "left": 38,
+      "right": 39,
+      "hit_probability": 0.010752688172043012
+    },
+    {
+      "feature": -2,
+      "threshold": -2.0,
+      "left": -1,
+      "right": -1,
+      "hit_probability": 0.05
+    },
+    {
+      "feature": -2,
+      "threshold": -2.0,
+      "left": -1,
+      "right": -1,
+      "hit_probability": 0.0
+    },
+    {
+      "feature": -2,
+      "threshold": -2.0,
+      "left": -1,
+      "right": -1,
+      "hit_probability": 0.09523809523809523
+    },
+    {
+      "feature": 0,
+      "threshold": 143.05249786376953,
+      "left": 42,
+      "right": 67,
+      "hit_probability": 0.32360300250208507
+    },
+    {
+      "feature": 2,
+      "threshold": 275.83953857421875,
+      "left": 43,
+      "right": 56,
+      "hit_probability": 0.35953757225433525
+    },
+    {
+      "feature": 2,
+      "threshold": 200.54158782958984,
+      "left": 44,
+      "right": 51,
+      "hit_probability": 0.39186991869918697
+    },
+    {
+      "feature": 1,
+      "threshold": -6.343500137329102,
+      "left": 45,
+      "right": 48,
+      "hit_probability": 0.2550335570469799
+    },
+    {
+      "feature": 1,
+      "threshold": -7.364500045776367,
+      "left": 46,
+      "right": 47,
+      "hit_probability": 0.16393442622950818
+    },
+    {
+      "feature": -2,
+      "threshold": -2.0,
+      "left": -1,
+      "right": -1,
+      "hit_probability": 0.24390243902439024
+    },
+    {
+      "feature": -2,
+      "threshold": -2.0,
+      "left": -1,
+      "right": -1,
+      "hit_probability": 0.0
+    },
+    {
+      "feature": 2,
+      "threshold": 189.3350601196289,
+      "left": 49,
+      "right": 50,
+      "hit_probability": 0.3181818181818182
+    },
+    {
+      "feature": -2,
+      "threshold": -2.0,
+      "left": -1,
+      "right": -1,
+      "hit_probability": 0.38596491228070173
+    },
+    {
+      "feature": -2,
+      "threshold": -2.0,
+      "left": -1,
+      "right": -1,
+      "hit_probability": 0.1935483870967742
+    },
+    {
+      "feature": 0,
+      "threshold": 85.0160026550293,
+      "left": 52,
+      "right": 53,
+      "hit_probability": 0.4356223175965665
+    },
+    {
+      "feature": -2,
+      "threshold": -2.0,
+      "left": -1,
+      "right": -1,
+      "hit_probability": 0.20512820512820512
+    },
+    {
+      "feature": 0,
+      "threshold": 104.98700332641602,
+      "left": 54,
+      "right": 55,
+      "hit_probability": 0.4566744730679157
+    },
+    {
+      "feature": -2,
+      "threshold": -2.0,
+      "left": -1,
+      "right": -1,
+      "hit_probability": 0.5113636363636364
+    },
+    {
+      "feature": -2,
+      "threshold": -2.0,
+      "left": -1,
+      "right": -1,
+      "hit_probability": 0.41832669322709165
+    },
+    {
+      "feature": 1,
+      "threshold": -7.238500118255615,
+      "left": 57,
+      "right": 62,
+      "hit_probability": 0.28
+    },
+    {
+      "feature": 2,
+      "threshold": 294.8175048828125,
+      "left": 58,
+      "right": 59,
+      "hit_probability": 0.20454545454545456
+    },
+    {
+      "feature": -2,
+      "threshold": -2.0,
+      "left": -1,
+      "right": -1,
+      "hit_probability": 0.045454545454545456
+    },
+    {
+      "feature": 0,
+      "threshold": 102.98450088500977,
+      "left": 60,
+      "right": 61,
+      "hit_probability": 0.23636363636363636
+    },
+    {
+      "feature": -2,
+      "threshold": -2.0,
+      "left": -1,
+      "right": -1,
+      "hit_probability": 0.35
+    },
+    {
+      "feature": -2,
+      "threshold": -2.0,
+      "left": -1,
+      "right": -1,
+      "hit_probability": 0.17142857142857143
+    },
+    {
+      "feature": 2,
+      "threshold": 407.431396484375,
+      "left": 63,
+      "right": 66,
+      "hit_probability": 0.3644067796610169
+    },
+    {
+      "feature": 0,
+      "threshold": 128.0405044555664,
+      "left": 64,
+      "right": 65,
+      "hit_probability": 0.29473684210526313
+    },
+    {
+      "feature": -2,
+      "threshold": -2.0,
+      "left": -1,
+      "right": -1,
+      "hit_probability": 0.33783783783783783
+    },
+    {
+      "feature": -2,
+      "threshold": -2.0,
+      "left": -1,
+      "right": -1,
+      "hit_probability": 0.14285714285714285
+    },
+    {
+      "feature": -2,
+      "threshold": -2.0,
+      "left": -1,
+      "right": -1,
+      "hit_probability": 0.6521739130434783
+    },
+    {
+      "feature": 2,
+      "threshold": 334.62811279296875,
+      "left": 68,
+      "right": 75,
+      "hit_probability": 0.23053892215568864
+    },
+    {
+      "feature": 0,
+      "threshold": 147.9415054321289,
+      "left": 69,
+      "right": 70,
+      "hit_probability": 0.25752508361204013
+    },
+    {
+      "feature": -2,
+      "threshold": -2.0,
+      "left": -1,
+      "right": -1,
+      "hit_probability": 0.10526315789473684
+    },
+    {
+      "feature": 0,
+      "threshold": 152.04750061035156,
+      "left": 71,
+      "right": 72,
+      "hit_probability": 0.2796934865900383
+    },
+    {
+      "feature": -2,
+      "threshold": -2.0,
+      "left": -1,
+      "right": -1,
+      "hit_probability": 0.4642857142857143
+    },
+    {
+      "feature": 0,
+      "threshold": 159.64550018310547,
+      "left": 73,
+      "right": 74,
+      "hit_probability": 0.2575107296137339
+    },
+    {
+      "feature": -2,
+      "threshold": -2.0,
+      "left": -1,
+      "right": -1,
+      "hit_probability": 0.15384615384615385
+    },
+    {
+      "feature": -2,
+      "threshold": -2.0,
+      "left": -1,
+      "right": -1,
+      "hit_probability": 0.287292817679558
+    },
+    {
+      "feature": -2,
+      "threshold": -2.0,
+      "left": -1,
+      "right": -1,
+      "hit_probability": 0.0
+    },
+    {
+      "feature": 2,
+      "threshold": 169.05097198486328,
+      "left": 77,
+      "right": 78,
+      "hit_probability": 0.924006908462867
+    },
+    {
+      "feature": -2,
+      "threshold": -2.0,
+      "left": -1,
+      "right": -1,
+      "hit_probability": 0.68
+    },
+    {
+      "feature": 1,
+      "threshold": -11.747499942779541,
+      "left": 79,
+      "right": 82,
+      "hit_probability": 0.9293909973521624
+    },
+    {
+      "feature": 2,
+      "threshold": 259.9440460205078,
+      "left": 80,
+      "right": 81,
+      "hit_probability": 0.8225806451612904
+    },
+    {
+      "feature": -2,
+      "threshold": -2.0,
+      "left": -1,
+      "right": -1,
+      "hit_probability": 0.7096774193548387
+    },
+    {
+      "feature": -2,
+      "threshold": -2.0,
+      "left": -1,
+      "right": -1,
+      "hit_probability": 0.9354838709677419
+    },
+    {
+      "feature": 0,
+      "threshold": 171.2405014038086,
+      "left": 83,
+      "right": 96,
+      "hit_probability": 0.9355742296918768
+    },
+    {
+      "feature": 0,
+      "threshold": 76.4219970703125,
+      "left": 84,
+      "right": 85,
+      "hit_probability": 0.9403714565004888
+    },
+    {
+      "feature": -2,
+      "threshold": -2.0,
+      "left": -1,
+      "right": -1,
+      "hit_probability": 0.7916666666666666
+    },
+    {
+      "feature": 2,
+      "threshold": 349.3872985839844,
+      "left": 86,
+      "right": 93,
+      "hit_probability": 0.943943943943944
+    },
+    {
+      "feature": 2,
+      "threshold": 254.70648193359375,
+      "left": 87,
+      "right": 90,
+      "hit_probability": 0.948936170212766
+    },
+    {
+      "feature": 2,
+      "threshold": 252.56444549560547,
+      "left": 88,
+      "right": 89,
+      "hit_probability": 0.9342327150084317
+    },
+    {
+      "feature": -2,
+      "threshold": -2.0,
+      "left": -1,
+      "right": -1,
+      "hit_probability": 0.9403508771929825
+    },
+    {
+      "feature": -2,
+      "threshold": -2.0,
+      "left": -1,
+      "right": -1,
+      "hit_probability": 0.782608695652174
+    },
+    {
+      "feature": 2,
+      "threshold": 319.4379119873047,
+      "left": 91,
+      "right": 92,
+      "hit_probability": 0.9740634005763689
+    },
+    {
+      "feature": -2,
+      "threshold": -2.0,
+      "left": -1,
+      "right": -1,
+      "hit_probability": 0.9801980198019802
+    },
+    {
+      "feature": -2,
+      "threshold": -2.0,
+      "left": -1,
+      "right": -1,
+      "hit_probability": 0.9318181818181818
+    },
+    {
+      "feature": 0,
+      "threshold": 113.96900177001953,
+      "left": 94,
+      "right": 95,
+      "hit_probability": 0.864406779661017
+    },
+    {
+      "feature": -2,
+      "threshold": -2.0,
+      "left": -1,
+      "right": -1,
+      "hit_probability": 0.72
+    },
+    {
+      "feature": -2,
+      "threshold": -2.0,
+      "left": -1,
+      "right": -1,
+      "hit_probability": 0.9705882352941176
+    },
+    {
+      "feature": 0,
+      "threshold": 189.63249969482422,
+      "left": 97,
+      "right": 98,
+      "hit_probability": 0.8333333333333334
+    },
+    {
+      "feature": -2,
+      "threshold": -2.0,
+      "left": -1,
+      "right": -1,
+      "hit_probability": 0.75
+    },
+    {
+      "feature": -2,
+      "threshold": -2.0,
+      "left": -1,
+      "right": -1,
+      "hit_probability": 0.95
+    }
+  ]
+}

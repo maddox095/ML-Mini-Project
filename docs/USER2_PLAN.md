@@ -14,7 +14,7 @@ new work.
 | U2-S4: diagnostics | Complete for current development | Learning curves; earlier v1 feature ablation, seed and shuffled-label checks |
 | U2-S5: evaluation and error analysis | V1 complete; v2 validation complete | V1 frozen test results; v2 outer predictions, metrics and learning curves |
 | U2-S6: model/code preservation | Complete | 42 fitted v2 pipelines, 420 setting/stage records and seven code ZIPs |
-| U2-S7: application and submission | Pending | Browser demo, two example predictions and final submission report |
+| U2-S7: application and submission | In progress | Streamlit demo is ready locally; capture examples and deploy or record it |
 
 The strongest v2 development candidate is **random forest: 82.77% +/- 0.92%
 accuracy** across five artist-disjoint validation folds. The 85-90% target
@@ -44,9 +44,9 @@ The shared implementation is described in [model setup](../src/models/README.md)
 
 ## Remaining delivery work
 
-1. Build a local browser demo using the four real inputs and a saved pipeline.
-   Clearly identify whether it loads the published v1 tree or v2 forest;
-   the existing inference CLI currently uses the published v1 tree.
+1. Run `streamlit run app/app.py` to use the local browser demo. It uses the
+   published v1 tree, verifies its saved checksum and displays held-out model
+   evidence. Deploy it on Streamlit Community Cloud if a public URL is wanted.
 2. Show predicted class, research-sample probability, model version and the
    corresponding test or validation evidence. Verify example predictions.
 3. Capture two examples that change at least two inputs, with screenshots
