@@ -9,7 +9,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from src.data.common import load_config, repo_path
+from src.data.common import load_config, model_features, repo_path
 from src.data.load_billboard import parse_billboard
 from src.features.normalize_names import canonicalize_frame
 
@@ -150,6 +150,18 @@ def write_eda(table: pd.DataFrame, report_path: Path, features: list[str]) -> No
         "## Correlation notes", "",
         "Correlations are descriptive only and must not be interpreted as causal effects.", "", correlations, "",
     ]
+    lines.extend(["## Descriptive outlier review", "",
+        "Pooled 1.5-IQR fences flag unusual values for inspection, not automatic removal.",
+        "Any fitted clipping or transformation must use training data only.", "",
+        "| Feature | Minimum | Maximum | Rows outside 1.5-IQR fences |",
+        "| --- | ---: | ---: | ---: |"])
+    for feature in features:
+        values = table[feature]
+        q1, q3 = values.quantile([0.25, 0.75])
+        spread = q3 - q1
+        flagged = ((values < q1 - 1.5 * spread) | (values > q3 + 1.5 * spread)).sum()
+        lines.append(f"| {feature} | {values.min():.3f} | {values.max():.3f} | {flagged} |")
+    lines.extend(["", "No rows were removed or clipped by this descriptive report.", ""])
     report_path.write_text("\n".join(lines), encoding="utf-8")
 
 
@@ -171,7 +183,7 @@ def main() -> None:
     audit.to_csv(reports / "match_audit.csv", index=False)
     artist_audit.to_csv(reports / "artist_score_audit.csv", index=False)
     quality.to_csv(reports / "data_quality.csv", index=False)
-    features = config["mode_b_features"] + ["artist_score"]
+    features = model_features(config)
     pd.DataFrame(
         {
             "feature": features,

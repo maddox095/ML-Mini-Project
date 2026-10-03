@@ -3,6 +3,8 @@ __pycache__/
 *.py[cod]
 .pytest_cache/
 .env
+.tools/
+/models/
 
 # Raw and generated data are intentionally local; manifests and documentation are tracked.
 data/raw/*
@@ -19,6 +21,7 @@ reports/*.json
 reports/*.png
 reports/*.parquet
 reports/figures/*
+reports/runs/
 !reports/figures/.gitkeep
 !reports/match_audit.csv
 !reports/artist_score_audit.csv

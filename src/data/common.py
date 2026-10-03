@@ -24,6 +24,13 @@ def load_config(path: str | Path = "configs/data.yaml") -> dict[str, Any]:
         return yaml.safe_load(handle)
 
 
+def model_features(config: dict[str, Any] | None = None) -> list[str]:
+    """Return the input whitelist shared by data checks and model pipelines."""
+    if config is None:
+        config = load_config()
+    return [*config["mode_b_features"], "artist_score"]
+
+
 def sha256(path: Path, chunk_size: int = 1024 * 1024) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as handle:

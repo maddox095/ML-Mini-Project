@@ -1,6 +1,8 @@
 {
   "source": "data/interim/model_table.parquet",
   "source_sha256": "fe9dd0b5c6e5683e2ca1bd9c3dba69cc9bdef55a987052039cdc7a45e68541a7",
+  "splits_sha256": "bccaf24876a5914e2afc03ce3388fcdd0cc8fa6052f9ea52f6c5d38964e29a20",
+  "dataset_version": "u1-mode-b",
   "seed": 42,
   "features": [
     "tempo",
