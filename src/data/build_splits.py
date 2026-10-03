@@ -40,7 +40,7 @@ def main() -> None:
     splits = build_splits(table, seed=config["seed"])
     output = repo_path("data/processed")
     output.mkdir(parents=True, exist_ok=True)
-    splits.to_csv(output / "user2_splits.csv", index=False)
+    splits.to_csv(output / "user2_splits.csv", index=False, lineterminator="\n")
     summary = {}
     for column in ("stratified_partition", "artist_disjoint_partition"):
         summary[column] = {
