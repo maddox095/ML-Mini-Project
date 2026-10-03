@@ -1,0 +1,47 @@
+{
+  "run_id": "course_accuracy_v2",
+  "bundles": [
+    {
+      "model": "logistic_regression",
+      "setting_records": 36,
+      "archive": "models/reproducibility_v2/course_accuracy_v2/logistic_regression.zip",
+      "sha256": "074a8a2c0a7b529ed3ad3c70b4a4a3add5391bc44d49bf2f2d487b1313e0d8f0"
+    },
+    {
+      "model": "polynomial_logistic",
+      "setting_records": 36,
+      "archive": "models/reproducibility_v2/course_accuracy_v2/polynomial_logistic.zip",
+      "sha256": "247070e6ab5d14edaf4aaf332ff36ccd64ad9e13a6a16db98c72f57934474474"
+    },
+    {
+      "model": "decision_tree",
+      "setting_records": 108,
+      "archive": "models/reproducibility_v2/course_accuracy_v2/decision_tree.zip",
+      "sha256": "4f55d7398b6471a594f3aebdc9d0dbd2f0c8715633b5e93d85e9fc6b07d613cd"
+    },
+    {
+      "model": "bagged_trees",
+      "setting_records": 48,
+      "archive": "models/reproducibility_v2/course_accuracy_v2/bagged_trees.zip",
+      "sha256": "726e236e097aeb9ee89c681f8c95385bb7b83d999029031c03e43140a1839c9b"
+    },
+    {
+      "model": "random_forest",
+      "setting_records": 72,
+      "archive": "models/reproducibility_v2/course_accuracy_v2/random_forest.zip",
+      "sha256": "029a266c044d5966189251040e79e033b005ba9cc2d6e9562922ba8244a4838f"
+    },
+    {
+      "model": "adaboost",
+      "setting_records": 48,
+      "archive": "models/reproducibility_v2/course_accuracy_v2/adaboost.zip",
+      "sha256": "f08ce3c5141fb9819ebf7b468b51cbe9cc645973f1c8add287ceb226d28ac933"
+    },
+    {
+      "model": "gradient_boosting",
+      "setting_records": 72,
+      "archive": "models/reproducibility_v2/course_accuracy_v2/gradient_boosting.zip",
+      "sha256": "e41c3fe3822f74f6ceb6592555493db372352a17a0f1f2e30d752bb0927616c4"
+    }
+  ]
+}

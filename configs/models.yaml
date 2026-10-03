@@ -1,0 +1,70 @@
+# Default model plus implemented alternatives. Final test partitions stay reserved.
+model: logistic_regression
+seed: 42
+protocols: [stratified_partition, artist_disjoint_partition]
+primary_protocol: artist_disjoint_partition
+cv:
+  outer_folds: 5
+  inner_folds: 5
+  selection_metric: roc_auc
+  n_jobs: 1
+feature_sets:
+  audio_only: [tempo, loudness, duration]
+  audio_artist_score: [tempo, loudness, duration, artist_score]
+  artist_score_only: [artist_score]
+diagnostic_feature_sets: [artist_score_only]
+logistic_regression:
+  solver: lbfgs
+  l1_ratio: 0.0
+  C: 1.0
+  max_iter: 5000
+  tol: 0.000001
+  C_grid: [0.01, 0.1, 1.0, 10.0, 100.0]
+svm_linear:
+  # LinearSVC uses a squared-hinge loss; record this source implementation choice.
+  penalty: l2
+  loss: squared_hinge
+  dual: false
+  C: 1.0
+  max_iter: 10000
+  tol: 0.000001
+  C_grid: [0.1, 1.0, 10.0, 100.0]
+svm_rbf:
+  kernel: rbf
+  probability: false
+  cache_size: 512
+  C_grid: [0.1, 1.0, 10.0, 100.0]
+  gamma_grid: [scale, 0.01, 0.1, 1.0]
+svm_polynomial:
+  kernel: poly
+  probability: false
+  cache_size: 512
+  C_grid: [0.1, 1.0, 10.0]
+  gamma_grid: [scale, 0.01]
+  degree_grid: [2, 3]
+  coef0_grid: [0.0, 1.0]
+  search_max_candidates: 12
+decision_tree:
+  max_depth_grid: [2, 4, 8, null]
+  min_samples_leaf_grid: [1, 5, 20]
+random_forest:
+  n_estimators: 300
+  n_jobs: 1
+  max_depth_grid: [4, 8, null]
+  min_samples_leaf_grid: [1, 5, 10]
+  max_features_grid: [sqrt, 1.0]
+  search_max_candidates: 6
+neural_network:
+  hidden_layer_sizes: [6]
+  activation: logistic
+  # L-BFGS avoids an internal random validation split and is practical for four inputs.
+  solver: lbfgs
+  early_stopping: false
+  max_iter: 5000
+  max_fun: 50000
+  tol: 0.00001
+  alpha_grid: [0.00001, 0.0001, 0.001, 0.01]
+decision_threshold: 0.5
+simplicity_auc_margin: 0.01
+robustness_seeds: [42, 7, 123]
+model_simplicity_order: [logistic_regression, svm_linear, decision_tree, random_forest, svm_rbf, svm_polynomial, neural_network]

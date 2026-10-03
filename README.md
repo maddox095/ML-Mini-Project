@@ -1,97 +1,127 @@
-# HitPredict - User 1 data pipeline
+# HitPredict
 
-This repository implements the **User 1** half of the HitPredict reproduction:
-immutable input registration, Million Song Dataset (MSD) extraction, Billboard
-history loading, conservative identity matching, overlap removal, target labels,
-chronological Artist Score, QA/EDA, and a deterministic handoff table for User 2.
+Hit-song classification using Million Song Dataset audio descriptors and
+historical Billboard labels. The current dataset has **4,000 songs: 2,000 hits
+and 2,000 non-hit candidates**, with four inputs: tempo, loudness, duration and
+a binary prior-hit Artist Score.
 
-The supplied guide makes one constraint explicit: do not newly collect Spotify
-audio features for ML training. This implementation therefore defaults to **Mode
-B**, a current-compliant methodology reproduction using MSD-native `tempo`,
-`loudness`, and `duration`. It does not claim feature-for-feature or numerical
-reproduction of the 2018 Spotify-based experiment.
+The active User 2 workflow uses only **regression, decision trees and
+ensembles**. Seven families are trained: logistic regression, degree-two
+polynomial logistic regression, decision trees, bagged trees, random forests,
+AdaBoost and gradient boosting.
 
-## Setup
+The best development result is **random forest: 82.77% +/- 0.92%** across five
+artist-disjoint validation folds. None reached 85%. These scores are training
+cross-validation results, not a fresh final test score.
+[Results](reports/course_accuracy_v2.md) and
+[complete model/code bundles](reports/course_model_artifacts_v2.md).
 
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install --upgrade pip
-python -m pip install -r requirements.txt
-pytest -q
+## Setup and checks
+
+Use Python 3.12 and the preserved dependency lock:
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements-lock.txt
+.\.venv\Scripts\python.exe -m pytest -q
+.\.venv\Scripts\python.exe -m src.data.verify_handoff
+.\.venv\Scripts\python.exe -B scripts/verify_artifacts.py
 ```
 
-## Build the User 1 handoff
+Artifact verification is read-only: it checks datasets, original source
+snapshots, saved models, results and ZIPs without fitting or loading test rows.
+Tests are restricted to `tests/`; saved replay programs are not collected.
 
-Raw input files remain local and are excluded from Git. Each acquisition command
-records source URL, retrieval time, size, SHA-256, and rows in
-`data/raw/MANIFEST.csv`.
+## Train and reuse models
 
-```bash
-# 1. Download the full MSD summary HDF5 from the URL in configs/data.yaml,
-#    then save it as data/raw/msd_full/msd_summary_file.h5.
-# 2. Download and normalize the historical Billboard weekly archive.
-python -m src.data.load_billboard --download
+New runs require a unique run ID and never overwrite previous experiments:
 
-# 3. Extract the full MSD summary and construct the audited handoff.
-python -m src.data.extract_msd
-python -m src.data.build_dataset
-pytest -q
+```powershell
+.\.venv\Scripts\python.exe -m src.models.accuracy_v2 --run-id course_accuracy_v2_rerun
+.\.venv\Scripts\python.exe -m src.models.export_course --run-id course_accuracy_v2_rerun
 ```
 
-The pipeline creates `data/interim/model_table.parquet` (4,000 balanced rows)
-plus
-`reports/match_audit.csv`, `reports/artist_score_audit.csv`,
-`reports/data_quality.csv`, `reports/feature_availability.csv`, and
-`reports/eda_summary.md`.
+`configs/accuracy_v2.yaml` controls all seven families, bounded searches, seeds
+and validation. The runner loads only the original 3,024 training rows, keeps
+artist groups separate at both CV levels, fits preprocessing within training,
+and selects thresholds without using outer validation labels. Training uses CPU.
 
-The workflow uses the official million-track MSD summary file, a 1990-2018
-label window, and 1986-2018 Billboard history only for Artist Score. The raw
-summary HDF5 remains excluded from Git; its source and SHA-256 are recorded in
-`data/raw/MANIFEST.csv`.
+The completed bundles contain **420 setting/stage records, actual training and
+evaluation code, and 42 fitted pipelines**. Each bundle saves full fixed and
+tuned parameters, five outer-fold checkpoints and the final training model.
+From an extracted bundle with the locked dependencies installed:
 
-The model table contains the valid MSD summary descriptors `tempo`,
-`loudness`, and `duration`, plus chronological `artist_score`. The source
-file's `danceability` and `energy` columns are constant zero in this release,
-so they are explicitly excluded rather than treated as model inputs.
-
-## Data rules that are enforced
-
-- Original artist/title strings are retained; normalized keys are comparison-only.
-- The pipeline accepts only exact canonical artist/title identities; unresolved labels
-  remain visible in the matching audit rather than being guessed.
-- MSD candidates that match any Billboard hit are removed before sampling the
-  non-hit pool. Balancing happens only after this cleanup and uses seed 42.
-- `artist_score=1` only when the audit identifies an earlier chart event for that
-  same normalized artist. The job fails if chronology is invalid.
-- Chart rank, peak position, and weeks on chart are kept in raw audit data only;
-  they are never model inputs.
-- Matching provenance (`source`, `match_method`, and `match_score`) is kept in
-  `reports/match_audit.csv` only and is never included in the model table.
-
-User 2 should consume only the accepted `model_table.parquet`, fit preprocessing
-inside training pipelines, and keep the prescribed 75/25 source-comparison split
-separate from a true held-out evaluation.
-
-Use only `tempo`, `loudness`, `duration`, and `artist_score` as model inputs;
-`hit` is the target. IDs, names, normalized keys, year, and reference dates are
-metadata. Positive reference dates use the first chart appearance in the label
-window; negative dates approximate release as January 1 of the MSD year, so
-dates must not be used as predictive features. Artist Score excludes the current
-song's earlier chart appearances. Known chart hits across the loaded history
-are excluded from the negative pool, and invalid identities, non-finite audio
-features, zero tempo, and nonpositive duration are rejected before sampling.
-An unmatched song is a non-hit candidate, not proof of never having charted;
-exact matching and the finite history window can still leave label noise.
-
-## User 2 modeling handoff
-
-See [the handoff guide](docs/USER2_HANDOFF.md) for permitted features, loading
-code, evaluation guidance and label limitations. Create reproducible stratified
-75/25 and artist-disjoint partitions with:
-
-```bash
-python -m src.data.build_splits
+```powershell
+python hyperparameters/setting_0000_train.py
+python hyperparameters/setting_0000_test.py
+python evaluate_saved_model.py
 ```
 
-Assignments and a dataset hash manifest are saved in `data/processed/`.
+The testing commands reproduce inner or outer validation results.
+[Reuse instructions](docs/MODEL_REPRODUCIBILITY.md).
+
+Fitted checkpoints and all 14 complete model ZIPs are published with Git LFS.
+Install Git LFS, then run `git lfs install` and `git lfs pull` after cloning.
+Extract a ZIP to use its preserved experiment code and data. Expanded bundle
+folders and run directories remain local; their records are included in ZIPs.
+
+## Dataset and source limitations
+
+`data/interim/model_table.parquet` has 2,660 distinct normalized artist keys,
+complete finite inputs and unique song identities. Identifiers, names, years,
+reference dates and chart outcomes remain metadata. Artist Score uses earlier
+chart history and excludes the current song.
+
+The stratified split has 3,000 training/1,000 test rows; the primary
+artist-disjoint split has 3,024 training/976 test rows with no shared normalized
+artist keys. V2 uses the primary training partition only.
+
+The registered raw MSD and Billboard sources are unavailable locally. Their
+restoration attempt did not produce verified files, so expansion and a full
+source rebuild remain blocked. The retained handoff passes 27 integrity checks;
+that does not independently verify all source labels. Non-hit candidates are
+not proof of never charting. The balanced research sample does not establish
+natural-release commercial-success probabilities.
+
+[Data handoff](docs/USER2_HANDOFF.md),
+[verification](reports/user1_verification.md), and
+[accuracy improvement plan](docs/ACCURACY_IMPROVEMENT_PLAN.md).
+
+## Earlier published benchmark and inference
+
+The original v1 benchmark and its complete code bundles remain preserved.
+Its CV-selected decision tree achieved **79.20% held-out accuracy** on unseen
+artist keys. [Published v1 results](reports/final_model_results.md) and
+[v1 bundles](reports/model_artifacts.md).
+
+The existing CLI still uses that frozen decision tree:
+
+```powershell
+.\.venv\Scripts\python.exe -m src.inference --tempo 120 --loudness -8 --duration 210 --artist-score 1
+```
+
+The new forest is saved separately as a development candidate. The browser
+demo and final submission report remain pending.
+[User 2 workflow](docs/USER2_PLAN.md).
+
+## Code layout
+
+| Path | Responsibility |
+| --- | --- |
+| `src/data/` | Acquisition, extraction, dataset checks and splits |
+| `src/features/` | Identity normalization and input preprocessing |
+| `src/models/validation.py` | Shared folds, parameter search and replay row selection |
+| `src/models/artifacts.py` | Model serialization, JSON and full source snapshots |
+| `src/models/bundles.py` | Shared code copying, replay programs and bundle hashes |
+| `src/models/accuracy_v2.py` | Active course-approved nested training workflow |
+| `src/models/course_models.py` | Allowed model factories and bounded grids |
+| `src/models/course_replay.py` | Replay settings and evaluate saved validation models |
+| `src/models/course_learning_curve.py` | Fixed-setting artist-group learning curves |
+| `src/models/export_course.py` | Complete per-family reproducibility bundles |
+| `src/inference.py` | Frozen v1 prediction CLI |
+| `scripts/verify_artifacts.py` | Read-only saved-artifact verification |
+| `tests/` | Data, leakage boundaries, replay and serialization checks |
+
+Earlier v1 training, comparison and finalization commands remain compatible.
+Original PDFs and author data are references under `docs/` and
+`data/reference/author_archive/`; they are not active training inputs.

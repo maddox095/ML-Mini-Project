@@ -1,0 +1,5497 @@
+{
+  "run_id": "course_accuracy_v2",
+  "experiment_type": "course_accuracy_v2",
+  "status": "complete: training-only accuracy development",
+  "created_at_utc": "2026-10-03T10:31:58.392702+00:00",
+  "config": {
+    "seed": 42,
+    "protocol": "artist_disjoint_partition",
+    "features": [
+      "tempo",
+      "loudness",
+      "duration",
+      "artist_score"
+    ],
+    "cv": {
+      "outer_folds": 5,
+      "inner_folds": 5,
+      "selection_metric": "accuracy",
+      "n_jobs": 1
+    },
+    "threshold_tie_policy": "closest_to_0.5_then_lower",
+    "family_order": [
+      "logistic_regression",
+      "polynomial_logistic",
+      "decision_tree",
+      "bagged_trees",
+      "random_forest",
+      "adaboost",
+      "gradient_boosting"
+    ],
+    "models": {
+      "logistic_regression": {
+        "fixed": {
+          "solver": "lbfgs",
+          "l1_ratio": 0.0,
+          "max_iter": 5000,
+          "tol": 1e-06
+        },
+        "grid": {
+          "model__C": [
+            0.001,
+            0.01,
+            0.1,
+            1.0,
+            10.0,
+            100.0
+          ]
+        }
+      },
+      "polynomial_logistic": {
+        "fixed": {
+          "solver": "lbfgs",
+          "l1_ratio": 0.0,
+          "max_iter": 10000,
+          "tol": 1e-06
+        },
+        "grid": {
+          "polynomial__degree": [
+            2
+          ],
+          "model__C": [
+            0.001,
+            0.01,
+            0.1,
+            1.0,
+            10.0,
+            100.0
+          ]
+        }
+      },
+      "decision_tree": {
+        "fixed": {},
+        "grid": {
+          "model__max_depth": [
+            2,
+            4,
+            6,
+            8,
+            12,
+            null
+          ],
+          "model__min_samples_leaf": [
+            5,
+            10,
+            20,
+            40
+          ],
+          "model__ccp_alpha": [
+            0.0,
+            0.001,
+            0.005
+          ]
+        },
+        "max_candidates": 18,
+        "anchors": [
+          {
+            "model__max_depth": 8,
+            "model__min_samples_leaf": 20,
+            "model__ccp_alpha": 0.0
+          },
+          {
+            "model__max_depth": 2,
+            "model__min_samples_leaf": 20,
+            "model__ccp_alpha": 0.0
+          }
+        ]
+      },
+      "bagged_trees": {
+        "fixed": {
+          "n_estimators": 150,
+          "bootstrap": true,
+          "n_jobs": 1
+        },
+        "base_tree": {
+          "min_samples_leaf": 10
+        },
+        "grid": {
+          "model__estimator__max_depth": [
+            3,
+            6,
+            null
+          ],
+          "model__estimator__min_samples_leaf": [
+            5,
+            20
+          ],
+          "model__max_samples": [
+            0.7,
+            1.0
+          ]
+        },
+        "max_candidates": 8
+      },
+      "random_forest": {
+        "fixed": {
+          "n_estimators": 300,
+          "n_jobs": 1
+        },
+        "grid": {
+          "model__max_depth": [
+            4,
+            6,
+            10,
+            null
+          ],
+          "model__min_samples_leaf": [
+            2,
+            5,
+            10,
+            30
+          ],
+          "model__max_features": [
+            "sqrt",
+            1.0
+          ],
+          "model__max_samples": [
+            0.7,
+            1.0
+          ]
+        },
+        "max_candidates": 12,
+        "anchors": [
+          {
+            "model__max_depth": 4,
+            "model__min_samples_leaf": 5,
+            "model__max_features": "sqrt",
+            "model__max_samples": 1.0
+          }
+        ]
+      },
+      "adaboost": {
+        "fixed": {},
+        "base_tree": {
+          "max_depth": 1,
+          "min_samples_leaf": 10
+        },
+        "grid": {
+          "model__n_estimators": [
+            50,
+            150
+          ],
+          "model__learning_rate": [
+            0.03,
+            0.1,
+            0.5
+          ],
+          "model__estimator__max_depth": [
+            1,
+            2
+          ]
+        },
+        "max_candidates": 8
+      },
+      "gradient_boosting": {
+        "fixed": {
+          "n_iter_no_change": null
+        },
+        "grid": {
+          "model__n_estimators": [
+            100,
+            200
+          ],
+          "model__learning_rate": [
+            0.03,
+            0.1
+          ],
+          "model__max_depth": [
+            1,
+            2,
+            3
+          ],
+          "model__min_samples_leaf": [
+            10,
+            30
+          ],
+          "model__subsample": [
+            0.7,
+            1.0
+          ]
+        },
+        "max_candidates": 12
+      }
+    }
+  },
+  "source_sha256": "fe9dd0b5c6e5683e2ca1bd9c3dba69cc9bdef55a987052039cdc7a45e68541a7",
+  "splits_sha256": "bccaf24876a5914e2afc03ce3388fcdd0cc8fa6052f9ea52f6c5d38964e29a20",
+  "test_sets_evaluated": false,
+  "existing_test_sets_previously_observed": true,
+  "selection_metric": "accuracy",
+  "scope": "regression, decision trees, bagging, boosting",
+  "python": "3.12.12",
+  "device": "cpu",
+  "packages": {
+    "scikit-learn": "1.9.1",
+    "pandas": "2.3.3",
+    "numpy": "2.5.3",
+    "scipy": "1.18.1",
+    "joblib": "1.6.0"
+  },
+  "source_hashes": {
+    "src/inference.py": "3ce57951b77127c79b95275e8bbccb8e85acee594d2d44f69e7c4434bb2b7a41",
+    "src/__init__.py": "abe44016e1541a41a79bd0c57e5346c1b4c590d78f9490d4c42f0ba424c10eda",
+    "src/data/build_dataset.py": "390db62941e6db96c792227da067f0f7322ba9e906852d7f97126308268f216b",
+    "src/data/build_splits.py": "b60dbc642ac87631d9202b60e5b39069d66041162fe5fc781027022b12e688ce",
+    "src/data/common.py": "3f7b0d8fb7e52ef3a030e037db4d8ffcd0499dd4e574bab3a0f493580753f630",
+    "src/data/extract_msd.py": "14b88127f06057f0c0912e6702e1172fab72e79951666faf50cd6cf76512b654",
+    "src/data/load_billboard.py": "5ea369bddc22c2b7316cbc5950478fd8b024d6c0eb8c2960925d46371243e1f5",
+    "src/data/restore_registered.py": "a0fd6f9a503f556c3b4daf42bab00a1dba3b2a68874bbce5226cc685d5f45a16",
+    "src/data/verify_handoff.py": "9661a92e77b415e7f34880796e78aafadcaab1e5e0603c50aee769524bac06c5",
+    "src/data/__init__.py": "7184ec36529dea4b1416367d6d92a985ea610448e9d31743f8c9ae9058b95547",
+    "src/features/build_features.py": "be4416404bf02023d54f02e3f8199a9efe12dddee64220637e04e65435960523",
+    "src/features/normalize_names.py": "dee00ef0ea3c669d8df8d072ac725fe9fa40f058907383beefe7590a7420b94d",
+    "src/features/__init__.py": "61e6bd0517ef3d5117936425144578602f240128bff975c0221d290478c14819",
+    "src/models/accuracy_v2.py": "0539eb9202e15792e7f12c0c090c1c5d55803119ee71a001a3c7e0f51401e375",
+    "src/models/compare.py": "61e6c94721a21a63f83717f40d79db4e7baa791e61187eb0f4d15f63dde29771",
+    "src/models/course_models.py": "8d21c0bff9ab9cc729e536b23e86b582ec3d538d130c248c354db2b0f26d6f6a",
+    "src/models/data.py": "2d4c6dc1e9508b9d8187cb83047fd4fcd72a4e8e7eb92b0c7197dcdf12280ada",
+    "src/models/evaluate.py": "7dfc0c146b87aa7ac406531768cfd608df71045f153b8e33deffde4315c8247a",
+    "src/models/export.py": "d5ea63481e0a96a7316fd5ef9b56db1733ad6c95750a1370e1c0cf245b2157d9",
+    "src/models/finalize.py": "e12245d04fd77078f00c49d99b983e1616578a4dd6e56033d9b5249b5e8901da",
+    "src/models/plots.py": "e2d979d3c467b7536b00b2b19e57264b29b6363bf96b9e1cb12bfd05473824a3",
+    "src/models/README.md": "abc5480eaba957c471a51468d8ec4c2cc0e9f4c264be52e129a787e95289b132",
+    "src/models/registry.py": "2d45d7b60b6fd9709083626e52767902aa14fb5b47b2791753cc3606226216a3",
+    "src/models/replay.py": "4230558d4e371a0c7cda73a7718965449076046feeb1fdbecff3730961cf426d",
+    "src/models/train.py": "c85d3b58baad14c4432937d606ab53f314d37c82f366932b256dd9a306b48e90",
+    "src/models/__init__.py": "72e2de8e6e032ed44d008a4c8bc5e3949e5db2b6466f8b7902ae363d1fe0f4f8",
+    "configs/accuracy_v2.yaml": "e04b0439852a977fa11b3a7eeb3810a7c64a47aa044781e5c3a5e107bba28e01",
+    "configs/data.yaml": "e5d85b2dacf1938ade8ad262b7c219ad1bc62e33dec651fe414fd2b447af41c0",
+    "configs/models.yaml": "1298b4cffb851ead0c720293f43fb21799775c56c9b809260325caeec7021740",
+    "tests/test_accuracy_v2.py": "9cb771c365ecbe2c69e8419534f901c5418cba8aa0aa20ba2ead830bf4ac2b01",
+    "tests/test_finalization.py": "ede557ddb30e7f9e84bb44a057d3f07a601cd7295cee5ee1223dcced27bcdc49",
+    "tests/test_handoff_integrity.py": "8edc45b1a7fb37c92f595749fa0a89ff4aaceef8b6f6cee06e3f2fc4f8c2164d",
+    "tests/test_model_data.py": "7689f51ce3e0fc683d690d00366ecad4f32e41ec78c9067dcdd6061b5e3f9fd6",
+    "tests/test_training.py": "ba2612b202857e45d66ffa1a7f59239a72385f68c6eee571af85c687eaf28995",
+    "tests/test_user1_pipeline.py": "ba200d6e4fac8d0e2ef93b5485d57d7ac5404c0724711a3e36430ece67c9ddc0",
+    "tests/test_user2_splits.py": "dd48cabde96044c9eda0c9a2135dc0d65a23e8a3f7420c9f71ba5c94db7f6a0c",
+    "requirements.txt": "93f7cca8af690d3f7a7b17194fb45b478703f5a60193393ba1735beef3eb3c03",
+    "requirements-lock.txt": "b9cf003059b08af41b0fc1f4dd1bef03b755247e51cb83ec822c0e7d69a1507a"
+  },
+  "artifacts": [
+    {
+      "model": "logistic_regression",
+      "stage": "outer_fold_1",
+      "path": "models/course_accuracy_v2/logistic_regression__outer_fold_1.joblib",
+      "threshold": 0.7580374906554141,
+      "comparison": ">=",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration",
+        "artist_score"
+      ],
+      "training_rows": 2419,
+      "tuned_parameters": {
+        "model__C": 1.0
+      },
+      "pipeline_configuration": {
+        "class": "sklearn.pipeline.Pipeline",
+        "parameters": {
+          "memory": null,
+          "steps": [
+            [
+              "preprocessor",
+              {
+                "class": "sklearn.compose._column_transformer.ColumnTransformer",
+                "parameters": {
+                  "n_jobs": null,
+                  "remainder": "drop",
+                  "sparse_threshold": 0.3,
+                  "transformer_weights": null,
+                  "transformers": [
+                    [
+                      "numeric",
+                      {
+                        "class": "sklearn.pipeline.Pipeline",
+                        "parameters": {
+                          "memory": null,
+                          "steps": [
+                            [
+                              "imputer",
+                              {
+                                "class": "sklearn.impute._base.SimpleImputer",
+                                "parameters": {
+                                  "add_indicator": false,
+                                  "copy": true,
+                                  "fill_value": null,
+                                  "keep_empty_features": true,
+                                  "missing_values": {
+                                    "special_float": "nan"
+                                  },
+                                  "strategy": "median"
+                                }
+                              }
+                            ],
+                            [
+                              "scaler",
+                              {
+                                "class": "sklearn.preprocessing._data.StandardScaler",
+                                "parameters": {
+                                  "copy": true,
+                                  "with_mean": true,
+                                  "with_std": true
+                                }
+                              }
+                            ]
+                          ],
+                          "transform_input": null,
+                          "verbose": false
+                        }
+                      },
+                      [
+                        "tempo",
+                        "loudness",
+                        "duration"
+                      ]
+                    ],
+                    [
+                      "binary",
+                      "passthrough",
+                      [
+                        "artist_score"
+                      ]
+                    ]
+                  ],
+                  "verbose": false,
+                  "verbose_feature_names_out": true
+                }
+              }
+            ],
+            [
+              "model",
+              {
+                "class": "sklearn.linear_model._logistic.LogisticRegression",
+                "parameters": {
+                  "C": 1.0,
+                  "class_weight": null,
+                  "dual": false,
+                  "fit_intercept": true,
+                  "intercept_scaling": 1,
+                  "l1_ratio": 0.0,
+                  "max_iter": 5000,
+                  "n_jobs": null,
+                  "penalty": "deprecated",
+                  "random_state": 42,
+                  "solver": "lbfgs",
+                  "tol": 1e-06,
+                  "verbose": 0,
+                  "warm_start": false
+                }
+              }
+            ]
+          ],
+          "transform_input": null,
+          "verbose": false
+        }
+      },
+      "sha256": "a76c94ef123dd036610c3f69acb35de75b0674e16870cbeeef368f80b83f67d3",
+      "round_trip_verified": true,
+      "score_kind": "probability",
+      "max_probability_difference": 0.0
+    },
+    {
+      "model": "logistic_regression",
+      "stage": "outer_fold_2",
+      "path": "models/course_accuracy_v2/logistic_regression__outer_fold_2.joblib",
+      "threshold": 0.6229488101181273,
+      "comparison": ">=",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration",
+        "artist_score"
+      ],
+      "training_rows": 2419,
+      "tuned_parameters": {
+        "model__C": 1.0
+      },
+      "pipeline_configuration": {
+        "class": "sklearn.pipeline.Pipeline",
+        "parameters": {
+          "memory": null,
+          "steps": [
+            [
+              "preprocessor",
+              {
+                "class": "sklearn.compose._column_transformer.ColumnTransformer",
+                "parameters": {
+                  "n_jobs": null,
+                  "remainder": "drop",
+                  "sparse_threshold": 0.3,
+                  "transformer_weights": null,
+                  "transformers": [
+                    [
+                      "numeric",
+                      {
+                        "class": "sklearn.pipeline.Pipeline",
+                        "parameters": {
+                          "memory": null,
+                          "steps": [
+                            [
+                              "imputer",
+                              {
+                                "class": "sklearn.impute._base.SimpleImputer",
+                                "parameters": {
+                                  "add_indicator": false,
+                                  "copy": true,
+                                  "fill_value": null,
+                                  "keep_empty_features": true,
+                                  "missing_values": {
+                                    "special_float": "nan"
+                                  },
+                                  "strategy": "median"
+                                }
+                              }
+                            ],
+                            [
+                              "scaler",
+                              {
+                                "class": "sklearn.preprocessing._data.StandardScaler",
+                                "parameters": {
+                                  "copy": true,
+                                  "with_mean": true,
+                                  "with_std": true
+                                }
+                              }
+                            ]
+                          ],
+                          "transform_input": null,
+                          "verbose": false
+                        }
+                      },
+                      [
+                        "tempo",
+                        "loudness",
+                        "duration"
+                      ]
+                    ],
+                    [
+                      "binary",
+                      "passthrough",
+                      [
+                        "artist_score"
+                      ]
+                    ]
+                  ],
+                  "verbose": false,
+                  "verbose_feature_names_out": true
+                }
+              }
+            ],
+            [
+              "model",
+              {
+                "class": "sklearn.linear_model._logistic.LogisticRegression",
+                "parameters": {
+                  "C": 1.0,
+                  "class_weight": null,
+                  "dual": false,
+                  "fit_intercept": true,
+                  "intercept_scaling": 1,
+                  "l1_ratio": 0.0,
+                  "max_iter": 5000,
+                  "n_jobs": null,
+                  "penalty": "deprecated",
+                  "random_state": 42,
+                  "solver": "lbfgs",
+                  "tol": 1e-06,
+                  "verbose": 0,
+                  "warm_start": false
+                }
+              }
+            ]
+          ],
+          "transform_input": null,
+          "verbose": false
+        }
+      },
+      "sha256": "6e397e628eb9fbba50be71a778c452ba156c57dfa201a3260eeda2238c948191",
+      "round_trip_verified": true,
+      "score_kind": "probability",
+      "max_probability_difference": 0.0
+    },
+    {
+      "model": "logistic_regression",
+      "stage": "outer_fold_3",
+      "path": "models/course_accuracy_v2/logistic_regression__outer_fold_3.joblib",
+      "threshold": 0.4599540699575975,
+      "comparison": ">=",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration",
+        "artist_score"
+      ],
+      "training_rows": 2418,
+      "tuned_parameters": {
+        "model__C": 10.0
+      },
+      "pipeline_configuration": {
+        "class": "sklearn.pipeline.Pipeline",
+        "parameters": {
+          "memory": null,
+          "steps": [
+            [
+              "preprocessor",
+              {
+                "class": "sklearn.compose._column_transformer.ColumnTransformer",
+                "parameters": {
+                  "n_jobs": null,
+                  "remainder": "drop",
+                  "sparse_threshold": 0.3,
+                  "transformer_weights": null,
+                  "transformers": [
+                    [
+                      "numeric",
+                      {
+                        "class": "sklearn.pipeline.Pipeline",
+                        "parameters": {
+                          "memory": null,
+                          "steps": [
+                            [
+                              "imputer",
+                              {
+                                "class": "sklearn.impute._base.SimpleImputer",
+                                "parameters": {
+                                  "add_indicator": false,
+                                  "copy": true,
+                                  "fill_value": null,
+                                  "keep_empty_features": true,
+                                  "missing_values": {
+                                    "special_float": "nan"
+                                  },
+                                  "strategy": "median"
+                                }
+                              }
+                            ],
+                            [
+                              "scaler",
+                              {
+                                "class": "sklearn.preprocessing._data.StandardScaler",
+                                "parameters": {
+                                  "copy": true,
+                                  "with_mean": true,
+                                  "with_std": true
+                                }
+                              }
+                            ]
+                          ],
+                          "transform_input": null,
+                          "verbose": false
+                        }
+                      },
+                      [
+                        "tempo",
+                        "loudness",
+                        "duration"
+                      ]
+                    ],
+                    [
+                      "binary",
+                      "passthrough",
+                      [
+                        "artist_score"
+                      ]
+                    ]
+                  ],
+                  "verbose": false,
+                  "verbose_feature_names_out": true
+                }
+              }
+            ],
+            [
+              "model",
+              {
+                "class": "sklearn.linear_model._logistic.LogisticRegression",
+                "parameters": {
+                  "C": 10.0,
+                  "class_weight": null,
+                  "dual": false,
+                  "fit_intercept": true,
+                  "intercept_scaling": 1,
+                  "l1_ratio": 0.0,
+                  "max_iter": 5000,
+                  "n_jobs": null,
+                  "penalty": "deprecated",
+                  "random_state": 42,
+                  "solver": "lbfgs",
+                  "tol": 1e-06,
+                  "verbose": 0,
+                  "warm_start": false
+                }
+              }
+            ]
+          ],
+          "transform_input": null,
+          "verbose": false
+        }
+      },
+      "sha256": "c7a7ed22056c33ec8cd30c55f0265d847b01b285c2a2753ca717b40f30d0866a",
+      "round_trip_verified": true,
+      "score_kind": "probability",
+      "max_probability_difference": 0.0
+    },
+    {
+      "model": "logistic_regression",
+      "stage": "outer_fold_4",
+      "path": "models/course_accuracy_v2/logistic_regression__outer_fold_4.joblib",
+      "threshold": 0.6804802871995986,
+      "comparison": ">=",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration",
+        "artist_score"
+      ],
+      "training_rows": 2420,
+      "tuned_parameters": {
+        "model__C": 1.0
+      },
+      "pipeline_configuration": {
+        "class": "sklearn.pipeline.Pipeline",
+        "parameters": {
+          "memory": null,
+          "steps": [
+            [
+              "preprocessor",
+              {
+                "class": "sklearn.compose._column_transformer.ColumnTransformer",
+                "parameters": {
+                  "n_jobs": null,
+                  "remainder": "drop",
+                  "sparse_threshold": 0.3,
+                  "transformer_weights": null,
+                  "transformers": [
+                    [
+                      "numeric",
+                      {
+                        "class": "sklearn.pipeline.Pipeline",
+                        "parameters": {
+                          "memory": null,
+                          "steps": [
+                            [
+                              "imputer",
+                              {
+                                "class": "sklearn.impute._base.SimpleImputer",
+                                "parameters": {
+                                  "add_indicator": false,
+                                  "copy": true,
+                                  "fill_value": null,
+                                  "keep_empty_features": true,
+                                  "missing_values": {
+                                    "special_float": "nan"
+                                  },
+                                  "strategy": "median"
+                                }
+                              }
+                            ],
+                            [
+                              "scaler",
+                              {
+                                "class": "sklearn.preprocessing._data.StandardScaler",
+                                "parameters": {
+                                  "copy": true,
+                                  "with_mean": true,
+                                  "with_std": true
+                                }
+                              }
+                            ]
+                          ],
+                          "transform_input": null,
+                          "verbose": false
+                        }
+                      },
+                      [
+                        "tempo",
+                        "loudness",
+                        "duration"
+                      ]
+                    ],
+                    [
+                      "binary",
+                      "passthrough",
+                      [
+                        "artist_score"
+                      ]
+                    ]
+                  ],
+                  "verbose": false,
+                  "verbose_feature_names_out": true
+                }
+              }
+            ],
+            [
+              "model",
+              {
+                "class": "sklearn.linear_model._logistic.LogisticRegression",
+                "parameters": {
+                  "C": 1.0,
+                  "class_weight": null,
+                  "dual": false,
+                  "fit_intercept": true,
+                  "intercept_scaling": 1,
+                  "l1_ratio": 0.0,
+                  "max_iter": 5000,
+                  "n_jobs": null,
+                  "penalty": "deprecated",
+                  "random_state": 42,
+                  "solver": "lbfgs",
+                  "tol": 1e-06,
+                  "verbose": 0,
+                  "warm_start": false
+                }
+              }
+            ]
+          ],
+          "transform_input": null,
+          "verbose": false
+        }
+      },
+      "sha256": "ae4337b57a64855dd6c32cfa15b2541a5dff6284e09695b385c22b0ee2319cc0",
+      "round_trip_verified": true,
+      "score_kind": "probability",
+      "max_probability_difference": 0.0
+    },
+    {
+      "model": "logistic_regression",
+      "stage": "outer_fold_5",
+      "path": "models/course_accuracy_v2/logistic_regression__outer_fold_5.joblib",
+      "threshold": 0.704116394678324,
+      "comparison": ">=",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration",
+        "artist_score"
+      ],
+      "training_rows": 2420,
+      "tuned_parameters": {
+        "model__C": 1.0
+      },
+      "pipeline_configuration": {
+        "class": "sklearn.pipeline.Pipeline",
+        "parameters": {
+          "memory": null,
+          "steps": [
+            [
+              "preprocessor",
+              {
+                "class": "sklearn.compose._column_transformer.ColumnTransformer",
+                "parameters": {
+                  "n_jobs": null,
+                  "remainder": "drop",
+                  "sparse_threshold": 0.3,
+                  "transformer_weights": null,
+                  "transformers": [
+                    [
+                      "numeric",
+                      {
+                        "class": "sklearn.pipeline.Pipeline",
+                        "parameters": {
+                          "memory": null,
+                          "steps": [
+                            [
+                              "imputer",
+                              {
+                                "class": "sklearn.impute._base.SimpleImputer",
+                                "parameters": {
+                                  "add_indicator": false,
+                                  "copy": true,
+                                  "fill_value": null,
+                                  "keep_empty_features": true,
+                                  "missing_values": {
+                                    "special_float": "nan"
+                                  },
+                                  "strategy": "median"
+                                }
+                              }
+                            ],
+                            [
+                              "scaler",
+                              {
+                                "class": "sklearn.preprocessing._data.StandardScaler",
+                                "parameters": {
+                                  "copy": true,
+                                  "with_mean": true,
+                                  "with_std": true
+                                }
+                              }
+                            ]
+                          ],
+                          "transform_input": null,
+                          "verbose": false
+                        }
+                      },
+                      [
+                        "tempo",
+                        "loudness",
+                        "duration"
+                      ]
+                    ],
+                    [
+                      "binary",
+                      "passthrough",
+                      [
+                        "artist_score"
+                      ]
+                    ]
+                  ],
+                  "verbose": false,
+                  "verbose_feature_names_out": true
+                }
+              }
+            ],
+            [
+              "model",
+              {
+                "class": "sklearn.linear_model._logistic.LogisticRegression",
+                "parameters": {
+                  "C": 1.0,
+                  "class_weight": null,
+                  "dual": false,
+                  "fit_intercept": true,
+                  "intercept_scaling": 1,
+                  "l1_ratio": 0.0,
+                  "max_iter": 5000,
+                  "n_jobs": null,
+                  "penalty": "deprecated",
+                  "random_state": 42,
+                  "solver": "lbfgs",
+                  "tol": 1e-06,
+                  "verbose": 0,
+                  "warm_start": false
+                }
+              }
+            ]
+          ],
+          "transform_input": null,
+          "verbose": false
+        }
+      },
+      "sha256": "417331283d8dac45e9eb2a290b833d6503b54c014d6ea2f403b02e22fffb3cda",
+      "round_trip_verified": true,
+      "score_kind": "probability",
+      "max_probability_difference": 0.0
+    },
+    {
+      "model": "logistic_regression",
+      "stage": "full_training_tuning",
+      "path": "models/course_accuracy_v2/logistic_regression__full_training_tuning.joblib",
+      "threshold": 0.5892139137073207,
+      "comparison": ">=",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration",
+        "artist_score"
+      ],
+      "training_rows": 3024,
+      "tuned_parameters": {
+        "model__C": 0.1
+      },
+      "pipeline_configuration": {
+        "class": "sklearn.pipeline.Pipeline",
+        "parameters": {
+          "memory": null,
+          "steps": [
+            [
+              "preprocessor",
+              {
+                "class": "sklearn.compose._column_transformer.ColumnTransformer",
+                "parameters": {
+                  "n_jobs": null,
+                  "remainder": "drop",
+                  "sparse_threshold": 0.3,
+                  "transformer_weights": null,
+                  "transformers": [
+                    [
+                      "numeric",
+                      {
+                        "class": "sklearn.pipeline.Pipeline",
+                        "parameters": {
+                          "memory": null,
+                          "steps": [
+                            [
+                              "imputer",
+                              {
+                                "class": "sklearn.impute._base.SimpleImputer",
+                                "parameters": {
+                                  "add_indicator": false,
+                                  "copy": true,
+                                  "fill_value": null,
+                                  "keep_empty_features": true,
+                                  "missing_values": {
+                                    "special_float": "nan"
+                                  },
+                                  "strategy": "median"
+                                }
+                              }
+                            ],
+                            [
+                              "scaler",
+                              {
+                                "class": "sklearn.preprocessing._data.StandardScaler",
+                                "parameters": {
+                                  "copy": true,
+                                  "with_mean": true,
+                                  "with_std": true
+                                }
+                              }
+                            ]
+                          ],
+                          "transform_input": null,
+                          "verbose": false
+                        }
+                      },
+                      [
+                        "tempo",
+                        "loudness",
+                        "duration"
+                      ]
+                    ],
+                    [
+                      "binary",
+                      "passthrough",
+                      [
+                        "artist_score"
+                      ]
+                    ]
+                  ],
+                  "verbose": false,
+                  "verbose_feature_names_out": true
+                }
+              }
+            ],
+            [
+              "model",
+              {
+                "class": "sklearn.linear_model._logistic.LogisticRegression",
+                "parameters": {
+                  "C": 0.1,
+                  "class_weight": null,
+                  "dual": false,
+                  "fit_intercept": true,
+                  "intercept_scaling": 1,
+                  "l1_ratio": 0.0,
+                  "max_iter": 5000,
+                  "n_jobs": null,
+                  "penalty": "deprecated",
+                  "random_state": 42,
+                  "solver": "lbfgs",
+                  "tol": 1e-06,
+                  "verbose": 0,
+                  "warm_start": false
+                }
+              }
+            ]
+          ],
+          "transform_input": null,
+          "verbose": false
+        }
+      },
+      "sha256": "b97e3a71b6c16b42565c6860fdfd2f8a208457f52994c87387bade691589f6c3",
+      "round_trip_verified": true,
+      "score_kind": "probability",
+      "max_probability_difference": 0.0
+    },
+    {
+      "model": "polynomial_logistic",
+      "stage": "outer_fold_1",
+      "path": "models/course_accuracy_v2/polynomial_logistic__outer_fold_1.joblib",
+      "threshold": 0.4658428255384298,
+      "comparison": ">=",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration",
+        "artist_score"
+      ],
+      "training_rows": 2419,
+      "tuned_parameters": {
+        "polynomial__degree": 2,
+        "model__C": 0.1
+      },
+      "pipeline_configuration": {
+        "class": "sklearn.pipeline.Pipeline",
+        "parameters": {
+          "memory": null,
+          "steps": [
+            [
+              "preprocessor",
+              {
+                "class": "sklearn.compose._column_transformer.ColumnTransformer",
+                "parameters": {
+                  "n_jobs": null,
+                  "remainder": "drop",
+                  "sparse_threshold": 0.3,
+                  "transformer_weights": null,
+                  "transformers": [
+                    [
+                      "numeric",
+                      {
+                        "class": "sklearn.pipeline.Pipeline",
+                        "parameters": {
+                          "memory": null,
+                          "steps": [
+                            [
+                              "imputer",
+                              {
+                                "class": "sklearn.impute._base.SimpleImputer",
+                                "parameters": {
+                                  "add_indicator": false,
+                                  "copy": true,
+                                  "fill_value": null,
+                                  "keep_empty_features": true,
+                                  "missing_values": {
+                                    "special_float": "nan"
+                                  },
+                                  "strategy": "median"
+                                }
+                              }
+                            ],
+                            [
+                              "scaler",
+                              {
+                                "class": "sklearn.preprocessing._data.StandardScaler",
+                                "parameters": {
+                                  "copy": true,
+                                  "with_mean": true,
+                                  "with_std": true
+                                }
+                              }
+                            ]
+                          ],
+                          "transform_input": null,
+                          "verbose": false
+                        }
+                      },
+                      [
+                        "tempo",
+                        "loudness",
+                        "duration"
+                      ]
+                    ],
+                    [
+                      "binary",
+                      "passthrough",
+                      [
+                        "artist_score"
+                      ]
+                    ]
+                  ],
+                  "verbose": false,
+                  "verbose_feature_names_out": true
+                }
+              }
+            ],
+            [
+              "polynomial",
+              {
+                "class": "sklearn.preprocessing._polynomial.PolynomialFeatures",
+                "parameters": {
+                  "degree": 2,
+                  "include_bias": false,
+                  "interaction_only": false,
+                  "order": "C"
+                }
+              }
+            ],
+            [
+              "expansion_scaler",
+              {
+                "class": "sklearn.preprocessing._data.StandardScaler",
+                "parameters": {
+                  "copy": true,
+                  "with_mean": true,
+                  "with_std": true
+                }
+              }
+            ],
+            [
+              "model",
+              {
+                "class": "sklearn.linear_model._logistic.LogisticRegression",
+                "parameters": {
+                  "C": 0.1,
+                  "class_weight": null,
+                  "dual": false,
+                  "fit_intercept": true,
+                  "intercept_scaling": 1,
+                  "l1_ratio": 0.0,
+                  "max_iter": 10000,
+                  "n_jobs": null,
+                  "penalty": "deprecated",
+                  "random_state": 42,
+                  "solver": "lbfgs",
+                  "tol": 1e-06,
+                  "verbose": 0,
+                  "warm_start": false
+                }
+              }
+            ]
+          ],
+          "transform_input": null,
+          "verbose": false
+        }
+      },
+      "sha256": "179de99fcbb733f94e82c4e58126b30f21ac243381fad530cf6dcd96c234f2b4",
+      "round_trip_verified": true,
+      "score_kind": "probability",
+      "max_probability_difference": 0.0
+    },
+    {
+      "model": "polynomial_logistic",
+      "stage": "outer_fold_2",
+      "path": "models/course_accuracy_v2/polynomial_logistic__outer_fold_2.joblib",
+      "threshold": 0.7070580345740288,
+      "comparison": ">=",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration",
+        "artist_score"
+      ],
+      "training_rows": 2419,
+      "tuned_parameters": {
+        "polynomial__degree": 2,
+        "model__C": 1.0
+      },
+      "pipeline_configuration": {
+        "class": "sklearn.pipeline.Pipeline",
+        "parameters": {
+          "memory": null,
+          "steps": [
+            [
+              "preprocessor",
+              {
+                "class": "sklearn.compose._column_transformer.ColumnTransformer",
+                "parameters": {
+                  "n_jobs": null,
+                  "remainder": "drop",
+                  "sparse_threshold": 0.3,
+                  "transformer_weights": null,
+                  "transformers": [
+                    [
+                      "numeric",
+                      {
+                        "class": "sklearn.pipeline.Pipeline",
+                        "parameters": {
+                          "memory": null,
+                          "steps": [
+                            [
+                              "imputer",
+                              {
+                                "class": "sklearn.impute._base.SimpleImputer",
+                                "parameters": {
+                                  "add_indicator": false,
+                                  "copy": true,
+                                  "fill_value": null,
+                                  "keep_empty_features": true,
+                                  "missing_values": {
+                                    "special_float": "nan"
+                                  },
+                                  "strategy": "median"
+                                }
+                              }
+                            ],
+                            [
+                              "scaler",
+                              {
+                                "class": "sklearn.preprocessing._data.StandardScaler",
+                                "parameters": {
+                                  "copy": true,
+                                  "with_mean": true,
+                                  "with_std": true
+                                }
+                              }
+                            ]
+                          ],
+                          "transform_input": null,
+                          "verbose": false
+                        }
+                      },
+                      [
+                        "tempo",
+                        "loudness",
+                        "duration"
+                      ]
+                    ],
+                    [
+                      "binary",
+                      "passthrough",
+                      [
+                        "artist_score"
+                      ]
+                    ]
+                  ],
+                  "verbose": false,
+                  "verbose_feature_names_out": true
+                }
+              }
+            ],
+            [
+              "polynomial",
+              {
+                "class": "sklearn.preprocessing._polynomial.PolynomialFeatures",
+                "parameters": {
+                  "degree": 2,
+                  "include_bias": false,
+                  "interaction_only": false,
+                  "order": "C"
+                }
+              }
+            ],
+            [
+              "expansion_scaler",
+              {
+                "class": "sklearn.preprocessing._data.StandardScaler",
+                "parameters": {
+                  "copy": true,
+                  "with_mean": true,
+                  "with_std": true
+                }
+              }
+            ],
+            [
+              "model",
+              {
+                "class": "sklearn.linear_model._logistic.LogisticRegression",
+                "parameters": {
+                  "C": 1.0,
+                  "class_weight": null,
+                  "dual": false,
+                  "fit_intercept": true,
+                  "intercept_scaling": 1,
+                  "l1_ratio": 0.0,
+                  "max_iter": 10000,
+                  "n_jobs": null,
+                  "penalty": "deprecated",
+                  "random_state": 42,
+                  "solver": "lbfgs",
+                  "tol": 1e-06,
+                  "verbose": 0,
+                  "warm_start": false
+                }
+              }
+            ]
+          ],
+          "transform_input": null,
+          "verbose": false
+        }
+      },
+      "sha256": "d00ca5eb84d4ea6c10d6640ee719d5b5540b1e9f9dee25a636eb1b59ba669060",
+      "round_trip_verified": true,
+      "score_kind": "probability",
+      "max_probability_difference": 0.0
+    },
+    {
+      "model": "polynomial_logistic",
+      "stage": "outer_fold_3",
+      "path": "models/course_accuracy_v2/polynomial_logistic__outer_fold_3.joblib",
+      "threshold": 0.4601761737501129,
+      "comparison": ">=",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration",
+        "artist_score"
+      ],
+      "training_rows": 2418,
+      "tuned_parameters": {
+        "polynomial__degree": 2,
+        "model__C": 1.0
+      },
+      "pipeline_configuration": {
+        "class": "sklearn.pipeline.Pipeline",
+        "parameters": {
+          "memory": null,
+          "steps": [
+            [
+              "preprocessor",
+              {
+                "class": "sklearn.compose._column_transformer.ColumnTransformer",
+                "parameters": {
+                  "n_jobs": null,
+                  "remainder": "drop",
+                  "sparse_threshold": 0.3,
+                  "transformer_weights": null,
+                  "transformers": [
+                    [
+                      "numeric",
+                      {
+                        "class": "sklearn.pipeline.Pipeline",
+                        "parameters": {
+                          "memory": null,
+                          "steps": [
+                            [
+                              "imputer",
+                              {
+                                "class": "sklearn.impute._base.SimpleImputer",
+                                "parameters": {
+                                  "add_indicator": false,
+                                  "copy": true,
+                                  "fill_value": null,
+                                  "keep_empty_features": true,
+                                  "missing_values": {
+                                    "special_float": "nan"
+                                  },
+                                  "strategy": "median"
+                                }
+                              }
+                            ],
+                            [
+                              "scaler",
+                              {
+                                "class": "sklearn.preprocessing._data.StandardScaler",
+                                "parameters": {
+                                  "copy": true,
+                                  "with_mean": true,
+                                  "with_std": true
+                                }
+                              }
+                            ]
+                          ],
+                          "transform_input": null,
+                          "verbose": false
+                        }
+                      },
+                      [
+                        "tempo",
+                        "loudness",
+                        "duration"
+                      ]
+                    ],
+                    [
+                      "binary",
+                      "passthrough",
+                      [
+                        "artist_score"
+                      ]
+                    ]
+                  ],
+                  "verbose": false,
+                  "verbose_feature_names_out": true
+                }
+              }
+            ],
+            [
+              "polynomial",
+              {
+                "class": "sklearn.preprocessing._polynomial.PolynomialFeatures",
+                "parameters": {
+                  "degree": 2,
+                  "include_bias": false,
+                  "interaction_only": false,
+                  "order": "C"
+                }
+              }
+            ],
+            [
+              "expansion_scaler",
+              {
+                "class": "sklearn.preprocessing._data.StandardScaler",
+                "parameters": {
+                  "copy": true,
+                  "with_mean": true,
+                  "with_std": true
+                }
+              }
+            ],
+            [
+              "model",
+              {
+                "class": "sklearn.linear_model._logistic.LogisticRegression",
+                "parameters": {
+                  "C": 1.0,
+                  "class_weight": null,
+                  "dual": false,
+                  "fit_intercept": true,
+                  "intercept_scaling": 1,
+                  "l1_ratio": 0.0,
+                  "max_iter": 10000,
+                  "n_jobs": null,
+                  "penalty": "deprecated",
+                  "random_state": 42,
+                  "solver": "lbfgs",
+                  "tol": 1e-06,
+                  "verbose": 0,
+                  "warm_start": false
+                }
+              }
+            ]
+          ],
+          "transform_input": null,
+          "verbose": false
+        }
+      },
+      "sha256": "d70a327e6dfc5f351674bb4753dc5d976688dadb28d68f24f26af39496607e27",
+      "round_trip_verified": true,
+      "score_kind": "probability",
+      "max_probability_difference": 0.0
+    },
+    {
+      "model": "polynomial_logistic",
+      "stage": "outer_fold_4",
+      "path": "models/course_accuracy_v2/polynomial_logistic__outer_fold_4.joblib",
+      "threshold": 0.5,
+      "comparison": ">=",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration",
+        "artist_score"
+      ],
+      "training_rows": 2420,
+      "tuned_parameters": {
+        "polynomial__degree": 2,
+        "model__C": 0.001
+      },
+      "pipeline_configuration": {
+        "class": "sklearn.pipeline.Pipeline",
+        "parameters": {
+          "memory": null,
+          "steps": [
+            [
+              "preprocessor",
+              {
+                "class": "sklearn.compose._column_transformer.ColumnTransformer",
+                "parameters": {
+                  "n_jobs": null,
+                  "remainder": "drop",
+                  "sparse_threshold": 0.3,
+                  "transformer_weights": null,
+                  "transformers": [
+                    [
+                      "numeric",
+                      {
+                        "class": "sklearn.pipeline.Pipeline",
+                        "parameters": {
+                          "memory": null,
+                          "steps": [
+                            [
+                              "imputer",
+                              {
+                                "class": "sklearn.impute._base.SimpleImputer",
+                                "parameters": {
+                                  "add_indicator": false,
+                                  "copy": true,
+                                  "fill_value": null,
+                                  "keep_empty_features": true,
+                                  "missing_values": {
+                                    "special_float": "nan"
+                                  },
+                                  "strategy": "median"
+                                }
+                              }
+                            ],
+                            [
+                              "scaler",
+                              {
+                                "class": "sklearn.preprocessing._data.StandardScaler",
+                                "parameters": {
+                                  "copy": true,
+                                  "with_mean": true,
+                                  "with_std": true
+                                }
+                              }
+                            ]
+                          ],
+                          "transform_input": null,
+                          "verbose": false
+                        }
+                      },
+                      [
+                        "tempo",
+                        "loudness",
+                        "duration"
+                      ]
+                    ],
+                    [
+                      "binary",
+                      "passthrough",
+                      [
+                        "artist_score"
+                      ]
+                    ]
+                  ],
+                  "verbose": false,
+                  "verbose_feature_names_out": true
+                }
+              }
+            ],
+            [
+              "polynomial",
+              {
+                "class": "sklearn.preprocessing._polynomial.PolynomialFeatures",
+                "parameters": {
+                  "degree": 2,
+                  "include_bias": false,
+                  "interaction_only": false,
+                  "order": "C"
+                }
+              }
+            ],
+            [
+              "expansion_scaler",
+              {
+                "class": "sklearn.preprocessing._data.StandardScaler",
+                "parameters": {
+                  "copy": true,
+                  "with_mean": true,
+                  "with_std": true
+                }
+              }
+            ],
+            [
+              "model",
+              {
+                "class": "sklearn.linear_model._logistic.LogisticRegression",
+                "parameters": {
+                  "C": 0.001,
+                  "class_weight": null,
+                  "dual": false,
+                  "fit_intercept": true,
+                  "intercept_scaling": 1,
+                  "l1_ratio": 0.0,
+                  "max_iter": 10000,
+                  "n_jobs": null,
+                  "penalty": "deprecated",
+                  "random_state": 42,
+                  "solver": "lbfgs",
+                  "tol": 1e-06,
+                  "verbose": 0,
+                  "warm_start": false
+                }
+              }
+            ]
+          ],
+          "transform_input": null,
+          "verbose": false
+        }
+      },
+      "sha256": "42cb0993a838e59a290ffa05054719a26e1a353ab03a85842e7e97df0733ecb6",
+      "round_trip_verified": true,
+      "score_kind": "probability",
+      "max_probability_difference": 0.0
+    },
+    {
+      "model": "polynomial_logistic",
+      "stage": "outer_fold_5",
+      "path": "models/course_accuracy_v2/polynomial_logistic__outer_fold_5.joblib",
+      "threshold": 0.4692852660998206,
+      "comparison": ">=",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration",
+        "artist_score"
+      ],
+      "training_rows": 2420,
+      "tuned_parameters": {
+        "polynomial__degree": 2,
+        "model__C": 1.0
+      },
+      "pipeline_configuration": {
+        "class": "sklearn.pipeline.Pipeline",
+        "parameters": {
+          "memory": null,
+          "steps": [
+            [
+              "preprocessor",
+              {
+                "class": "sklearn.compose._column_transformer.ColumnTransformer",
+                "parameters": {
+                  "n_jobs": null,
+                  "remainder": "drop",
+                  "sparse_threshold": 0.3,
+                  "transformer_weights": null,
+                  "transformers": [
+                    [
+                      "numeric",
+                      {
+                        "class": "sklearn.pipeline.Pipeline",
+                        "parameters": {
+                          "memory": null,
+                          "steps": [
+                            [
+                              "imputer",
+                              {
+                                "class": "sklearn.impute._base.SimpleImputer",
+                                "parameters": {
+                                  "add_indicator": false,
+                                  "copy": true,
+                                  "fill_value": null,
+                                  "keep_empty_features": true,
+                                  "missing_values": {
+                                    "special_float": "nan"
+                                  },
+                                  "strategy": "median"
+                                }
+                              }
+                            ],
+                            [
+                              "scaler",
+                              {
+                                "class": "sklearn.preprocessing._data.StandardScaler",
+                                "parameters": {
+                                  "copy": true,
+                                  "with_mean": true,
+                                  "with_std": true
+                                }
+                              }
+                            ]
+                          ],
+                          "transform_input": null,
+                          "verbose": false
+                        }
+                      },
+                      [
+                        "tempo",
+                        "loudness",
+                        "duration"
+                      ]
+                    ],
+                    [
+                      "binary",
+                      "passthrough",
+                      [
+                        "artist_score"
+                      ]
+                    ]
+                  ],
+                  "verbose": false,
+                  "verbose_feature_names_out": true
+                }
+              }
+            ],
+            [
+              "polynomial",
+              {
+                "class": "sklearn.preprocessing._polynomial.PolynomialFeatures",
+                "parameters": {
+                  "degree": 2,
+                  "include_bias": false,
+                  "interaction_only": false,
+                  "order": "C"
+                }
+              }
+            ],
+            [
+              "expansion_scaler",
+              {
+                "class": "sklearn.preprocessing._data.StandardScaler",
+                "parameters": {
+                  "copy": true,
+                  "with_mean": true,
+                  "with_std": true
+                }
+              }
+            ],
+            [
+              "model",
+              {
+                "class": "sklearn.linear_model._logistic.LogisticRegression",
+                "parameters": {
+                  "C": 1.0,
+                  "class_weight": null,
+                  "dual": false,
+                  "fit_intercept": true,
+                  "intercept_scaling": 1,
+                  "l1_ratio": 0.0,
+                  "max_iter": 10000,
+                  "n_jobs": null,
+                  "penalty": "deprecated",
+                  "random_state": 42,
+                  "solver": "lbfgs",
+                  "tol": 1e-06,
+                  "verbose": 0,
+                  "warm_start": false
+                }
+              }
+            ]
+          ],
+          "transform_input": null,
+          "verbose": false
+        }
+      },
+      "sha256": "28bee5fb5f748009f842bca9750b4c6a3c937b35eefaa408be02b248d459fdfb",
+      "round_trip_verified": true,
+      "score_kind": "probability",
+      "max_probability_difference": 0.0
+    },
+    {
+      "model": "polynomial_logistic",
+      "stage": "full_training_tuning",
+      "path": "models/course_accuracy_v2/polynomial_logistic__full_training_tuning.joblib",
+      "threshold": 0.5,
+      "comparison": ">=",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration",
+        "artist_score"
+      ],
+      "training_rows": 3024,
+      "tuned_parameters": {
+        "polynomial__degree": 2,
+        "model__C": 10.0
+      },
+      "pipeline_configuration": {
+        "class": "sklearn.pipeline.Pipeline",
+        "parameters": {
+          "memory": null,
+          "steps": [
+            [
+              "preprocessor",
+              {
+                "class": "sklearn.compose._column_transformer.ColumnTransformer",
+                "parameters": {
+                  "n_jobs": null,
+                  "remainder": "drop",
+                  "sparse_threshold": 0.3,
+                  "transformer_weights": null,
+                  "transformers": [
+                    [
+                      "numeric",
+                      {
+                        "class": "sklearn.pipeline.Pipeline",
+                        "parameters": {
+                          "memory": null,
+                          "steps": [
+                            [
+                              "imputer",
+                              {
+                                "class": "sklearn.impute._base.SimpleImputer",
+                                "parameters": {
+                                  "add_indicator": false,
+                                  "copy": true,
+                                  "fill_value": null,
+                                  "keep_empty_features": true,
+                                  "missing_values": {
+                                    "special_float": "nan"
+                                  },
+                                  "strategy": "median"
+                                }
+                              }
+                            ],
+                            [
+                              "scaler",
+                              {
+                                "class": "sklearn.preprocessing._data.StandardScaler",
+                                "parameters": {
+                                  "copy": true,
+                                  "with_mean": true,
+                                  "with_std": true
+                                }
+                              }
+                            ]
+                          ],
+                          "transform_input": null,
+                          "verbose": false
+                        }
+                      },
+                      [
+                        "tempo",
+                        "loudness",
+                        "duration"
+                      ]
+                    ],
+                    [
+                      "binary",
+                      "passthrough",
+                      [
+                        "artist_score"
+                      ]
+                    ]
+                  ],
+                  "verbose": false,
+                  "verbose_feature_names_out": true
+                }
+              }
+            ],
+            [
+              "polynomial",
+              {
+                "class": "sklearn.preprocessing._polynomial.PolynomialFeatures",
+                "parameters": {
+                  "degree": 2,
+                  "include_bias": false,
+                  "interaction_only": false,
+                  "order": "C"
+                }
+              }
+            ],
+            [
+              "expansion_scaler",
+              {
+                "class": "sklearn.preprocessing._data.StandardScaler",
+                "parameters": {
+                  "copy": true,
+                  "with_mean": true,
+                  "with_std": true
+                }
+              }
+            ],
+            [
+              "model",
+              {
+                "class": "sklearn.linear_model._logistic.LogisticRegression",
+                "parameters": {
+                  "C": 10.0,
+                  "class_weight": null,
+                  "dual": false,
+                  "fit_intercept": true,
+                  "intercept_scaling": 1,
+                  "l1_ratio": 0.0,
+                  "max_iter": 10000,
+                  "n_jobs": null,
+                  "penalty": "deprecated",
+                  "random_state": 42,
+                  "solver": "lbfgs",
+                  "tol": 1e-06,
+                  "verbose": 0,
+                  "warm_start": false
+                }
+              }
+            ]
+          ],
+          "transform_input": null,
+          "verbose": false
+        }
+      },
+      "sha256": "31eda9cb1dc4903de55506233676b57d5c526336614de1d7624053c29fcd5a6e",
+      "round_trip_verified": true,
+      "score_kind": "probability",
+      "max_probability_difference": 0.0
+    },
+    {
+      "model": "decision_tree",
+      "stage": "outer_fold_1",
+      "path": "models/course_accuracy_v2/decision_tree__outer_fold_1.joblib",
+      "threshold": 0.5,
+      "comparison": ">=",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration",
+        "artist_score"
+      ],
+      "training_rows": 2419,
+      "tuned_parameters": {
+        "model__ccp_alpha": 0.0,
+        "model__max_depth": 2,
+        "model__min_samples_leaf": 20
+      },
+      "pipeline_configuration": {
+        "class": "sklearn.pipeline.Pipeline",
+        "parameters": {
+          "memory": null,
+          "steps": [
+            [
+              "preprocessor",
+              {
+                "class": "sklearn.compose._column_transformer.ColumnTransformer",
+                "parameters": {
+                  "n_jobs": null,
+                  "remainder": "drop",
+                  "sparse_threshold": 0.3,
+                  "transformer_weights": null,
+                  "transformers": [
+                    [
+                      "numeric",
+                      {
+                        "class": "sklearn.pipeline.Pipeline",
+                        "parameters": {
+                          "memory": null,
+                          "steps": [
+                            [
+                              "imputer",
+                              {
+                                "class": "sklearn.impute._base.SimpleImputer",
+                                "parameters": {
+                                  "add_indicator": false,
+                                  "copy": true,
+                                  "fill_value": null,
+                                  "keep_empty_features": true,
+                                  "missing_values": {
+                                    "special_float": "nan"
+                                  },
+                                  "strategy": "median"
+                                }
+                              }
+                            ]
+                          ],
+                          "transform_input": null,
+                          "verbose": false
+                        }
+                      },
+                      [
+                        "tempo",
+                        "loudness",
+                        "duration"
+                      ]
+                    ],
+                    [
+                      "binary",
+                      "passthrough",
+                      [
+                        "artist_score"
+                      ]
+                    ]
+                  ],
+                  "verbose": false,
+                  "verbose_feature_names_out": true
+                }
+              }
+            ],
+            [
+              "model",
+              {
+                "class": "sklearn.tree._classes.DecisionTreeClassifier",
+                "parameters": {
+                  "ccp_alpha": 0.0,
+                  "class_weight": null,
+                  "criterion": "gini",
+                  "max_depth": 2,
+                  "max_features": null,
+                  "max_leaf_nodes": null,
+                  "min_impurity_decrease": 0.0,
+                  "min_samples_leaf": 20,
+                  "min_samples_split": 2,
+                  "min_weight_fraction_leaf": 0.0,
+                  "monotonic_cst": null,
+                  "random_state": 42,
+                  "splitter": "best"
+                }
+              }
+            ]
+          ],
+          "transform_input": null,
+          "verbose": false
+        }
+      },
+      "sha256": "9e3b8c1c8441446dd21b05243787c5c1ca936c31af794f2b81657b1526f76646",
+      "round_trip_verified": true,
+      "score_kind": "probability",
+      "max_probability_difference": 0.0
+    },
+    {
+      "model": "decision_tree",
+      "stage": "outer_fold_2",
+      "path": "models/course_accuracy_v2/decision_tree__outer_fold_2.joblib",
+      "threshold": 0.5,
+      "comparison": ">=",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration",
+        "artist_score"
+      ],
+      "training_rows": 2419,
+      "tuned_parameters": {
+        "model__ccp_alpha": 0.0,
+        "model__max_depth": 2,
+        "model__min_samples_leaf": 20
+      },
+      "pipeline_configuration": {
+        "class": "sklearn.pipeline.Pipeline",
+        "parameters": {
+          "memory": null,
+          "steps": [
+            [
+              "preprocessor",
+              {
+                "class": "sklearn.compose._column_transformer.ColumnTransformer",
+                "parameters": {
+                  "n_jobs": null,
+                  "remainder": "drop",
+                  "sparse_threshold": 0.3,
+                  "transformer_weights": null,
+                  "transformers": [
+                    [
+                      "numeric",
+                      {
+                        "class": "sklearn.pipeline.Pipeline",
+                        "parameters": {
+                          "memory": null,
+                          "steps": [
+                            [
+                              "imputer",
+                              {
+                                "class": "sklearn.impute._base.SimpleImputer",
+                                "parameters": {
+                                  "add_indicator": false,
+                                  "copy": true,
+                                  "fill_value": null,
+                                  "keep_empty_features": true,
+                                  "missing_values": {
+                                    "special_float": "nan"
+                                  },
+                                  "strategy": "median"
+                                }
+                              }
+                            ]
+                          ],
+                          "transform_input": null,
+                          "verbose": false
+                        }
+                      },
+                      [
+                        "tempo",
+                        "loudness",
+                        "duration"
+                      ]
+                    ],
+                    [
+                      "binary",
+                      "passthrough",
+                      [
+                        "artist_score"
+                      ]
+                    ]
+                  ],
+                  "verbose": false,
+                  "verbose_feature_names_out": true
+                }
+              }
+            ],
+            [
+              "model",
+              {
+                "class": "sklearn.tree._classes.DecisionTreeClassifier",
+                "parameters": {
+                  "ccp_alpha": 0.0,
+                  "class_weight": null,
+                  "criterion": "gini",
+                  "max_depth": 2,
+                  "max_features": null,
+                  "max_leaf_nodes": null,
+                  "min_impurity_decrease": 0.0,
+                  "min_samples_leaf": 20,
+                  "min_samples_split": 2,
+                  "min_weight_fraction_leaf": 0.0,
+                  "monotonic_cst": null,
+                  "random_state": 42,
+                  "splitter": "best"
+                }
+              }
+            ]
+          ],
+          "transform_input": null,
+          "verbose": false
+        }
+      },
+      "sha256": "099ddcdfc89e5ad595adbaae58104f4cf2b3a56e16e20390e5abd259afeb5a14",
+      "round_trip_verified": true,
+      "score_kind": "probability",
+      "max_probability_difference": 0.0
+    },
+    {
+      "model": "decision_tree",
+      "stage": "outer_fold_3",
+      "path": "models/course_accuracy_v2/decision_tree__outer_fold_3.joblib",
+      "threshold": 0.5,
+      "comparison": ">=",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration",
+        "artist_score"
+      ],
+      "training_rows": 2418,
+      "tuned_parameters": {
+        "model__ccp_alpha": 0.0,
+        "model__max_depth": 2,
+        "model__min_samples_leaf": 20
+      },
+      "pipeline_configuration": {
+        "class": "sklearn.pipeline.Pipeline",
+        "parameters": {
+          "memory": null,
+          "steps": [
+            [
+              "preprocessor",
+              {
+                "class": "sklearn.compose._column_transformer.ColumnTransformer",
+                "parameters": {
+                  "n_jobs": null,
+                  "remainder": "drop",
+                  "sparse_threshold": 0.3,
+                  "transformer_weights": null,
+                  "transformers": [
+                    [
+                      "numeric",
+                      {
+                        "class": "sklearn.pipeline.Pipeline",
+                        "parameters": {
+                          "memory": null,
+                          "steps": [
+                            [
+                              "imputer",
+                              {
+                                "class": "sklearn.impute._base.SimpleImputer",
+                                "parameters": {
+                                  "add_indicator": false,
+                                  "copy": true,
+                                  "fill_value": null,
+                                  "keep_empty_features": true,
+                                  "missing_values": {
+                                    "special_float": "nan"
+                                  },
+                                  "strategy": "median"
+                                }
+                              }
+                            ]
+                          ],
+                          "transform_input": null,
+                          "verbose": false
+                        }
+                      },
+                      [
+                        "tempo",
+                        "loudness",
+                        "duration"
+                      ]
+                    ],
+                    [
+                      "binary",
+                      "passthrough",
+                      [
+                        "artist_score"
+                      ]
+                    ]
+                  ],
+                  "verbose": false,
+                  "verbose_feature_names_out": true
+                }
+              }
+            ],
+            [
+              "model",
+              {
+                "class": "sklearn.tree._classes.DecisionTreeClassifier",
+                "parameters": {
+                  "ccp_alpha": 0.0,
+                  "class_weight": null,
+                  "criterion": "gini",
+                  "max_depth": 2,
+                  "max_features": null,
+                  "max_leaf_nodes": null,
+                  "min_impurity_decrease": 0.0,
+                  "min_samples_leaf": 20,
+                  "min_samples_split": 2,
+                  "min_weight_fraction_leaf": 0.0,
+                  "monotonic_cst": null,
+                  "random_state": 42,
+                  "splitter": "best"
+                }
+              }
+            ]
+          ],
+          "transform_input": null,
+          "verbose": false
+        }
+      },
+      "sha256": "fbdfc016506caa8c3786ad4abf183d90afad94836993e74359e91f7e0796c093",
+      "round_trip_verified": true,
+      "score_kind": "probability",
+      "max_probability_difference": 0.0
+    },
+    {
+      "model": "decision_tree",
+      "stage": "outer_fold_4",
+      "path": "models/course_accuracy_v2/decision_tree__outer_fold_4.joblib",
+      "threshold": 0.5,
+      "comparison": ">=",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration",
+        "artist_score"
+      ],
+      "training_rows": 2420,
+      "tuned_parameters": {
+        "model__ccp_alpha": 0.0,
+        "model__max_depth": 2,
+        "model__min_samples_leaf": 20
+      },
+      "pipeline_configuration": {
+        "class": "sklearn.pipeline.Pipeline",
+        "parameters": {
+          "memory": null,
+          "steps": [
+            [
+              "preprocessor",
+              {
+                "class": "sklearn.compose._column_transformer.ColumnTransformer",
+                "parameters": {
+                  "n_jobs": null,
+                  "remainder": "drop",
+                  "sparse_threshold": 0.3,
+                  "transformer_weights": null,
+                  "transformers": [
+                    [
+                      "numeric",
+                      {
+                        "class": "sklearn.pipeline.Pipeline",
+                        "parameters": {
+                          "memory": null,
+                          "steps": [
+                            [
+                              "imputer",
+                              {
+                                "class": "sklearn.impute._base.SimpleImputer",
+                                "parameters": {
+                                  "add_indicator": false,
+                                  "copy": true,
+                                  "fill_value": null,
+                                  "keep_empty_features": true,
+                                  "missing_values": {
+                                    "special_float": "nan"
+                                  },
+                                  "strategy": "median"
+                                }
+                              }
+                            ]
+                          ],
+                          "transform_input": null,
+                          "verbose": false
+                        }
+                      },
+                      [
+                        "tempo",
+                        "loudness",
+                        "duration"
+                      ]
+                    ],
+                    [
+                      "binary",
+                      "passthrough",
+                      [
+                        "artist_score"
+                      ]
+                    ]
+                  ],
+                  "verbose": false,
+                  "verbose_feature_names_out": true
+                }
+              }
+            ],
+            [
+              "model",
+              {
+                "class": "sklearn.tree._classes.DecisionTreeClassifier",
+                "parameters": {
+                  "ccp_alpha": 0.0,
+                  "class_weight": null,
+                  "criterion": "gini",
+                  "max_depth": 2,
+                  "max_features": null,
+                  "max_leaf_nodes": null,
+                  "min_impurity_decrease": 0.0,
+                  "min_samples_leaf": 20,
+                  "min_samples_split": 2,
+                  "min_weight_fraction_leaf": 0.0,
+                  "monotonic_cst": null,
+                  "random_state": 42,
+                  "splitter": "best"
+                }
+              }
+            ]
+          ],
+          "transform_input": null,
+          "verbose": false
+        }
+      },
+      "sha256": "ff96b4ea4f5246863a4cfbe795245b3186213577fbca9a4452cd92ba3ff04823",
+      "round_trip_verified": true,
+      "score_kind": "probability",
+      "max_probability_difference": 0.0
+    },
+    {
+      "model": "decision_tree",
+      "stage": "outer_fold_5",
+      "path": "models/course_accuracy_v2/decision_tree__outer_fold_5.joblib",
+      "threshold": 0.5,
+      "comparison": ">=",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration",
+        "artist_score"
+      ],
+      "training_rows": 2420,
+      "tuned_parameters": {
+        "model__ccp_alpha": 0.0,
+        "model__max_depth": 2,
+        "model__min_samples_leaf": 20
+      },
+      "pipeline_configuration": {
+        "class": "sklearn.pipeline.Pipeline",
+        "parameters": {
+          "memory": null,
+          "steps": [
+            [
+              "preprocessor",
+              {
+                "class": "sklearn.compose._column_transformer.ColumnTransformer",
+                "parameters": {
+                  "n_jobs": null,
+                  "remainder": "drop",
+                  "sparse_threshold": 0.3,
+                  "transformer_weights": null,
+                  "transformers": [
+                    [
+                      "numeric",
+                      {
+                        "class": "sklearn.pipeline.Pipeline",
+                        "parameters": {
+                          "memory": null,
+                          "steps": [
+                            [
+                              "imputer",
+                              {
+                                "class": "sklearn.impute._base.SimpleImputer",
+                                "parameters": {
+                                  "add_indicator": false,
+                                  "copy": true,
+                                  "fill_value": null,
+                                  "keep_empty_features": true,
+                                  "missing_values": {
+                                    "special_float": "nan"
+                                  },
+                                  "strategy": "median"
+                                }
+                              }
+                            ]
+                          ],
+                          "transform_input": null,
+                          "verbose": false
+                        }
+                      },
+                      [
+                        "tempo",
+                        "loudness",
+                        "duration"
+                      ]
+                    ],
+                    [
+                      "binary",
+                      "passthrough",
+                      [
+                        "artist_score"
+                      ]
+                    ]
+                  ],
+                  "verbose": false,
+                  "verbose_feature_names_out": true
+                }
+              }
+            ],
+            [
+              "model",
+              {
+                "class": "sklearn.tree._classes.DecisionTreeClassifier",
+                "parameters": {
+                  "ccp_alpha": 0.0,
+                  "class_weight": null,
+                  "criterion": "gini",
+                  "max_depth": 2,
+                  "max_features": null,
+                  "max_leaf_nodes": null,
+                  "min_impurity_decrease": 0.0,
+                  "min_samples_leaf": 20,
+                  "min_samples_split": 2,
+                  "min_weight_fraction_leaf": 0.0,
+                  "monotonic_cst": null,
+                  "random_state": 42,
+                  "splitter": "best"
+                }
+              }
+            ]
+          ],
+          "transform_input": null,
+          "verbose": false
+        }
+      },
+      "sha256": "3df21c57f8c1c9006fc569782e0915b144789842fcfe590de8c97fcc83aee331",
+      "round_trip_verified": true,
+      "score_kind": "probability",
+      "max_probability_difference": 0.0
+    },
+    {
+      "model": "decision_tree",
+      "stage": "full_training_tuning",
+      "path": "models/course_accuracy_v2/decision_tree__full_training_tuning.joblib",
+      "threshold": 0.5,
+      "comparison": ">=",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration",
+        "artist_score"
+      ],
+      "training_rows": 3024,
+      "tuned_parameters": {
+        "model__ccp_alpha": 0.0,
+        "model__max_depth": 2,
+        "model__min_samples_leaf": 20
+      },
+      "pipeline_configuration": {
+        "class": "sklearn.pipeline.Pipeline",
+        "parameters": {
+          "memory": null,
+          "steps": [
+            [
+              "preprocessor",
+              {
+                "class": "sklearn.compose._column_transformer.ColumnTransformer",
+                "parameters": {
+                  "n_jobs": null,
+                  "remainder": "drop",
+                  "sparse_threshold": 0.3,
+                  "transformer_weights": null,
+                  "transformers": [
+                    [
+                      "numeric",
+                      {
+                        "class": "sklearn.pipeline.Pipeline",
+                        "parameters": {
+                          "memory": null,
+                          "steps": [
+                            [
+                              "imputer",
+                              {
+                                "class": "sklearn.impute._base.SimpleImputer",
+                                "parameters": {
+                                  "add_indicator": false,
+                                  "copy": true,
+                                  "fill_value": null,
+                                  "keep_empty_features": true,
+                                  "missing_values": {
+                                    "special_float": "nan"
+                                  },
+                                  "strategy": "median"
+                                }
+                              }
+                            ]
+                          ],
+                          "transform_input": null,
+                          "verbose": false
+                        }
+                      },
+                      [
+                        "tempo",
+                        "loudness",
+                        "duration"
+                      ]
+                    ],
+                    [
+                      "binary",
+                      "passthrough",
+                      [
+                        "artist_score"
+                      ]
+                    ]
+                  ],
+                  "verbose": false,
+                  "verbose_feature_names_out": true
+                }
+              }
+            ],
+            [
+              "model",
+              {
+                "class": "sklearn.tree._classes.DecisionTreeClassifier",
+                "parameters": {
+                  "ccp_alpha": 0.0,
+                  "class_weight": null,
+                  "criterion": "gini",
+                  "max_depth": 2,
+                  "max_features": null,
+                  "max_leaf_nodes": null,
+                  "min_impurity_decrease": 0.0,
+                  "min_samples_leaf": 20,
+                  "min_samples_split": 2,
+                  "min_weight_fraction_leaf": 0.0,
+                  "monotonic_cst": null,
+                  "random_state": 42,
+                  "splitter": "best"
+                }
+              }
+            ]
+          ],
+          "transform_input": null,
+          "verbose": false
+        }
+      },
+      "sha256": "4b5a3d7e3ea2a5b81b59c5d50999946b5837f5951cd8e27562add64d81890fbb",
+      "round_trip_verified": true,
+      "score_kind": "probability",
+      "max_probability_difference": 0.0
+    },
+    {
+      "model": "bagged_trees",
+      "stage": "outer_fold_1",
+      "path": "models/course_accuracy_v2/bagged_trees__outer_fold_1.joblib",
+      "threshold": 0.5075089531308427,
+      "comparison": ">=",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration",
+        "artist_score"
+      ],
+      "training_rows": 2419,
+      "tuned_parameters": {
+        "model__estimator__max_depth": 6,
+        "model__estimator__min_samples_leaf": 20,
+        "model__max_samples": 0.7
+      },
+      "pipeline_configuration": {
+        "class": "sklearn.pipeline.Pipeline",
+        "parameters": {
+          "memory": null,
+          "steps": [
+            [
+              "preprocessor",
+              {
+                "class": "sklearn.compose._column_transformer.ColumnTransformer",
+                "parameters": {
+                  "n_jobs": null,
+                  "remainder": "drop",
+                  "sparse_threshold": 0.3,
+                  "transformer_weights": null,
+                  "transformers": [
+                    [
+                      "numeric",
+                      {
+                        "class": "sklearn.pipeline.Pipeline",
+                        "parameters": {
+                          "memory": null,
+                          "steps": [
+                            [
+                              "imputer",
+                              {
+                                "class": "sklearn.impute._base.SimpleImputer",
+                                "parameters": {
+                                  "add_indicator": false,
+                                  "copy": true,
+                                  "fill_value": null,
+                                  "keep_empty_features": true,
+                                  "missing_values": {
+                                    "special_float": "nan"
+                                  },
+                                  "strategy": "median"
+                                }
+                              }
+                            ]
+                          ],
+                          "transform_input": null,
+                          "verbose": false
+                        }
+                      },
+                      [
+                        "tempo",
+                        "loudness",
+                        "duration"
+                      ]
+                    ],
+                    [
+                      "binary",
+                      "passthrough",
+                      [
+                        "artist_score"
+                      ]
+                    ]
+                  ],
+                  "verbose": false,
+                  "verbose_feature_names_out": true
+                }
+              }
+            ],
+            [
+              "model",
+              {
+                "class": "sklearn.ensemble._bagging.BaggingClassifier",
+                "parameters": {
+                  "bootstrap": true,
+                  "bootstrap_features": false,
+                  "estimator": {
+                    "class": "sklearn.tree._classes.DecisionTreeClassifier",
+                    "parameters": {
+                      "ccp_alpha": 0.0,
+                      "class_weight": null,
+                      "criterion": "gini",
+                      "max_depth": 6,
+                      "max_features": null,
+                      "max_leaf_nodes": null,
+                      "min_impurity_decrease": 0.0,
+                      "min_samples_leaf": 20,
+                      "min_samples_split": 2,
+                      "min_weight_fraction_leaf": 0.0,
+                      "monotonic_cst": null,
+                      "random_state": 42,
+                      "splitter": "best"
+                    }
+                  },
+                  "max_features": 1.0,
+                  "max_samples": 0.7,
+                  "n_estimators": 150,
+                  "n_jobs": 1,
+                  "oob_score": false,
+                  "random_state": 42,
+                  "verbose": 0,
+                  "warm_start": false
+                }
+              }
+            ]
+          ],
+          "transform_input": null,
+          "verbose": false
+        }
+      },
+      "sha256": "416b25a56869f08a8b9ea6e0c68c7fa45e37f8c9236cf4fc97a5abf5c4d1487e",
+      "round_trip_verified": true,
+      "score_kind": "probability",
+      "max_probability_difference": 0.0
+    },
+    {
+      "model": "bagged_trees",
+      "stage": "outer_fold_2",
+      "path": "models/course_accuracy_v2/bagged_trees__outer_fold_2.joblib",
+      "threshold": 0.4857598418230508,
+      "comparison": ">=",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration",
+        "artist_score"
+      ],
+      "training_rows": 2419,
+      "tuned_parameters": {
+        "model__estimator__max_depth": 6,
+        "model__estimator__min_samples_leaf": 5,
+        "model__max_samples": 0.7
+      },
+      "pipeline_configuration": {
+        "class": "sklearn.pipeline.Pipeline",
+        "parameters": {
+          "memory": null,
+          "steps": [
+            [
+              "preprocessor",
+              {
+                "class": "sklearn.compose._column_transformer.ColumnTransformer",
+                "parameters": {
+                  "n_jobs": null,
+                  "remainder": "drop",
+                  "sparse_threshold": 0.3,
+                  "transformer_weights": null,
+                  "transformers": [
+                    [
+                      "numeric",
+                      {
+                        "class": "sklearn.pipeline.Pipeline",
+                        "parameters": {
+                          "memory": null,
+                          "steps": [
+                            [
+                              "imputer",
+                              {
+                                "class": "sklearn.impute._base.SimpleImputer",
+                                "parameters": {
+                                  "add_indicator": false,
+                                  "copy": true,
+                                  "fill_value": null,
+                                  "keep_empty_features": true,
+                                  "missing_values": {
+                                    "special_float": "nan"
+                                  },
+                                  "strategy": "median"
+                                }
+                              }
+                            ]
+                          ],
+                          "transform_input": null,
+                          "verbose": false
+                        }
+                      },
+                      [
+                        "tempo",
+                        "loudness",
+                        "duration"
+                      ]
+                    ],
+                    [
+                      "binary",
+                      "passthrough",
+                      [
+                        "artist_score"
+                      ]
+                    ]
+                  ],
+                  "verbose": false,
+                  "verbose_feature_names_out": true
+                }
+              }
+            ],
+            [
+              "model",
+              {
+                "class": "sklearn.ensemble._bagging.BaggingClassifier",
+                "parameters": {
+                  "bootstrap": true,
+                  "bootstrap_features": false,
+                  "estimator": {
+                    "class": "sklearn.tree._classes.DecisionTreeClassifier",
+                    "parameters": {
+                      "ccp_alpha": 0.0,
+                      "class_weight": null,
+                      "criterion": "gini",
+                      "max_depth": 6,
+                      "max_features": null,
+                      "max_leaf_nodes": null,
+                      "min_impurity_decrease": 0.0,
+                      "min_samples_leaf": 5,
+                      "min_samples_split": 2,
+                      "min_weight_fraction_leaf": 0.0,
+                      "monotonic_cst": null,
+                      "random_state": 42,
+                      "splitter": "best"
+                    }
+                  },
+                  "max_features": 1.0,
+                  "max_samples": 0.7,
+                  "n_estimators": 150,
+                  "n_jobs": 1,
+                  "oob_score": false,
+                  "random_state": 42,
+                  "verbose": 0,
+                  "warm_start": false
+                }
+              }
+            ]
+          ],
+          "transform_input": null,
+          "verbose": false
+        }
+      },
+      "sha256": "621399c3a987691e167427d61cdd208b16eb38631938817f98c466e2363c7ac1",
+      "round_trip_verified": true,
+      "score_kind": "probability",
+      "max_probability_difference": 0.0
+    },
+    {
+      "model": "bagged_trees",
+      "stage": "outer_fold_3",
+      "path": "models/course_accuracy_v2/bagged_trees__outer_fold_3.joblib",
+      "threshold": 0.5008172817485107,
+      "comparison": ">=",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration",
+        "artist_score"
+      ],
+      "training_rows": 2418,
+      "tuned_parameters": {
+        "model__estimator__max_depth": 6,
+        "model__estimator__min_samples_leaf": 20,
+        "model__max_samples": 0.7
+      },
+      "pipeline_configuration": {
+        "class": "sklearn.pipeline.Pipeline",
+        "parameters": {
+          "memory": null,
+          "steps": [
+            [
+              "preprocessor",
+              {
+                "class": "sklearn.compose._column_transformer.ColumnTransformer",
+                "parameters": {
+                  "n_jobs": null,
+                  "remainder": "drop",
+                  "sparse_threshold": 0.3,
+                  "transformer_weights": null,
+                  "transformers": [
+                    [
+                      "numeric",
+                      {
+                        "class": "sklearn.pipeline.Pipeline",
+                        "parameters": {
+                          "memory": null,
+                          "steps": [
+                            [
+                              "imputer",
+                              {
+                                "class": "sklearn.impute._base.SimpleImputer",
+                                "parameters": {
+                                  "add_indicator": false,
+                                  "copy": true,
+                                  "fill_value": null,
+                                  "keep_empty_features": true,
+                                  "missing_values": {
+                                    "special_float": "nan"
+                                  },
+                                  "strategy": "median"
+                                }
+                              }
+                            ]
+                          ],
+                          "transform_input": null,
+                          "verbose": false
+                        }
+                      },
+                      [
+                        "tempo",
+                        "loudness",
+                        "duration"
+                      ]
+                    ],
+                    [
+                      "binary",
+                      "passthrough",
+                      [
+                        "artist_score"
+                      ]
+                    ]
+                  ],
+                  "verbose": false,
+                  "verbose_feature_names_out": true
+                }
+              }
+            ],
+            [
+              "model",
+              {
+                "class": "sklearn.ensemble._bagging.BaggingClassifier",
+                "parameters": {
+                  "bootstrap": true,
+                  "bootstrap_features": false,
+                  "estimator": {
+                    "class": "sklearn.tree._classes.DecisionTreeClassifier",
+                    "parameters": {
+                      "ccp_alpha": 0.0,
+                      "class_weight": null,
+                      "criterion": "gini",
+                      "max_depth": 6,
+                      "max_features": null,
+                      "max_leaf_nodes": null,
+                      "min_impurity_decrease": 0.0,
+                      "min_samples_leaf": 20,
+                      "min_samples_split": 2,
+                      "min_weight_fraction_leaf": 0.0,
+                      "monotonic_cst": null,
+                      "random_state": 42,
+                      "splitter": "best"
+                    }
+                  },
+                  "max_features": 1.0,
+                  "max_samples": 0.7,
+                  "n_estimators": 150,
+                  "n_jobs": 1,
+                  "oob_score": false,
+                  "random_state": 42,
+                  "verbose": 0,
+                  "warm_start": false
+                }
+              }
+            ]
+          ],
+          "transform_input": null,
+          "verbose": false
+        }
+      },
+      "sha256": "6091e066035f1ea9821fda0a35c5a23321266d9ab58d411e905508ae71a87d5b",
+      "round_trip_verified": true,
+      "score_kind": "probability",
+      "max_probability_difference": 0.0
+    },
+    {
+      "model": "bagged_trees",
+      "stage": "outer_fold_4",
+      "path": "models/course_accuracy_v2/bagged_trees__outer_fold_4.joblib",
+      "threshold": 0.47555951025203086,
+      "comparison": ">=",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration",
+        "artist_score"
+      ],
+      "training_rows": 2420,
+      "tuned_parameters": {
+        "model__estimator__max_depth": null,
+        "model__estimator__min_samples_leaf": 20,
+        "model__max_samples": 1.0
+      },
+      "pipeline_configuration": {
+        "class": "sklearn.pipeline.Pipeline",
+        "parameters": {
+          "memory": null,
+          "steps": [
+            [
+              "preprocessor",
+              {
+                "class": "sklearn.compose._column_transformer.ColumnTransformer",
+                "parameters": {
+                  "n_jobs": null,
+                  "remainder": "drop",
+                  "sparse_threshold": 0.3,
+                  "transformer_weights": null,
+                  "transformers": [
+                    [
+                      "numeric",
+                      {
+                        "class": "sklearn.pipeline.Pipeline",
+                        "parameters": {
+                          "memory": null,
+                          "steps": [
+                            [
+                              "imputer",
+                              {
+                                "class": "sklearn.impute._base.SimpleImputer",
+                                "parameters": {
+                                  "add_indicator": false,
+                                  "copy": true,
+                                  "fill_value": null,
+                                  "keep_empty_features": true,
+                                  "missing_values": {
+                                    "special_float": "nan"
+                                  },
+                                  "strategy": "median"
+                                }
+                              }
+                            ]
+                          ],
+                          "transform_input": null,
+                          "verbose": false
+                        }
+                      },
+                      [
+                        "tempo",
+                        "loudness",
+                        "duration"
+                      ]
+                    ],
+                    [
+                      "binary",
+                      "passthrough",
+                      [
+                        "artist_score"
+                      ]
+                    ]
+                  ],
+                  "verbose": false,
+                  "verbose_feature_names_out": true
+                }
+              }
+            ],
+            [
+              "model",
+              {
+                "class": "sklearn.ensemble._bagging.BaggingClassifier",
+                "parameters": {
+                  "bootstrap": true,
+                  "bootstrap_features": false,
+                  "estimator": {
+                    "class": "sklearn.tree._classes.DecisionTreeClassifier",
+                    "parameters": {
+                      "ccp_alpha": 0.0,
+                      "class_weight": null,
+                      "criterion": "gini",
+                      "max_depth": null,
+                      "max_features": null,
+                      "max_leaf_nodes": null,
+                      "min_impurity_decrease": 0.0,
+                      "min_samples_leaf": 20,
+                      "min_samples_split": 2,
+                      "min_weight_fraction_leaf": 0.0,
+                      "monotonic_cst": null,
+                      "random_state": 42,
+                      "splitter": "best"
+                    }
+                  },
+                  "max_features": 1.0,
+                  "max_samples": 1.0,
+                  "n_estimators": 150,
+                  "n_jobs": 1,
+                  "oob_score": false,
+                  "random_state": 42,
+                  "verbose": 0,
+                  "warm_start": false
+                }
+              }
+            ]
+          ],
+          "transform_input": null,
+          "verbose": false
+        }
+      },
+      "sha256": "54bf6bd88908389dcc51d0a42629aa616afa77913e32fcc44658dcfdc07567d1",
+      "round_trip_verified": true,
+      "score_kind": "probability",
+      "max_probability_difference": 0.0
+    },
+    {
+      "model": "bagged_trees",
+      "stage": "outer_fold_5",
+      "path": "models/course_accuracy_v2/bagged_trees__outer_fold_5.joblib",
+      "threshold": 0.5187961761128764,
+      "comparison": ">=",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration",
+        "artist_score"
+      ],
+      "training_rows": 2420,
+      "tuned_parameters": {
+        "model__estimator__max_depth": null,
+        "model__estimator__min_samples_leaf": 20,
+        "model__max_samples": 1.0
+      },
+      "pipeline_configuration": {
+        "class": "sklearn.pipeline.Pipeline",
+        "parameters": {
+          "memory": null,
+          "steps": [
+            [
+              "preprocessor",
+              {
+                "class": "sklearn.compose._column_transformer.ColumnTransformer",
+                "parameters": {
+                  "n_jobs": null,
+                  "remainder": "drop",
+                  "sparse_threshold": 0.3,
+                  "transformer_weights": null,
+                  "transformers": [
+                    [
+                      "numeric",
+                      {
+                        "class": "sklearn.pipeline.Pipeline",
+                        "parameters": {
+                          "memory": null,
+                          "steps": [
+                            [
+                              "imputer",
+                              {
+                                "class": "sklearn.impute._base.SimpleImputer",
+                                "parameters": {
+                                  "add_indicator": false,
+                                  "copy": true,
+                                  "fill_value": null,
+                                  "keep_empty_features": true,
+                                  "missing_values": {
+                                    "special_float": "nan"
+                                  },
+                                  "strategy": "median"
+                                }
+                              }
+                            ]
+                          ],
+                          "transform_input": null,
+                          "verbose": false
+                        }
+                      },
+                      [
+                        "tempo",
+                        "loudness",
+                        "duration"
+                      ]
+                    ],
+                    [
+                      "binary",
+                      "passthrough",
+                      [
+                        "artist_score"
+                      ]
+                    ]
+                  ],
+                  "verbose": false,
+                  "verbose_feature_names_out": true
+                }
+              }
+            ],
+            [
+              "model",
+              {
+                "class": "sklearn.ensemble._bagging.BaggingClassifier",
+                "parameters": {
+                  "bootstrap": true,
+                  "bootstrap_features": false,
+                  "estimator": {
+                    "class": "sklearn.tree._classes.DecisionTreeClassifier",
+                    "parameters": {
+                      "ccp_alpha": 0.0,
+                      "class_weight": null,
+                      "criterion": "gini",
+                      "max_depth": null,
+                      "max_features": null,
+                      "max_leaf_nodes": null,
+                      "min_impurity_decrease": 0.0,
+                      "min_samples_leaf": 20,
+                      "min_samples_split": 2,
+                      "min_weight_fraction_leaf": 0.0,
+                      "monotonic_cst": null,
+                      "random_state": 42,
+                      "splitter": "best"
+                    }
+                  },
+                  "max_features": 1.0,
+                  "max_samples": 1.0,
+                  "n_estimators": 150,
+                  "n_jobs": 1,
+                  "oob_score": false,
+                  "random_state": 42,
+                  "verbose": 0,
+                  "warm_start": false
+                }
+              }
+            ]
+          ],
+          "transform_input": null,
+          "verbose": false
+        }
+      },
+      "sha256": "77dbaf4b5c77ec607d80556b51afd55868318e832384c4b64c4518f959be0483",
+      "round_trip_verified": true,
+      "score_kind": "probability",
+      "max_probability_difference": 0.0
+    },
+    {
+      "model": "bagged_trees",
+      "stage": "full_training_tuning",
+      "path": "models/course_accuracy_v2/bagged_trees__full_training_tuning.joblib",
+      "threshold": 0.4952665348216227,
+      "comparison": ">=",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration",
+        "artist_score"
+      ],
+      "training_rows": 3024,
+      "tuned_parameters": {
+        "model__estimator__max_depth": 6,
+        "model__estimator__min_samples_leaf": 20,
+        "model__max_samples": 0.7
+      },
+      "pipeline_configuration": {
+        "class": "sklearn.pipeline.Pipeline",
+        "parameters": {
+          "memory": null,
+          "steps": [
+            [
+              "preprocessor",
+              {
+                "class": "sklearn.compose._column_transformer.ColumnTransformer",
+                "parameters": {
+                  "n_jobs": null,
+                  "remainder": "drop",
+                  "sparse_threshold": 0.3,
+                  "transformer_weights": null,
+                  "transformers": [
+                    [
+                      "numeric",
+                      {
+                        "class": "sklearn.pipeline.Pipeline",
+                        "parameters": {
+                          "memory": null,
+                          "steps": [
+                            [
+                              "imputer",
+                              {
+                                "class": "sklearn.impute._base.SimpleImputer",
+                                "parameters": {
+                                  "add_indicator": false,
+                                  "copy": true,
+                                  "fill_value": null,
+                                  "keep_empty_features": true,
+                                  "missing_values": {
+                                    "special_float": "nan"
+                                  },
+                                  "strategy": "median"
+                                }
+                              }
+                            ]
+                          ],
+                          "transform_input": null,
+                          "verbose": false
+                        }
+                      },
+                      [
+                        "tempo",
+                        "loudness",
+                        "duration"
+                      ]
+                    ],
+                    [
+                      "binary",
+                      "passthrough",
+                      [
+                        "artist_score"
+                      ]
+                    ]
+                  ],
+                  "verbose": false,
+                  "verbose_feature_names_out": true
+                }
+              }
+            ],
+            [
+              "model",
+              {
+                "class": "sklearn.ensemble._bagging.BaggingClassifier",
+                "parameters": {
+                  "bootstrap": true,
+                  "bootstrap_features": false,
+                  "estimator": {
+                    "class": "sklearn.tree._classes.DecisionTreeClassifier",
+                    "parameters": {
+                      "ccp_alpha": 0.0,
+                      "class_weight": null,
+                      "criterion": "gini",
+                      "max_depth": 6,
+                      "max_features": null,
+                      "max_leaf_nodes": null,
+                      "min_impurity_decrease": 0.0,
+                      "min_samples_leaf": 20,
+                      "min_samples_split": 2,
+                      "min_weight_fraction_leaf": 0.0,
+                      "monotonic_cst": null,
+                      "random_state": 42,
+                      "splitter": "best"
+                    }
+                  },
+                  "max_features": 1.0,
+                  "max_samples": 0.7,
+                  "n_estimators": 150,
+                  "n_jobs": 1,
+                  "oob_score": false,
+                  "random_state": 42,
+                  "verbose": 0,
+                  "warm_start": false
+                }
+              }
+            ]
+          ],
+          "transform_input": null,
+          "verbose": false
+        }
+      },
+      "sha256": "d96b321f2069e12de1eb1b5dd3bd3e4f7da85a18da3d06f3b654643e7db47d69",
+      "round_trip_verified": true,
+      "score_kind": "probability",
+      "max_probability_difference": 0.0
+    },
+    {
+      "model": "random_forest",
+      "stage": "outer_fold_1",
+      "path": "models/course_accuracy_v2/random_forest__outer_fold_1.joblib",
+      "threshold": 0.384205466977029,
+      "comparison": ">=",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration",
+        "artist_score"
+      ],
+      "training_rows": 2419,
+      "tuned_parameters": {
+        "model__max_depth": 4,
+        "model__max_features": "sqrt",
+        "model__max_samples": 1.0,
+        "model__min_samples_leaf": 2
+      },
+      "pipeline_configuration": {
+        "class": "sklearn.pipeline.Pipeline",
+        "parameters": {
+          "memory": null,
+          "steps": [
+            [
+              "preprocessor",
+              {
+                "class": "sklearn.compose._column_transformer.ColumnTransformer",
+                "parameters": {
+                  "n_jobs": null,
+                  "remainder": "drop",
+                  "sparse_threshold": 0.3,
+                  "transformer_weights": null,
+                  "transformers": [
+                    [
+                      "numeric",
+                      {
+                        "class": "sklearn.pipeline.Pipeline",
+                        "parameters": {
+                          "memory": null,
+                          "steps": [
+                            [
+                              "imputer",
+                              {
+                                "class": "sklearn.impute._base.SimpleImputer",
+                                "parameters": {
+                                  "add_indicator": false,
+                                  "copy": true,
+                                  "fill_value": null,
+                                  "keep_empty_features": true,
+                                  "missing_values": {
+                                    "special_float": "nan"
+                                  },
+                                  "strategy": "median"
+                                }
+                              }
+                            ]
+                          ],
+                          "transform_input": null,
+                          "verbose": false
+                        }
+                      },
+                      [
+                        "tempo",
+                        "loudness",
+                        "duration"
+                      ]
+                    ],
+                    [
+                      "binary",
+                      "passthrough",
+                      [
+                        "artist_score"
+                      ]
+                    ]
+                  ],
+                  "verbose": false,
+                  "verbose_feature_names_out": true
+                }
+              }
+            ],
+            [
+              "model",
+              {
+                "class": "sklearn.ensemble._forest.RandomForestClassifier",
+                "parameters": {
+                  "bootstrap": true,
+                  "ccp_alpha": 0.0,
+                  "class_weight": null,
+                  "criterion": "gini",
+                  "max_depth": 4,
+                  "max_features": "sqrt",
+                  "max_leaf_nodes": null,
+                  "max_samples": 1.0,
+                  "min_impurity_decrease": 0.0,
+                  "min_samples_leaf": 2,
+                  "min_samples_split": 2,
+                  "min_weight_fraction_leaf": 0.0,
+                  "monotonic_cst": null,
+                  "n_estimators": 300,
+                  "n_jobs": 1,
+                  "oob_score": false,
+                  "random_state": 42,
+                  "verbose": 0,
+                  "warm_start": false
+                }
+              }
+            ]
+          ],
+          "transform_input": null,
+          "verbose": false
+        }
+      },
+      "sha256": "303c5730f6f2bc0a5c14a442ec7f2e0a860e4414302331f749010ae60947ea3f",
+      "round_trip_verified": true,
+      "score_kind": "probability",
+      "max_probability_difference": 0.0
+    },
+    {
+      "model": "random_forest",
+      "stage": "outer_fold_2",
+      "path": "models/course_accuracy_v2/random_forest__outer_fold_2.joblib",
+      "threshold": 0.4701984669094398,
+      "comparison": ">=",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration",
+        "artist_score"
+      ],
+      "training_rows": 2419,
+      "tuned_parameters": {
+        "model__max_depth": 6,
+        "model__max_features": 1.0,
+        "model__max_samples": 0.7,
+        "model__min_samples_leaf": 5
+      },
+      "pipeline_configuration": {
+        "class": "sklearn.pipeline.Pipeline",
+        "parameters": {
+          "memory": null,
+          "steps": [
+            [
+              "preprocessor",
+              {
+                "class": "sklearn.compose._column_transformer.ColumnTransformer",
+                "parameters": {
+                  "n_jobs": null,
+                  "remainder": "drop",
+                  "sparse_threshold": 0.3,
+                  "transformer_weights": null,
+                  "transformers": [
+                    [
+                      "numeric",
+                      {
+                        "class": "sklearn.pipeline.Pipeline",
+                        "parameters": {
+                          "memory": null,
+                          "steps": [
+                            [
+                              "imputer",
+                              {
+                                "class": "sklearn.impute._base.SimpleImputer",
+                                "parameters": {
+                                  "add_indicator": false,
+                                  "copy": true,
+                                  "fill_value": null,
+                                  "keep_empty_features": true,
+                                  "missing_values": {
+                                    "special_float": "nan"
+                                  },
+                                  "strategy": "median"
+                                }
+                              }
+                            ]
+                          ],
+                          "transform_input": null,
+                          "verbose": false
+                        }
+                      },
+                      [
+                        "tempo",
+                        "loudness",
+                        "duration"
+                      ]
+                    ],
+                    [
+                      "binary",
+                      "passthrough",
+                      [
+                        "artist_score"
+                      ]
+                    ]
+                  ],
+                  "verbose": false,
+                  "verbose_feature_names_out": true
+                }
+              }
+            ],
+            [
+              "model",
+              {
+                "class": "sklearn.ensemble._forest.RandomForestClassifier",
+                "parameters": {
+                  "bootstrap": true,
+                  "ccp_alpha": 0.0,
+                  "class_weight": null,
+                  "criterion": "gini",
+                  "max_depth": 6,
+                  "max_features": 1.0,
+                  "max_leaf_nodes": null,
+                  "max_samples": 0.7,
+                  "min_impurity_decrease": 0.0,
+                  "min_samples_leaf": 5,
+                  "min_samples_split": 2,
+                  "min_weight_fraction_leaf": 0.0,
+                  "monotonic_cst": null,
+                  "n_estimators": 300,
+                  "n_jobs": 1,
+                  "oob_score": false,
+                  "random_state": 42,
+                  "verbose": 0,
+                  "warm_start": false
+                }
+              }
+            ]
+          ],
+          "transform_input": null,
+          "verbose": false
+        }
+      },
+      "sha256": "642e0838e7b80586bd8a7c70b9ebefa24c5cee41944ffd4627d697c6c8a52004",
+      "round_trip_verified": true,
+      "score_kind": "probability",
+      "max_probability_difference": 0.0
+    },
+    {
+      "model": "random_forest",
+      "stage": "outer_fold_3",
+      "path": "models/course_accuracy_v2/random_forest__outer_fold_3.joblib",
+      "threshold": 0.4998092811785486,
+      "comparison": ">=",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration",
+        "artist_score"
+      ],
+      "training_rows": 2418,
+      "tuned_parameters": {
+        "model__max_depth": 6,
+        "model__max_features": 1.0,
+        "model__max_samples": 0.7,
+        "model__min_samples_leaf": 5
+      },
+      "pipeline_configuration": {
+        "class": "sklearn.pipeline.Pipeline",
+        "parameters": {
+          "memory": null,
+          "steps": [
+            [
+              "preprocessor",
+              {
+                "class": "sklearn.compose._column_transformer.ColumnTransformer",
+                "parameters": {
+                  "n_jobs": null,
+                  "remainder": "drop",
+                  "sparse_threshold": 0.3,
+                  "transformer_weights": null,
+                  "transformers": [
+                    [
+                      "numeric",
+                      {
+                        "class": "sklearn.pipeline.Pipeline",
+                        "parameters": {
+                          "memory": null,
+                          "steps": [
+                            [
+                              "imputer",
+                              {
+                                "class": "sklearn.impute._base.SimpleImputer",
+                                "parameters": {
+                                  "add_indicator": false,
+                                  "copy": true,
+                                  "fill_value": null,
+                                  "keep_empty_features": true,
+                                  "missing_values": {
+                                    "special_float": "nan"
+                                  },
+                                  "strategy": "median"
+                                }
+                              }
+                            ]
+                          ],
+                          "transform_input": null,
+                          "verbose": false
+                        }
+                      },
+                      [
+                        "tempo",
+                        "loudness",
+                        "duration"
+                      ]
+                    ],
+                    [
+                      "binary",
+                      "passthrough",
+                      [
+                        "artist_score"
+                      ]
+                    ]
+                  ],
+                  "verbose": false,
+                  "verbose_feature_names_out": true
+                }
+              }
+            ],
+            [
+              "model",
+              {
+                "class": "sklearn.ensemble._forest.RandomForestClassifier",
+                "parameters": {
+                  "bootstrap": true,
+                  "ccp_alpha": 0.0,
+                  "class_weight": null,
+                  "criterion": "gini",
+                  "max_depth": 6,
+                  "max_features": 1.0,
+                  "max_leaf_nodes": null,
+                  "max_samples": 0.7,
+                  "min_impurity_decrease": 0.0,
+                  "min_samples_leaf": 5,
+                  "min_samples_split": 2,
+                  "min_weight_fraction_leaf": 0.0,
+                  "monotonic_cst": null,
+                  "n_estimators": 300,
+                  "n_jobs": 1,
+                  "oob_score": false,
+                  "random_state": 42,
+                  "verbose": 0,
+                  "warm_start": false
+                }
+              }
+            ]
+          ],
+          "transform_input": null,
+          "verbose": false
+        }
+      },
+      "sha256": "802f14df1e050d30e6d5f78dc2dae1d341caa8a9f8542fa3c4038f6c0eadd536",
+      "round_trip_verified": true,
+      "score_kind": "probability",
+      "max_probability_difference": 0.0
+    },
+    {
+      "model": "random_forest",
+      "stage": "outer_fold_4",
+      "path": "models/course_accuracy_v2/random_forest__outer_fold_4.joblib",
+      "threshold": 0.45247577794216026,
+      "comparison": ">=",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration",
+        "artist_score"
+      ],
+      "training_rows": 2420,
+      "tuned_parameters": {
+        "model__max_depth": 6,
+        "model__max_features": 1.0,
+        "model__max_samples": 0.7,
+        "model__min_samples_leaf": 5
+      },
+      "pipeline_configuration": {
+        "class": "sklearn.pipeline.Pipeline",
+        "parameters": {
+          "memory": null,
+          "steps": [
+            [
+              "preprocessor",
+              {
+                "class": "sklearn.compose._column_transformer.ColumnTransformer",
+                "parameters": {
+                  "n_jobs": null,
+                  "remainder": "drop",
+                  "sparse_threshold": 0.3,
+                  "transformer_weights": null,
+                  "transformers": [
+                    [
+                      "numeric",
+                      {
+                        "class": "sklearn.pipeline.Pipeline",
+                        "parameters": {
+                          "memory": null,
+                          "steps": [
+                            [
+                              "imputer",
+                              {
+                                "class": "sklearn.impute._base.SimpleImputer",
+                                "parameters": {
+                                  "add_indicator": false,
+                                  "copy": true,
+                                  "fill_value": null,
+                                  "keep_empty_features": true,
+                                  "missing_values": {
+                                    "special_float": "nan"
+                                  },
+                                  "strategy": "median"
+                                }
+                              }
+                            ]
+                          ],
+                          "transform_input": null,
+                          "verbose": false
+                        }
+                      },
+                      [
+                        "tempo",
+                        "loudness",
+                        "duration"
+                      ]
+                    ],
+                    [
+                      "binary",
+                      "passthrough",
+                      [
+                        "artist_score"
+                      ]
+                    ]
+                  ],
+                  "verbose": false,
+                  "verbose_feature_names_out": true
+                }
+              }
+            ],
+            [
+              "model",
+              {
+                "class": "sklearn.ensemble._forest.RandomForestClassifier",
+                "parameters": {
+                  "bootstrap": true,
+                  "ccp_alpha": 0.0,
+                  "class_weight": null,
+                  "criterion": "gini",
+                  "max_depth": 6,
+                  "max_features": 1.0,
+                  "max_leaf_nodes": null,
+                  "max_samples": 0.7,
+                  "min_impurity_decrease": 0.0,
+                  "min_samples_leaf": 5,
+                  "min_samples_split": 2,
+                  "min_weight_fraction_leaf": 0.0,
+                  "monotonic_cst": null,
+                  "n_estimators": 300,
+                  "n_jobs": 1,
+                  "oob_score": false,
+                  "random_state": 42,
+                  "verbose": 0,
+                  "warm_start": false
+                }
+              }
+            ]
+          ],
+          "transform_input": null,
+          "verbose": false
+        }
+      },
+      "sha256": "b42c6fdd24f94806f22fec574365518594dfb6f135e7ab17160a8810f67cbb7a",
+      "round_trip_verified": true,
+      "score_kind": "probability",
+      "max_probability_difference": 0.0
+    },
+    {
+      "model": "random_forest",
+      "stage": "outer_fold_5",
+      "path": "models/course_accuracy_v2/random_forest__outer_fold_5.joblib",
+      "threshold": 0.48550162915759576,
+      "comparison": ">=",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration",
+        "artist_score"
+      ],
+      "training_rows": 2420,
+      "tuned_parameters": {
+        "model__max_depth": 10,
+        "model__max_features": "sqrt",
+        "model__max_samples": 0.7,
+        "model__min_samples_leaf": 10
+      },
+      "pipeline_configuration": {
+        "class": "sklearn.pipeline.Pipeline",
+        "parameters": {
+          "memory": null,
+          "steps": [
+            [
+              "preprocessor",
+              {
+                "class": "sklearn.compose._column_transformer.ColumnTransformer",
+                "parameters": {
+                  "n_jobs": null,
+                  "remainder": "drop",
+                  "sparse_threshold": 0.3,
+                  "transformer_weights": null,
+                  "transformers": [
+                    [
+                      "numeric",
+                      {
+                        "class": "sklearn.pipeline.Pipeline",
+                        "parameters": {
+                          "memory": null,
+                          "steps": [
+                            [
+                              "imputer",
+                              {
+                                "class": "sklearn.impute._base.SimpleImputer",
+                                "parameters": {
+                                  "add_indicator": false,
+                                  "copy": true,
+                                  "fill_value": null,
+                                  "keep_empty_features": true,
+                                  "missing_values": {
+                                    "special_float": "nan"
+                                  },
+                                  "strategy": "median"
+                                }
+                              }
+                            ]
+                          ],
+                          "transform_input": null,
+                          "verbose": false
+                        }
+                      },
+                      [
+                        "tempo",
+                        "loudness",
+                        "duration"
+                      ]
+                    ],
+                    [
+                      "binary",
+                      "passthrough",
+                      [
+                        "artist_score"
+                      ]
+                    ]
+                  ],
+                  "verbose": false,
+                  "verbose_feature_names_out": true
+                }
+              }
+            ],
+            [
+              "model",
+              {
+                "class": "sklearn.ensemble._forest.RandomForestClassifier",
+                "parameters": {
+                  "bootstrap": true,
+                  "ccp_alpha": 0.0,
+                  "class_weight": null,
+                  "criterion": "gini",
+                  "max_depth": 10,
+                  "max_features": "sqrt",
+                  "max_leaf_nodes": null,
+                  "max_samples": 0.7,
+                  "min_impurity_decrease": 0.0,
+                  "min_samples_leaf": 10,
+                  "min_samples_split": 2,
+                  "min_weight_fraction_leaf": 0.0,
+                  "monotonic_cst": null,
+                  "n_estimators": 300,
+                  "n_jobs": 1,
+                  "oob_score": false,
+                  "random_state": 42,
+                  "verbose": 0,
+                  "warm_start": false
+                }
+              }
+            ]
+          ],
+          "transform_input": null,
+          "verbose": false
+        }
+      },
+      "sha256": "a865c15d81ccba9bd1ac592c6240c921d024f8857717b083b7280c1ff3de66e8",
+      "round_trip_verified": true,
+      "score_kind": "probability",
+      "max_probability_difference": 0.0
+    },
+    {
+      "model": "random_forest",
+      "stage": "full_training_tuning",
+      "path": "models/course_accuracy_v2/random_forest__full_training_tuning.joblib",
+      "threshold": 0.5674968768867616,
+      "comparison": ">=",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration",
+        "artist_score"
+      ],
+      "training_rows": 3024,
+      "tuned_parameters": {
+        "model__max_depth": 10,
+        "model__max_features": "sqrt",
+        "model__max_samples": 1.0,
+        "model__min_samples_leaf": 5
+      },
+      "pipeline_configuration": {
+        "class": "sklearn.pipeline.Pipeline",
+        "parameters": {
+          "memory": null,
+          "steps": [
+            [
+              "preprocessor",
+              {
+                "class": "sklearn.compose._column_transformer.ColumnTransformer",
+                "parameters": {
+                  "n_jobs": null,
+                  "remainder": "drop",
+                  "sparse_threshold": 0.3,
+                  "transformer_weights": null,
+                  "transformers": [
+                    [
+                      "numeric",
+                      {
+                        "class": "sklearn.pipeline.Pipeline",
+                        "parameters": {
+                          "memory": null,
+                          "steps": [
+                            [
+                              "imputer",
+                              {
+                                "class": "sklearn.impute._base.SimpleImputer",
+                                "parameters": {
+                                  "add_indicator": false,
+                                  "copy": true,
+                                  "fill_value": null,
+                                  "keep_empty_features": true,
+                                  "missing_values": {
+                                    "special_float": "nan"
+                                  },
+                                  "strategy": "median"
+                                }
+                              }
+                            ]
+                          ],
+                          "transform_input": null,
+                          "verbose": false
+                        }
+                      },
+                      [
+                        "tempo",
+                        "loudness",
+                        "duration"
+                      ]
+                    ],
+                    [
+                      "binary",
+                      "passthrough",
+                      [
+                        "artist_score"
+                      ]
+                    ]
+                  ],
+                  "verbose": false,
+                  "verbose_feature_names_out": true
+                }
+              }
+            ],
+            [
+              "model",
+              {
+                "class": "sklearn.ensemble._forest.RandomForestClassifier",
+                "parameters": {
+                  "bootstrap": true,
+                  "ccp_alpha": 0.0,
+                  "class_weight": null,
+                  "criterion": "gini",
+                  "max_depth": 10,
+                  "max_features": "sqrt",
+                  "max_leaf_nodes": null,
+                  "max_samples": 1.0,
+                  "min_impurity_decrease": 0.0,
+                  "min_samples_leaf": 5,
+                  "min_samples_split": 2,
+                  "min_weight_fraction_leaf": 0.0,
+                  "monotonic_cst": null,
+                  "n_estimators": 300,
+                  "n_jobs": 1,
+                  "oob_score": false,
+                  "random_state": 42,
+                  "verbose": 0,
+                  "warm_start": false
+                }
+              }
+            ]
+          ],
+          "transform_input": null,
+          "verbose": false
+        }
+      },
+      "sha256": "573edf827f2ca229cd63734c10a64dda1d945aaee28c3d4591c1b0c93ef77477",
+      "round_trip_verified": true,
+      "score_kind": "probability",
+      "max_probability_difference": 0.0
+    },
+    {
+      "model": "adaboost",
+      "stage": "outer_fold_1",
+      "path": "models/course_accuracy_v2/adaboost__outer_fold_1.joblib",
+      "threshold": 0.861538687299188,
+      "comparison": ">=",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration",
+        "artist_score"
+      ],
+      "training_rows": 2419,
+      "tuned_parameters": {
+        "model__estimator__max_depth": 1,
+        "model__learning_rate": 0.03,
+        "model__n_estimators": 50
+      },
+      "pipeline_configuration": {
+        "class": "sklearn.pipeline.Pipeline",
+        "parameters": {
+          "memory": null,
+          "steps": [
+            [
+              "preprocessor",
+              {
+                "class": "sklearn.compose._column_transformer.ColumnTransformer",
+                "parameters": {
+                  "n_jobs": null,
+                  "remainder": "drop",
+                  "sparse_threshold": 0.3,
+                  "transformer_weights": null,
+                  "transformers": [
+                    [
+                      "numeric",
+                      {
+                        "class": "sklearn.pipeline.Pipeline",
+                        "parameters": {
+                          "memory": null,
+                          "steps": [
+                            [
+                              "imputer",
+                              {
+                                "class": "sklearn.impute._base.SimpleImputer",
+                                "parameters": {
+                                  "add_indicator": false,
+                                  "copy": true,
+                                  "fill_value": null,
+                                  "keep_empty_features": true,
+                                  "missing_values": {
+                                    "special_float": "nan"
+                                  },
+                                  "strategy": "median"
+                                }
+                              }
+                            ]
+                          ],
+                          "transform_input": null,
+                          "verbose": false
+                        }
+                      },
+                      [
+                        "tempo",
+                        "loudness",
+                        "duration"
+                      ]
+                    ],
+                    [
+                      "binary",
+                      "passthrough",
+                      [
+                        "artist_score"
+                      ]
+                    ]
+                  ],
+                  "verbose": false,
+                  "verbose_feature_names_out": true
+                }
+              }
+            ],
+            [
+              "model",
+              {
+                "class": "sklearn.ensemble._weight_boosting.AdaBoostClassifier",
+                "parameters": {
+                  "estimator": {
+                    "class": "sklearn.tree._classes.DecisionTreeClassifier",
+                    "parameters": {
+                      "ccp_alpha": 0.0,
+                      "class_weight": null,
+                      "criterion": "gini",
+                      "max_depth": 1,
+                      "max_features": null,
+                      "max_leaf_nodes": null,
+                      "min_impurity_decrease": 0.0,
+                      "min_samples_leaf": 10,
+                      "min_samples_split": 2,
+                      "min_weight_fraction_leaf": 0.0,
+                      "monotonic_cst": null,
+                      "random_state": 42,
+                      "splitter": "best"
+                    }
+                  },
+                  "learning_rate": 0.03,
+                  "n_estimators": 50,
+                  "random_state": 42
+                }
+              }
+            ]
+          ],
+          "transform_input": null,
+          "verbose": false
+        }
+      },
+      "sha256": "e7671d8085fc29078e66942b9016c5950a2bf42398820066d1c8d5bd4da92794",
+      "round_trip_verified": true,
+      "score_kind": "probability",
+      "max_probability_difference": 0.0
+    },
+    {
+      "model": "adaboost",
+      "stage": "outer_fold_2",
+      "path": "models/course_accuracy_v2/adaboost__outer_fold_2.joblib",
+      "threshold": 0.5,
+      "comparison": ">=",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration",
+        "artist_score"
+      ],
+      "training_rows": 2419,
+      "tuned_parameters": {
+        "model__estimator__max_depth": 1,
+        "model__learning_rate": 0.5,
+        "model__n_estimators": 50
+      },
+      "pipeline_configuration": {
+        "class": "sklearn.pipeline.Pipeline",
+        "parameters": {
+          "memory": null,
+          "steps": [
+            [
+              "preprocessor",
+              {
+                "class": "sklearn.compose._column_transformer.ColumnTransformer",
+                "parameters": {
+                  "n_jobs": null,
+                  "remainder": "drop",
+                  "sparse_threshold": 0.3,
+                  "transformer_weights": null,
+                  "transformers": [
+                    [
+                      "numeric",
+                      {
+                        "class": "sklearn.pipeline.Pipeline",
+                        "parameters": {
+                          "memory": null,
+                          "steps": [
+                            [
+                              "imputer",
+                              {
+                                "class": "sklearn.impute._base.SimpleImputer",
+                                "parameters": {
+                                  "add_indicator": false,
+                                  "copy": true,
+                                  "fill_value": null,
+                                  "keep_empty_features": true,
+                                  "missing_values": {
+                                    "special_float": "nan"
+                                  },
+                                  "strategy": "median"
+                                }
+                              }
+                            ]
+                          ],
+                          "transform_input": null,
+                          "verbose": false
+                        }
+                      },
+                      [
+                        "tempo",
+                        "loudness",
+                        "duration"
+                      ]
+                    ],
+                    [
+                      "binary",
+                      "passthrough",
+                      [
+                        "artist_score"
+                      ]
+                    ]
+                  ],
+                  "verbose": false,
+                  "verbose_feature_names_out": true
+                }
+              }
+            ],
+            [
+              "model",
+              {
+                "class": "sklearn.ensemble._weight_boosting.AdaBoostClassifier",
+                "parameters": {
+                  "estimator": {
+                    "class": "sklearn.tree._classes.DecisionTreeClassifier",
+                    "parameters": {
+                      "ccp_alpha": 0.0,
+                      "class_weight": null,
+                      "criterion": "gini",
+                      "max_depth": 1,
+                      "max_features": null,
+                      "max_leaf_nodes": null,
+                      "min_impurity_decrease": 0.0,
+                      "min_samples_leaf": 10,
+                      "min_samples_split": 2,
+                      "min_weight_fraction_leaf": 0.0,
+                      "monotonic_cst": null,
+                      "random_state": 42,
+                      "splitter": "best"
+                    }
+                  },
+                  "learning_rate": 0.5,
+                  "n_estimators": 50,
+                  "random_state": 42
+                }
+              }
+            ]
+          ],
+          "transform_input": null,
+          "verbose": false
+        }
+      },
+      "sha256": "fa65386c2b97e07b008abaef1745ffd9ce1b3c5c175488f51413f0f4a3eae66d",
+      "round_trip_verified": true,
+      "score_kind": "probability",
+      "max_probability_difference": 0.0
+    },
+    {
+      "model": "adaboost",
+      "stage": "outer_fold_3",
+      "path": "models/course_accuracy_v2/adaboost__outer_fold_3.joblib",
+      "threshold": 0.5,
+      "comparison": ">=",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration",
+        "artist_score"
+      ],
+      "training_rows": 2418,
+      "tuned_parameters": {
+        "model__estimator__max_depth": 1,
+        "model__learning_rate": 0.5,
+        "model__n_estimators": 50
+      },
+      "pipeline_configuration": {
+        "class": "sklearn.pipeline.Pipeline",
+        "parameters": {
+          "memory": null,
+          "steps": [
+            [
+              "preprocessor",
+              {
+                "class": "sklearn.compose._column_transformer.ColumnTransformer",
+                "parameters": {
+                  "n_jobs": null,
+                  "remainder": "drop",
+                  "sparse_threshold": 0.3,
+                  "transformer_weights": null,
+                  "transformers": [
+                    [
+                      "numeric",
+                      {
+                        "class": "sklearn.pipeline.Pipeline",
+                        "parameters": {
+                          "memory": null,
+                          "steps": [
+                            [
+                              "imputer",
+                              {
+                                "class": "sklearn.impute._base.SimpleImputer",
+                                "parameters": {
+                                  "add_indicator": false,
+                                  "copy": true,
+                                  "fill_value": null,
+                                  "keep_empty_features": true,
+                                  "missing_values": {
+                                    "special_float": "nan"
+                                  },
+                                  "strategy": "median"
+                                }
+                              }
+                            ]
+                          ],
+                          "transform_input": null,
+                          "verbose": false
+                        }
+                      },
+                      [
+                        "tempo",
+                        "loudness",
+                        "duration"
+                      ]
+                    ],
+                    [
+                      "binary",
+                      "passthrough",
+                      [
+                        "artist_score"
+                      ]
+                    ]
+                  ],
+                  "verbose": false,
+                  "verbose_feature_names_out": true
+                }
+              }
+            ],
+            [
+              "model",
+              {
+                "class": "sklearn.ensemble._weight_boosting.AdaBoostClassifier",
+                "parameters": {
+                  "estimator": {
+                    "class": "sklearn.tree._classes.DecisionTreeClassifier",
+                    "parameters": {
+                      "ccp_alpha": 0.0,
+                      "class_weight": null,
+                      "criterion": "gini",
+                      "max_depth": 1,
+                      "max_features": null,
+                      "max_leaf_nodes": null,
+                      "min_impurity_decrease": 0.0,
+                      "min_samples_leaf": 10,
+                      "min_samples_split": 2,
+                      "min_weight_fraction_leaf": 0.0,
+                      "monotonic_cst": null,
+                      "random_state": 42,
+                      "splitter": "best"
+                    }
+                  },
+                  "learning_rate": 0.5,
+                  "n_estimators": 50,
+                  "random_state": 42
+                }
+              }
+            ]
+          ],
+          "transform_input": null,
+          "verbose": false
+        }
+      },
+      "sha256": "3a1d8c02ad5fffff583fd8f2d0bdab2a0fe3482b7b28656fa3ca839e7a6fd51f",
+      "round_trip_verified": true,
+      "score_kind": "probability",
+      "max_probability_difference": 0.0
+    },
+    {
+      "model": "adaboost",
+      "stage": "outer_fold_4",
+      "path": "models/course_accuracy_v2/adaboost__outer_fold_4.joblib",
+      "threshold": 0.5449979908943003,
+      "comparison": ">=",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration",
+        "artist_score"
+      ],
+      "training_rows": 2420,
+      "tuned_parameters": {
+        "model__estimator__max_depth": 1,
+        "model__learning_rate": 0.5,
+        "model__n_estimators": 50
+      },
+      "pipeline_configuration": {
+        "class": "sklearn.pipeline.Pipeline",
+        "parameters": {
+          "memory": null,
+          "steps": [
+            [
+              "preprocessor",
+              {
+                "class": "sklearn.compose._column_transformer.ColumnTransformer",
+                "parameters": {
+                  "n_jobs": null,
+                  "remainder": "drop",
+                  "sparse_threshold": 0.3,
+                  "transformer_weights": null,
+                  "transformers": [
+                    [
+                      "numeric",
+                      {
+                        "class": "sklearn.pipeline.Pipeline",
+                        "parameters": {
+                          "memory": null,
+                          "steps": [
+                            [
+                              "imputer",
+                              {
+                                "class": "sklearn.impute._base.SimpleImputer",
+                                "parameters": {
+                                  "add_indicator": false,
+                                  "copy": true,
+                                  "fill_value": null,
+                                  "keep_empty_features": true,
+                                  "missing_values": {
+                                    "special_float": "nan"
+                                  },
+                                  "strategy": "median"
+                                }
+                              }
+                            ]
+                          ],
+                          "transform_input": null,
+                          "verbose": false
+                        }
+                      },
+                      [
+                        "tempo",
+                        "loudness",
+                        "duration"
+                      ]
+                    ],
+                    [
+                      "binary",
+                      "passthrough",
+                      [
+                        "artist_score"
+                      ]
+                    ]
+                  ],
+                  "verbose": false,
+                  "verbose_feature_names_out": true
+                }
+              }
+            ],
+            [
+              "model",
+              {
+                "class": "sklearn.ensemble._weight_boosting.AdaBoostClassifier",
+                "parameters": {
+                  "estimator": {
+                    "class": "sklearn.tree._classes.DecisionTreeClassifier",
+                    "parameters": {
+                      "ccp_alpha": 0.0,
+                      "class_weight": null,
+                      "criterion": "gini",
+                      "max_depth": 1,
+                      "max_features": null,
+                      "max_leaf_nodes": null,
+                      "min_impurity_decrease": 0.0,
+                      "min_samples_leaf": 10,
+                      "min_samples_split": 2,
+                      "min_weight_fraction_leaf": 0.0,
+                      "monotonic_cst": null,
+                      "random_state": 42,
+                      "splitter": "best"
+                    }
+                  },
+                  "learning_rate": 0.5,
+                  "n_estimators": 50,
+                  "random_state": 42
+                }
+              }
+            ]
+          ],
+          "transform_input": null,
+          "verbose": false
+        }
+      },
+      "sha256": "cd10932394f1b1012399f0625030290aacf6d49c274474a2bff673804772f0e5",
+      "round_trip_verified": true,
+      "score_kind": "probability",
+      "max_probability_difference": 0.0
+    },
+    {
+      "model": "adaboost",
+      "stage": "outer_fold_5",
+      "path": "models/course_accuracy_v2/adaboost__outer_fold_5.joblib",
+      "threshold": 0.5,
+      "comparison": ">=",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration",
+        "artist_score"
+      ],
+      "training_rows": 2420,
+      "tuned_parameters": {
+        "model__estimator__max_depth": 1,
+        "model__learning_rate": 0.5,
+        "model__n_estimators": 50
+      },
+      "pipeline_configuration": {
+        "class": "sklearn.pipeline.Pipeline",
+        "parameters": {
+          "memory": null,
+          "steps": [
+            [
+              "preprocessor",
+              {
+                "class": "sklearn.compose._column_transformer.ColumnTransformer",
+                "parameters": {
+                  "n_jobs": null,
+                  "remainder": "drop",
+                  "sparse_threshold": 0.3,
+                  "transformer_weights": null,
+                  "transformers": [
+                    [
+                      "numeric",
+                      {
+                        "class": "sklearn.pipeline.Pipeline",
+                        "parameters": {
+                          "memory": null,
+                          "steps": [
+                            [
+                              "imputer",
+                              {
+                                "class": "sklearn.impute._base.SimpleImputer",
+                                "parameters": {
+                                  "add_indicator": false,
+                                  "copy": true,
+                                  "fill_value": null,
+                                  "keep_empty_features": true,
+                                  "missing_values": {
+                                    "special_float": "nan"
+                                  },
+                                  "strategy": "median"
+                                }
+                              }
+                            ]
+                          ],
+                          "transform_input": null,
+                          "verbose": false
+                        }
+                      },
+                      [
+                        "tempo",
+                        "loudness",
+                        "duration"
+                      ]
+                    ],
+                    [
+                      "binary",
+                      "passthrough",
+                      [
+                        "artist_score"
+                      ]
+                    ]
+                  ],
+                  "verbose": false,
+                  "verbose_feature_names_out": true
+                }
+              }
+            ],
+            [
+              "model",
+              {
+                "class": "sklearn.ensemble._weight_boosting.AdaBoostClassifier",
+                "parameters": {
+                  "estimator": {
+                    "class": "sklearn.tree._classes.DecisionTreeClassifier",
+                    "parameters": {
+                      "ccp_alpha": 0.0,
+                      "class_weight": null,
+                      "criterion": "gini",
+                      "max_depth": 1,
+                      "max_features": null,
+                      "max_leaf_nodes": null,
+                      "min_impurity_decrease": 0.0,
+                      "min_samples_leaf": 10,
+                      "min_samples_split": 2,
+                      "min_weight_fraction_leaf": 0.0,
+                      "monotonic_cst": null,
+                      "random_state": 42,
+                      "splitter": "best"
+                    }
+                  },
+                  "learning_rate": 0.5,
+                  "n_estimators": 50,
+                  "random_state": 42
+                }
+              }
+            ]
+          ],
+          "transform_input": null,
+          "verbose": false
+        }
+      },
+      "sha256": "5a2908208ed5de2ab0dc7d0e47ec0b0933e3ca48a935a4ef21ed455e232a698d",
+      "round_trip_verified": true,
+      "score_kind": "probability",
+      "max_probability_difference": 0.0
+    },
+    {
+      "model": "adaboost",
+      "stage": "full_training_tuning",
+      "path": "models/course_accuracy_v2/adaboost__full_training_tuning.joblib",
+      "threshold": 0.5665957337792604,
+      "comparison": ">=",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration",
+        "artist_score"
+      ],
+      "training_rows": 3024,
+      "tuned_parameters": {
+        "model__estimator__max_depth": 1,
+        "model__learning_rate": 0.5,
+        "model__n_estimators": 50
+      },
+      "pipeline_configuration": {
+        "class": "sklearn.pipeline.Pipeline",
+        "parameters": {
+          "memory": null,
+          "steps": [
+            [
+              "preprocessor",
+              {
+                "class": "sklearn.compose._column_transformer.ColumnTransformer",
+                "parameters": {
+                  "n_jobs": null,
+                  "remainder": "drop",
+                  "sparse_threshold": 0.3,
+                  "transformer_weights": null,
+                  "transformers": [
+                    [
+                      "numeric",
+                      {
+                        "class": "sklearn.pipeline.Pipeline",
+                        "parameters": {
+                          "memory": null,
+                          "steps": [
+                            [
+                              "imputer",
+                              {
+                                "class": "sklearn.impute._base.SimpleImputer",
+                                "parameters": {
+                                  "add_indicator": false,
+                                  "copy": true,
+                                  "fill_value": null,
+                                  "keep_empty_features": true,
+                                  "missing_values": {
+                                    "special_float": "nan"
+                                  },
+                                  "strategy": "median"
+                                }
+                              }
+                            ]
+                          ],
+                          "transform_input": null,
+                          "verbose": false
+                        }
+                      },
+                      [
+                        "tempo",
+                        "loudness",
+                        "duration"
+                      ]
+                    ],
+                    [
+                      "binary",
+                      "passthrough",
+                      [
+                        "artist_score"
+                      ]
+                    ]
+                  ],
+                  "verbose": false,
+                  "verbose_feature_names_out": true
+                }
+              }
+            ],
+            [
+              "model",
+              {
+                "class": "sklearn.ensemble._weight_boosting.AdaBoostClassifier",
+                "parameters": {
+                  "estimator": {
+                    "class": "sklearn.tree._classes.DecisionTreeClassifier",
+                    "parameters": {
+                      "ccp_alpha": 0.0,
+                      "class_weight": null,
+                      "criterion": "gini",
+                      "max_depth": 1,
+                      "max_features": null,
+                      "max_leaf_nodes": null,
+                      "min_impurity_decrease": 0.0,
+                      "min_samples_leaf": 10,
+                      "min_samples_split": 2,
+                      "min_weight_fraction_leaf": 0.0,
+                      "monotonic_cst": null,
+                      "random_state": 42,
+                      "splitter": "best"
+                    }
+                  },
+                  "learning_rate": 0.5,
+                  "n_estimators": 50,
+                  "random_state": 42
+                }
+              }
+            ]
+          ],
+          "transform_input": null,
+          "verbose": false
+        }
+      },
+      "sha256": "f4ff9c734d03421c7b15d02337353d2889642f4d733ed627b12d0a75ed98daf5",
+      "round_trip_verified": true,
+      "score_kind": "probability",
+      "max_probability_difference": 0.0
+    },
+    {
+      "model": "gradient_boosting",
+      "stage": "outer_fold_1",
+      "path": "models/course_accuracy_v2/gradient_boosting__outer_fold_1.joblib",
+      "threshold": 0.5647990698537819,
+      "comparison": ">=",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration",
+        "artist_score"
+      ],
+      "training_rows": 2419,
+      "tuned_parameters": {
+        "model__learning_rate": 0.1,
+        "model__max_depth": 1,
+        "model__min_samples_leaf": 10,
+        "model__n_estimators": 100,
+        "model__subsample": 0.7
+      },
+      "pipeline_configuration": {
+        "class": "sklearn.pipeline.Pipeline",
+        "parameters": {
+          "memory": null,
+          "steps": [
+            [
+              "preprocessor",
+              {
+                "class": "sklearn.compose._column_transformer.ColumnTransformer",
+                "parameters": {
+                  "n_jobs": null,
+                  "remainder": "drop",
+                  "sparse_threshold": 0.3,
+                  "transformer_weights": null,
+                  "transformers": [
+                    [
+                      "numeric",
+                      {
+                        "class": "sklearn.pipeline.Pipeline",
+                        "parameters": {
+                          "memory": null,
+                          "steps": [
+                            [
+                              "imputer",
+                              {
+                                "class": "sklearn.impute._base.SimpleImputer",
+                                "parameters": {
+                                  "add_indicator": false,
+                                  "copy": true,
+                                  "fill_value": null,
+                                  "keep_empty_features": true,
+                                  "missing_values": {
+                                    "special_float": "nan"
+                                  },
+                                  "strategy": "median"
+                                }
+                              }
+                            ]
+                          ],
+                          "transform_input": null,
+                          "verbose": false
+                        }
+                      },
+                      [
+                        "tempo",
+                        "loudness",
+                        "duration"
+                      ]
+                    ],
+                    [
+                      "binary",
+                      "passthrough",
+                      [
+                        "artist_score"
+                      ]
+                    ]
+                  ],
+                  "verbose": false,
+                  "verbose_feature_names_out": true
+                }
+              }
+            ],
+            [
+              "model",
+              {
+                "class": "sklearn.ensemble._gb.GradientBoostingClassifier",
+                "parameters": {
+                  "ccp_alpha": 0.0,
+                  "criterion": "deprecated",
+                  "init": null,
+                  "learning_rate": 0.1,
+                  "loss": "log_loss",
+                  "max_depth": 1,
+                  "max_features": null,
+                  "max_leaf_nodes": null,
+                  "min_impurity_decrease": 0.0,
+                  "min_samples_leaf": 10,
+                  "min_samples_split": 2,
+                  "min_weight_fraction_leaf": 0.0,
+                  "n_estimators": 100,
+                  "n_iter_no_change": null,
+                  "random_state": 42,
+                  "subsample": 0.7,
+                  "tol": 0.0001,
+                  "validation_fraction": 0.1,
+                  "verbose": 0,
+                  "warm_start": false
+                }
+              }
+            ]
+          ],
+          "transform_input": null,
+          "verbose": false
+        }
+      },
+      "sha256": "1d34da276cab364c8291007a96c82bd060b3545b55829304c9840c29c70b7681",
+      "round_trip_verified": true,
+      "score_kind": "probability",
+      "max_probability_difference": 0.0
+    },
+    {
+      "model": "gradient_boosting",
+      "stage": "outer_fold_2",
+      "path": "models/course_accuracy_v2/gradient_boosting__outer_fold_2.joblib",
+      "threshold": 0.5,
+      "comparison": ">=",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration",
+        "artist_score"
+      ],
+      "training_rows": 2419,
+      "tuned_parameters": {
+        "model__learning_rate": 0.1,
+        "model__max_depth": 1,
+        "model__min_samples_leaf": 30,
+        "model__n_estimators": 100,
+        "model__subsample": 1.0
+      },
+      "pipeline_configuration": {
+        "class": "sklearn.pipeline.Pipeline",
+        "parameters": {
+          "memory": null,
+          "steps": [
+            [
+              "preprocessor",
+              {
+                "class": "sklearn.compose._column_transformer.ColumnTransformer",
+                "parameters": {
+                  "n_jobs": null,
+                  "remainder": "drop",
+                  "sparse_threshold": 0.3,
+                  "transformer_weights": null,
+                  "transformers": [
+                    [
+                      "numeric",
+                      {
+                        "class": "sklearn.pipeline.Pipeline",
+                        "parameters": {
+                          "memory": null,
+                          "steps": [
+                            [
+                              "imputer",
+                              {
+                                "class": "sklearn.impute._base.SimpleImputer",
+                                "parameters": {
+                                  "add_indicator": false,
+                                  "copy": true,
+                                  "fill_value": null,
+                                  "keep_empty_features": true,
+                                  "missing_values": {
+                                    "special_float": "nan"
+                                  },
+                                  "strategy": "median"
+                                }
+                              }
+                            ]
+                          ],
+                          "transform_input": null,
+                          "verbose": false
+                        }
+                      },
+                      [
+                        "tempo",
+                        "loudness",
+                        "duration"
+                      ]
+                    ],
+                    [
+                      "binary",
+                      "passthrough",
+                      [
+                        "artist_score"
+                      ]
+                    ]
+                  ],
+                  "verbose": false,
+                  "verbose_feature_names_out": true
+                }
+              }
+            ],
+            [
+              "model",
+              {
+                "class": "sklearn.ensemble._gb.GradientBoostingClassifier",
+                "parameters": {
+                  "ccp_alpha": 0.0,
+                  "criterion": "deprecated",
+                  "init": null,
+                  "learning_rate": 0.1,
+                  "loss": "log_loss",
+                  "max_depth": 1,
+                  "max_features": null,
+                  "max_leaf_nodes": null,
+                  "min_impurity_decrease": 0.0,
+                  "min_samples_leaf": 30,
+                  "min_samples_split": 2,
+                  "min_weight_fraction_leaf": 0.0,
+                  "n_estimators": 100,
+                  "n_iter_no_change": null,
+                  "random_state": 42,
+                  "subsample": 1.0,
+                  "tol": 0.0001,
+                  "validation_fraction": 0.1,
+                  "verbose": 0,
+                  "warm_start": false
+                }
+              }
+            ]
+          ],
+          "transform_input": null,
+          "verbose": false
+        }
+      },
+      "sha256": "9b912dfffc72d3abb0d31cbdbd4356dbd3dd79011b380df72c11508a7294df65",
+      "round_trip_verified": true,
+      "score_kind": "probability",
+      "max_probability_difference": 0.0
+    },
+    {
+      "model": "gradient_boosting",
+      "stage": "outer_fold_3",
+      "path": "models/course_accuracy_v2/gradient_boosting__outer_fold_3.joblib",
+      "threshold": 0.5,
+      "comparison": ">=",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration",
+        "artist_score"
+      ],
+      "training_rows": 2418,
+      "tuned_parameters": {
+        "model__learning_rate": 0.1,
+        "model__max_depth": 1,
+        "model__min_samples_leaf": 10,
+        "model__n_estimators": 100,
+        "model__subsample": 0.7
+      },
+      "pipeline_configuration": {
+        "class": "sklearn.pipeline.Pipeline",
+        "parameters": {
+          "memory": null,
+          "steps": [
+            [
+              "preprocessor",
+              {
+                "class": "sklearn.compose._column_transformer.ColumnTransformer",
+                "parameters": {
+                  "n_jobs": null,
+                  "remainder": "drop",
+                  "sparse_threshold": 0.3,
+                  "transformer_weights": null,
+                  "transformers": [
+                    [
+                      "numeric",
+                      {
+                        "class": "sklearn.pipeline.Pipeline",
+                        "parameters": {
+                          "memory": null,
+                          "steps": [
+                            [
+                              "imputer",
+                              {
+                                "class": "sklearn.impute._base.SimpleImputer",
+                                "parameters": {
+                                  "add_indicator": false,
+                                  "copy": true,
+                                  "fill_value": null,
+                                  "keep_empty_features": true,
+                                  "missing_values": {
+                                    "special_float": "nan"
+                                  },
+                                  "strategy": "median"
+                                }
+                              }
+                            ]
+                          ],
+                          "transform_input": null,
+                          "verbose": false
+                        }
+                      },
+                      [
+                        "tempo",
+                        "loudness",
+                        "duration"
+                      ]
+                    ],
+                    [
+                      "binary",
+                      "passthrough",
+                      [
+                        "artist_score"
+                      ]
+                    ]
+                  ],
+                  "verbose": false,
+                  "verbose_feature_names_out": true
+                }
+              }
+            ],
+            [
+              "model",
+              {
+                "class": "sklearn.ensemble._gb.GradientBoostingClassifier",
+                "parameters": {
+                  "ccp_alpha": 0.0,
+                  "criterion": "deprecated",
+                  "init": null,
+                  "learning_rate": 0.1,
+                  "loss": "log_loss",
+                  "max_depth": 1,
+                  "max_features": null,
+                  "max_leaf_nodes": null,
+                  "min_impurity_decrease": 0.0,
+                  "min_samples_leaf": 10,
+                  "min_samples_split": 2,
+                  "min_weight_fraction_leaf": 0.0,
+                  "n_estimators": 100,
+                  "n_iter_no_change": null,
+                  "random_state": 42,
+                  "subsample": 0.7,
+                  "tol": 0.0001,
+                  "validation_fraction": 0.1,
+                  "verbose": 0,
+                  "warm_start": false
+                }
+              }
+            ]
+          ],
+          "transform_input": null,
+          "verbose": false
+        }
+      },
+      "sha256": "1ddfb9c15a0ca57b66527102728836c48f4bad8d21440a4ccb86e56ad19e4e13",
+      "round_trip_verified": true,
+      "score_kind": "probability",
+      "max_probability_difference": 0.0
+    },
+    {
+      "model": "gradient_boosting",
+      "stage": "outer_fold_4",
+      "path": "models/course_accuracy_v2/gradient_boosting__outer_fold_4.joblib",
+      "threshold": 0.5,
+      "comparison": ">=",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration",
+        "artist_score"
+      ],
+      "training_rows": 2420,
+      "tuned_parameters": {
+        "model__learning_rate": 0.1,
+        "model__max_depth": 1,
+        "model__min_samples_leaf": 30,
+        "model__n_estimators": 200,
+        "model__subsample": 0.7
+      },
+      "pipeline_configuration": {
+        "class": "sklearn.pipeline.Pipeline",
+        "parameters": {
+          "memory": null,
+          "steps": [
+            [
+              "preprocessor",
+              {
+                "class": "sklearn.compose._column_transformer.ColumnTransformer",
+                "parameters": {
+                  "n_jobs": null,
+                  "remainder": "drop",
+                  "sparse_threshold": 0.3,
+                  "transformer_weights": null,
+                  "transformers": [
+                    [
+                      "numeric",
+                      {
+                        "class": "sklearn.pipeline.Pipeline",
+                        "parameters": {
+                          "memory": null,
+                          "steps": [
+                            [
+                              "imputer",
+                              {
+                                "class": "sklearn.impute._base.SimpleImputer",
+                                "parameters": {
+                                  "add_indicator": false,
+                                  "copy": true,
+                                  "fill_value": null,
+                                  "keep_empty_features": true,
+                                  "missing_values": {
+                                    "special_float": "nan"
+                                  },
+                                  "strategy": "median"
+                                }
+                              }
+                            ]
+                          ],
+                          "transform_input": null,
+                          "verbose": false
+                        }
+                      },
+                      [
+                        "tempo",
+                        "loudness",
+                        "duration"
+                      ]
+                    ],
+                    [
+                      "binary",
+                      "passthrough",
+                      [
+                        "artist_score"
+                      ]
+                    ]
+                  ],
+                  "verbose": false,
+                  "verbose_feature_names_out": true
+                }
+              }
+            ],
+            [
+              "model",
+              {
+                "class": "sklearn.ensemble._gb.GradientBoostingClassifier",
+                "parameters": {
+                  "ccp_alpha": 0.0,
+                  "criterion": "deprecated",
+                  "init": null,
+                  "learning_rate": 0.1,
+                  "loss": "log_loss",
+                  "max_depth": 1,
+                  "max_features": null,
+                  "max_leaf_nodes": null,
+                  "min_impurity_decrease": 0.0,
+                  "min_samples_leaf": 30,
+                  "min_samples_split": 2,
+                  "min_weight_fraction_leaf": 0.0,
+                  "n_estimators": 200,
+                  "n_iter_no_change": null,
+                  "random_state": 42,
+                  "subsample": 0.7,
+                  "tol": 0.0001,
+                  "validation_fraction": 0.1,
+                  "verbose": 0,
+                  "warm_start": false
+                }
+              }
+            ]
+          ],
+          "transform_input": null,
+          "verbose": false
+        }
+      },
+      "sha256": "3a2eed836b66c377523f137703bea2099481b2f3924350649ea14b4c538aeb4c",
+      "round_trip_verified": true,
+      "score_kind": "probability",
+      "max_probability_difference": 0.0
+    },
+    {
+      "model": "gradient_boosting",
+      "stage": "outer_fold_5",
+      "path": "models/course_accuracy_v2/gradient_boosting__outer_fold_5.joblib",
+      "threshold": 0.6851592827155126,
+      "comparison": ">=",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration",
+        "artist_score"
+      ],
+      "training_rows": 2420,
+      "tuned_parameters": {
+        "model__learning_rate": 0.1,
+        "model__max_depth": 1,
+        "model__min_samples_leaf": 30,
+        "model__n_estimators": 100,
+        "model__subsample": 1.0
+      },
+      "pipeline_configuration": {
+        "class": "sklearn.pipeline.Pipeline",
+        "parameters": {
+          "memory": null,
+          "steps": [
+            [
+              "preprocessor",
+              {
+                "class": "sklearn.compose._column_transformer.ColumnTransformer",
+                "parameters": {
+                  "n_jobs": null,
+                  "remainder": "drop",
+                  "sparse_threshold": 0.3,
+                  "transformer_weights": null,
+                  "transformers": [
+                    [
+                      "numeric",
+                      {
+                        "class": "sklearn.pipeline.Pipeline",
+                        "parameters": {
+                          "memory": null,
+                          "steps": [
+                            [
+                              "imputer",
+                              {
+                                "class": "sklearn.impute._base.SimpleImputer",
+                                "parameters": {
+                                  "add_indicator": false,
+                                  "copy": true,
+                                  "fill_value": null,
+                                  "keep_empty_features": true,
+                                  "missing_values": {
+                                    "special_float": "nan"
+                                  },
+                                  "strategy": "median"
+                                }
+                              }
+                            ]
+                          ],
+                          "transform_input": null,
+                          "verbose": false
+                        }
+                      },
+                      [
+                        "tempo",
+                        "loudness",
+                        "duration"
+                      ]
+                    ],
+                    [
+                      "binary",
+                      "passthrough",
+                      [
+                        "artist_score"
+                      ]
+                    ]
+                  ],
+                  "verbose": false,
+                  "verbose_feature_names_out": true
+                }
+              }
+            ],
+            [
+              "model",
+              {
+                "class": "sklearn.ensemble._gb.GradientBoostingClassifier",
+                "parameters": {
+                  "ccp_alpha": 0.0,
+                  "criterion": "deprecated",
+                  "init": null,
+                  "learning_rate": 0.1,
+                  "loss": "log_loss",
+                  "max_depth": 1,
+                  "max_features": null,
+                  "max_leaf_nodes": null,
+                  "min_impurity_decrease": 0.0,
+                  "min_samples_leaf": 30,
+                  "min_samples_split": 2,
+                  "min_weight_fraction_leaf": 0.0,
+                  "n_estimators": 100,
+                  "n_iter_no_change": null,
+                  "random_state": 42,
+                  "subsample": 1.0,
+                  "tol": 0.0001,
+                  "validation_fraction": 0.1,
+                  "verbose": 0,
+                  "warm_start": false
+                }
+              }
+            ]
+          ],
+          "transform_input": null,
+          "verbose": false
+        }
+      },
+      "sha256": "714ecf5f632eec474f7e6cc41334a00d22faeadc0d2d773e9dd44b1e0cf6593f",
+      "round_trip_verified": true,
+      "score_kind": "probability",
+      "max_probability_difference": 0.0
+    },
+    {
+      "model": "gradient_boosting",
+      "stage": "full_training_tuning",
+      "path": "models/course_accuracy_v2/gradient_boosting__full_training_tuning.joblib",
+      "threshold": 0.5051412757404645,
+      "comparison": ">=",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration",
+        "artist_score"
+      ],
+      "training_rows": 3024,
+      "tuned_parameters": {
+        "model__learning_rate": 0.1,
+        "model__max_depth": 1,
+        "model__min_samples_leaf": 30,
+        "model__n_estimators": 200,
+        "model__subsample": 0.7
+      },
+      "pipeline_configuration": {
+        "class": "sklearn.pipeline.Pipeline",
+        "parameters": {
+          "memory": null,
+          "steps": [
+            [
+              "preprocessor",
+              {
+                "class": "sklearn.compose._column_transformer.ColumnTransformer",
+                "parameters": {
+                  "n_jobs": null,
+                  "remainder": "drop",
+                  "sparse_threshold": 0.3,
+                  "transformer_weights": null,
+                  "transformers": [
+                    [
+                      "numeric",
+                      {
+                        "class": "sklearn.pipeline.Pipeline",
+                        "parameters": {
+                          "memory": null,
+                          "steps": [
+                            [
+                              "imputer",
+                              {
+                                "class": "sklearn.impute._base.SimpleImputer",
+                                "parameters": {
+                                  "add_indicator": false,
+                                  "copy": true,
+                                  "fill_value": null,
+                                  "keep_empty_features": true,
+                                  "missing_values": {
+                                    "special_float": "nan"
+                                  },
+                                  "strategy": "median"
+                                }
+                              }
+                            ]
+                          ],
+                          "transform_input": null,
+                          "verbose": false
+                        }
+                      },
+                      [
+                        "tempo",
+                        "loudness",
+                        "duration"
+                      ]
+                    ],
+                    [
+                      "binary",
+                      "passthrough",
+                      [
+                        "artist_score"
+                      ]
+                    ]
+                  ],
+                  "verbose": false,
+                  "verbose_feature_names_out": true
+                }
+              }
+            ],
+            [
+              "model",
+              {
+                "class": "sklearn.ensemble._gb.GradientBoostingClassifier",
+                "parameters": {
+                  "ccp_alpha": 0.0,
+                  "criterion": "deprecated",
+                  "init": null,
+                  "learning_rate": 0.1,
+                  "loss": "log_loss",
+                  "max_depth": 1,
+                  "max_features": null,
+                  "max_leaf_nodes": null,
+                  "min_impurity_decrease": 0.0,
+                  "min_samples_leaf": 30,
+                  "min_samples_split": 2,
+                  "min_weight_fraction_leaf": 0.0,
+                  "n_estimators": 200,
+                  "n_iter_no_change": null,
+                  "random_state": 42,
+                  "subsample": 0.7,
+                  "tol": 0.0001,
+                  "validation_fraction": 0.1,
+                  "verbose": 0,
+                  "warm_start": false
+                }
+              }
+            ]
+          ],
+          "transform_input": null,
+          "verbose": false
+        }
+      },
+      "sha256": "2e75717a3a0cb81f95d6d72029143fcfadaf8b8adb8a42afde12c40ae7395342",
+      "round_trip_verified": true,
+      "score_kind": "probability",
+      "max_probability_difference": 0.0
+    }
+  ],
+  "completed_families": [
+    "logistic_regression",
+    "polynomial_logistic",
+    "decision_tree",
+    "bagged_trees",
+    "random_forest",
+    "adaboost",
+    "gradient_boosting"
+  ],
+  "candidate": {
+    "model": "random_forest",
+    "artifact": "models/course_accuracy_v2/random_forest__full_training_tuning.joblib",
+    "cv_accuracy_mean": 0.8277054767487586,
+    "threshold": 0.5674968768867616,
+    "parameters": {
+      "model__max_depth": 10,
+      "model__max_features": "sqrt",
+      "model__max_samples": 1.0,
+      "model__min_samples_leaf": 5
+    },
+    "selection_policy": "Highest mean outer training CV accuracy; exact ties use declared family order. Development candidate only."
+  },
+  "completed_at_utc": "2026-10-03T10:46:32.041342+00:00",
+  "report_hashes": {
+    "outer_fold_assignments.csv": "0eef93d8955559e4754b002c5d9ff36753a021834002f19ccd8fe671b407d1c9",
+    "results.csv": "cd084a4edc13b6ad940924ddd4ed10a6006e4b3f05d29d51188e409b943f2f0f",
+    "adaboost/fold_metrics.csv": "ef55eea9656ee2ef78a26523eaeb69bbc94fec9aa1f4081270b84975faab933e",
+    "adaboost/outer_predictions.csv": "5891926662db01b9a676fbf08d62f4b21c9914035265ec941b617bc29af0c538",
+    "adaboost/search_results.csv": "16e6b061616bab9af46d762e42a04a6a1d6ab3480d3df30055a5cc965de7c4ab",
+    "adaboost/threshold_search.csv": "482064316d5bb126a6f41357927b803bd19dffc307471a3e15f696cca3a418a2",
+    "bagged_trees/fold_metrics.csv": "1dec30763b3acda3a300664249223f1d704c0affcdeaaabf932c3b547c9f5561",
+    "bagged_trees/outer_predictions.csv": "87c43c1109b5873808c2456f71dad7d7264ef387b2fa17940f34cbc1c4335111",
+    "bagged_trees/search_results.csv": "3c0fd59be570def6e901d099f11c6129260eab14ac86761306fe52331c3d1d6c",
+    "bagged_trees/threshold_search.csv": "f9bee62a9a51abb7ef49b9eb5f66792ab0d0db60a49ca6371cdd30a7b25aa182",
+    "decision_tree/fold_metrics.csv": "3c95ce80382bcd04ac6a1a4d624cb684ac10988c7147e6c0f02fb8d10fe5b740",
+    "decision_tree/outer_predictions.csv": "dc82e534d0c33a10e146f3de15dcee2c449380480de700299feaacaae9c3bd4c",
+    "decision_tree/search_results.csv": "c02e3944d1a87bf6985329a2a0aa069048516cf210dca0ed01d10ef1b65dfbe0",
+    "decision_tree/threshold_search.csv": "cd693db1e495aafad8284a083fcc6db8ded3ef3c64260fd4818bd43dfe8f0365",
+    "gradient_boosting/fold_metrics.csv": "a29c1cac16e965180b2b93560171e74ea0b8b3546f9d7168ffa6b0edded9274a",
+    "gradient_boosting/outer_predictions.csv": "70e046cbb09c84f4acda90227670219f04a40525c2238ec0f32a20cd2ff006bb",
+    "gradient_boosting/search_results.csv": "a8c030c890aba801532b843eeb992e7aae5d7d306027fbb721bb77136cdaf9d5",
+    "gradient_boosting/threshold_search.csv": "2b269d76b84e33ad92dbfdef07eca5ff43d802ea86e9259485c34584b417430f",
+    "logistic_regression/fold_metrics.csv": "6b618335cc5ea21441963c407ebed215db41647f5b739e201b74677df0205cfb",
+    "logistic_regression/outer_predictions.csv": "9be8098ff0fec13629d04105be3d4e1fb2c9a21807710b369a95d6b3fbe33883",
+    "logistic_regression/search_results.csv": "7722467e762efc64cee90285664207575e7b95783d172232dcc0f18f958e649f",
+    "logistic_regression/threshold_search.csv": "3ecf2df48f29c6fb30265223bdda9882a7eae0ea4093d4b3b1dd21a08d17ff6b",
+    "polynomial_logistic/fold_metrics.csv": "62ea9b21b43f12bd68117d69eecc0fe25f0283ae2ca0f78215d1653e6ca10b70",
+    "polynomial_logistic/outer_predictions.csv": "734884c2cb9910284b9985a0674c0b69c577f8caa679fcb0dc7b1b2504469ec7",
+    "polynomial_logistic/search_results.csv": "0ad0c612fb170675090e323f3cec61a3697ff97678005cc306541b19966f6acc",
+    "polynomial_logistic/threshold_search.csv": "82007ded852490784138242ca8f4d8a5b46d53e09b44c22b932f739cbd1c2c6b",
+    "random_forest/fold_metrics.csv": "d5ebafa4a73afcea8c41b33591a5fbd54b2a0a477cc527ead37cbbec0e24146f",
+    "random_forest/outer_predictions.csv": "1d948b1f06b9a095511a5752a02fc80204d1fb3100d065af9988e4ae8b344dbd",
+    "random_forest/search_results.csv": "2e463da4a66351af2410aa9211c84dcd1ed152d928ec11c5ffc244ec4564e5e4",
+    "random_forest/threshold_search.csv": "88582c329370d655751fa65698fec9010bb49fb760869a8c1e1e8a5ed061e467"
+  }
+}

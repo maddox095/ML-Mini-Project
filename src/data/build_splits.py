@@ -1,22 +1,19 @@
 """Create reproducible User 2 partitions without model preprocessing."""
-import hashlib
 import json
-from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
-FEATURES = ["tempo", "loudness", "duration", "artist_score"]
-SEED = 42
+from src.data.common import load_config, model_features, repo_path, sha256
 
 
-def build_splits(table: pd.DataFrame) -> pd.DataFrame:
+def build_splits(table: pd.DataFrame, *, seed: int | None = None) -> pd.DataFrame:
     if not table.track_id.is_unique or not table.canonical_key.is_unique:
         raise ValueError("Split identities must be unique")
     if table.artist_key.isna().any() or set(table.hit.unique()) != {0, 1}:
         raise ValueError("Require artist keys and both binary classes")
     table = table.sort_values("track_id").reset_index(drop=True)
-    rng = np.random.default_rng(SEED)
+    rng = np.random.default_rng(load_config()["seed"] if seed is None else seed)
     result = table[["track_id", "canonical_key", "artist_key", "hit"]].copy()
     result["stratified_partition"] = "train"
     for label in (0, 1):
@@ -37,12 +34,13 @@ def build_splits(table: pd.DataFrame) -> pd.DataFrame:
 
 
 def main() -> None:
-    source = Path("data/interim/model_table.parquet")
+    config = load_config()
+    source = repo_path("data/interim/model_table.parquet")
     table = pd.read_parquet(source)
-    splits = build_splits(table)
-    output = Path("data/processed")
+    splits = build_splits(table, seed=config["seed"])
+    output = repo_path("data/processed")
     output.mkdir(parents=True, exist_ok=True)
-    splits.to_csv(output / "user2_splits.csv", index=False)
+    splits.to_csv(output / "user2_splits.csv", index=False, lineterminator="\n")
     summary = {}
     for column in ("stratified_partition", "artist_disjoint_partition"):
         summary[column] = {
@@ -58,14 +56,16 @@ def main() -> None:
         test = set(splits.loc[splits[column].eq("test"), "artist_key"])
         summary[column]["shared_artists"] = len(train & test)
     manifest = {
-        "source": str(source),
-        "source_sha256": hashlib.sha256(source.read_bytes()).hexdigest(),
-        "seed": SEED,
-        "features": FEATURES,
+        "source": source.relative_to(repo_path(".")).as_posix(),
+        "source_sha256": sha256(source),
+        "splits_sha256": sha256(output / "user2_splits.csv"),
+        "dataset_version": config["dataset_version"],
+        "seed": config["seed"],
+        "features": model_features(config),
         "target": "hit",
         "splits": summary,
     }
-    (output / "user2_split_manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
+    (output / "user2_split_manifest.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(summary, indent=2))
 
 
