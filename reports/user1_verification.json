@@ -1,0 +1,82 @@
+{
+  "input_sha256": "fe9dd0b5c6e5683e2ca1bd9c3dba69cc9bdef55a987052039cdc7a45e68541a7",
+  "rows": 4000,
+  "dataset_version": "u1-mode-b",
+  "features": [
+    "tempo",
+    "loudness",
+    "duration",
+    "artist_score"
+  ],
+  "integrity_passed": true,
+  "accepted_for_final_modeling": false,
+  "status": "handoff integrity passed; source review required",
+  "checks": {
+    "required_columns": true,
+    "nonempty": true,
+    "one_row_per_identity": true,
+    "unique_track_ids": true,
+    "no_conflicting_labels": true,
+    "binary_target_both_classes": true,
+    "balanced_classes": true,
+    "binary_artist_score": true,
+    "required_fields_present": true,
+    "nonempty_identities": true,
+    "finite_features": true,
+    "positive_tempo_and_duration": true,
+    "dates_in_label_window": true,
+    "history_contains_label_window": true,
+    "model_features_exclude_outcomes": true,
+    "handoff_excludes_matching_provenance": true,
+    "artist_audit_schema": true,
+    "artist_audit_covers_all_rows": true,
+    "artist_audit_scores_agree": true,
+    "artist_audit_names_agree": true,
+    "artist_audit_dates_agree": true,
+    "positive_artist_scores_have_prior_evidence": true,
+    "prior_evidence_in_history_window": true,
+    "zero_artist_scores_have_no_prior_evidence": true,
+    "chronology_flags_pass": true,
+    "feature_sources_documented": true,
+    "quality_counts_agree": true
+  },
+  "class_counts": {
+    "0": 2000,
+    "1": 2000
+  },
+  "distinct_artists": 2660,
+  "reference_date_range": [
+    "1990-01-01 00:00:00",
+    "2016-02-06 00:00:00"
+  ],
+  "raw_inputs": [
+    {
+      "artifact": "data/raw/billboard/all.json",
+      "present": false,
+      "recorded_sha256": "6cc26c365b120cacfe67201ef3d33d9bcb95c2021232dd51a9d95eec79ccc6d0",
+      "checksum_verified": false,
+      "size_verified": false
+    },
+    {
+      "artifact": "data/raw/msd_full/msd_summary_file.h5",
+      "present": false,
+      "recorded_sha256": "c245d348eac4d80380e561b147234acf0094228e8d0c0b969ac807641b987c06",
+      "checksum_verified": false,
+      "size_verified": false
+    }
+  ],
+  "raw_inputs_verified": false,
+  "intermediate_tables_present": {
+    "data/interim/msd_summary_tracks.parquet": false,
+    "data/interim/billboard_entries.parquet": false
+  },
+  "limitations": [
+    "Registered raw sources are unavailable or unverified locally; full-source extraction and labels cannot be independently reproduced in this checkout.",
+    "Extracted MSD/Billboard intermediate tables are absent locally.",
+    "Mode B uses three MSD audio descriptors plus Artist Score; it is not a numerical reproduction of the original Spotify-feature experiment.",
+    "Exact matching and finite chart history can leave label noise; an unmatched song is only a non-hit candidate.",
+    "Non-hit reference dates approximate release as January 1; dates are metadata, not model inputs.",
+    "Saved Artist Score evidence validates chronology, not every source event or zero score without raw history."
+  ],
+  "review_policy": "Integrity checks do not independently certify source labels or establish final research acceptance."
+}

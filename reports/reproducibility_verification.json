@@ -1,0 +1,104 @@
+{
+  "copied_model_code_verified": [
+    {
+      "model": "decision_tree",
+      "setting": "setting_0000",
+      "inner_fold": 1,
+      "metric_absolute_differences": {
+        "roc_auc": 0.0,
+        "accuracy": 0.0,
+        "f1": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "average_precision": 0.0
+      },
+      "save_reload_verified": true
+    },
+    {
+      "model": "logistic_regression",
+      "setting": "setting_0000",
+      "inner_fold": 1,
+      "metric_absolute_differences": {
+        "roc_auc": 0.0,
+        "accuracy": 0.0,
+        "f1": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "average_precision": 0.0
+      },
+      "save_reload_verified": true
+    },
+    {
+      "model": "neural_network",
+      "setting": "setting_0000",
+      "inner_fold": 1,
+      "metric_absolute_differences": {
+        "roc_auc": 0.0,
+        "accuracy": 0.0,
+        "f1": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "average_precision": 0.0
+      },
+      "save_reload_verified": true
+    },
+    {
+      "model": "random_forest",
+      "setting": "setting_0000",
+      "inner_fold": 1,
+      "metric_absolute_differences": {
+        "roc_auc": 0.0,
+        "accuracy": 0.0,
+        "f1": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "average_precision": 0.0
+      },
+      "save_reload_verified": true
+    },
+    {
+      "model": "svm_linear",
+      "setting": "setting_0000",
+      "inner_fold": 1,
+      "metric_absolute_differences": {
+        "roc_auc": 0.0,
+        "accuracy": 0.0,
+        "f1": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "average_precision": 0.0
+      },
+      "save_reload_verified": true
+    },
+    {
+      "model": "svm_polynomial",
+      "setting": "setting_0000",
+      "inner_fold": 1,
+      "metric_absolute_differences": {
+        "roc_auc": 0.0,
+        "accuracy": 0.0,
+        "f1": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "average_precision": 0.0
+      },
+      "save_reload_verified": true
+    },
+    {
+      "model": "svm_rbf",
+      "setting": "setting_0000",
+      "inner_fold": 1,
+      "metric_absolute_differences": {
+        "roc_auc": 0.0,
+        "accuracy": 0.0,
+        "f1": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "average_precision": 0.0
+      },
+      "save_reload_verified": true
+    }
+  ],
+  "copied_final_testing_code_verified": "decision_tree",
+  "total_setting_records": 2124
+}

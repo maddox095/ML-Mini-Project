@@ -1,5 +1,11 @@
 # User 2 modeling handoff
 
+See [the User 2 plan](USER2_PLAN.md) for proposed models, training order,
+cross-validation, evaluation and delivery milestones. The active course-only
+v2 suite is complete. It uses only the primary training partition: the
+original test scores were already inspected and remain the published v1
+benchmark. New final accuracy claims need untouched evaluation data.
+
 Use `data/interim/model_table.parquet`: 4,000 songs, with 2,000 hits and
 2,000 non-hit candidates. The four permitted inputs have no missing values.
 
@@ -20,8 +26,9 @@ python -m src.data.build_splits
 
 `data/processed/user2_splits.csv` assigns every track to two independent
 experiments. `user2_split_manifest.json` records seed 42, the source file
-SHA-256, features, counts and artist overlap. Regenerate these files after any
-change to the model table; verify the source hash before using existing splits.
+SHA-256 for the source and split assignments, features, counts and artist
+overlap. Regenerate these files after any change to the model table.
+`src.models.data.load_partition` verifies both hashes before loading data.
 
 | Experiment | Train | Test | Shared artists |
 | --- | ---: | ---: | ---: |
@@ -31,8 +38,7 @@ change to the model table; verify the source hash before using existing splits.
 The stratified partition is a conventional held-out baseline. It does not
 implement or verify the original study's prescribed source-comparison protocol;
 that protocol remains a separate experiment to confirm against the project
-guide. The PDFs in this checkout are Git LFS pointers, so their contents were
-not available when preparing this handoff.
+guide. The research PDFs are retained in `docs/`.
 
 The artist-disjoint partition randomly reserves 25% of unique normalized artist
 keys, so its row and class proportions are approximate. Different credits or
@@ -50,6 +56,7 @@ import pandas as pd
 source = Path("data/interim/model_table.parquet")
 manifest = json.loads(Path("data/processed/user2_split_manifest.json").read_text())
 assert hashlib.sha256(source.read_bytes()).hexdigest() == manifest["source_sha256"]
+assert hashlib.sha256(Path("data/processed/user2_splits.csv").read_bytes()).hexdigest() == manifest["splits_sha256"]
 table = pd.read_parquet(source)
 splits = pd.read_csv("data/processed/user2_splits.csv")
 assert set(table.track_id) == set(splits.track_id)
@@ -104,3 +111,8 @@ keys: artist-disjoint evaluation does not mean predicting without artist history
 Audit details are in `reports/data_quality.csv`, `reports/match_audit.csv`,
 `reports/artist_score_audit.csv`, `reports/feature_availability.csv` and
 `reports/eda_summary.md`.
+
+Run `python -m src.data.verify_handoff` for the current integrity and source
+availability report. Raw MSD/Billboard files and full extracted tables are
+absent locally; table checks do not independently verify the original labels.
+There is no separate provisional snapshot or alternate split-preparation job.

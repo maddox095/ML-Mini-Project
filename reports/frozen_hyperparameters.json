@@ -1,0 +1,948 @@
+{
+  "final_run_id": "final_suite_v1",
+  "chosen_before_testing": {
+    "model": "decision_tree",
+    "feature_set": "audio_artist_score",
+    "protocol": "artist_disjoint_partition",
+    "run_id": "decision_tree_baseline_v1",
+    "artifact": "models/decision_tree_baseline_v1/artist_disjoint_partition__decision_tree__audio_artist_score.joblib",
+    "cv_roc_auc_mean": 0.8795495240199867,
+    "best_cv_roc_auc_mean": 0.8847631519462096,
+    "policy": "Artist-disjoint nested CV ROC-AUC within 0.01 of best; predefined family simplicity order, then fewer inputs, then larger CV AUC.",
+    "simplicity_order": [
+      "logistic_regression",
+      "svm_linear",
+      "decision_tree",
+      "random_forest",
+      "svm_rbf",
+      "svm_polynomial",
+      "neural_network"
+    ]
+  },
+  "models": [
+    {
+      "model": "decision_tree",
+      "protocol": "stratified_partition",
+      "feature_set": "audio_only",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration"
+      ],
+      "estimator_parameters": {
+        "ccp_alpha": 0.0,
+        "class_weight": null,
+        "criterion": "gini",
+        "max_depth": 8,
+        "max_features": null,
+        "max_leaf_nodes": null,
+        "min_impurity_decrease": 0.0,
+        "min_samples_leaf": 20,
+        "min_samples_split": 2,
+        "min_weight_fraction_leaf": 0.0,
+        "monotonic_cst": null,
+        "random_state": 42,
+        "splitter": "best"
+      },
+      "threshold": 0.5,
+      "path": "models/decision_tree_baseline_v1/stratified_partition__decision_tree__audio_only.joblib",
+      "sha256": "b740940535bd957db82af4b2e142ece1907291469a0948a735301cb61ffbf910"
+    },
+    {
+      "model": "decision_tree",
+      "protocol": "stratified_partition",
+      "feature_set": "audio_artist_score",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration",
+        "artist_score"
+      ],
+      "estimator_parameters": {
+        "ccp_alpha": 0.0,
+        "class_weight": null,
+        "criterion": "gini",
+        "max_depth": 8,
+        "max_features": null,
+        "max_leaf_nodes": null,
+        "min_impurity_decrease": 0.0,
+        "min_samples_leaf": 20,
+        "min_samples_split": 2,
+        "min_weight_fraction_leaf": 0.0,
+        "monotonic_cst": null,
+        "random_state": 42,
+        "splitter": "best"
+      },
+      "threshold": 0.5,
+      "path": "models/decision_tree_baseline_v1/stratified_partition__decision_tree__audio_artist_score.joblib",
+      "sha256": "838ab99fb1a0796e29f3d18002951e255384a506ecdb68e0f97b85fa580bf61f"
+    },
+    {
+      "model": "decision_tree",
+      "protocol": "artist_disjoint_partition",
+      "feature_set": "audio_only",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration"
+      ],
+      "estimator_parameters": {
+        "ccp_alpha": 0.0,
+        "class_weight": null,
+        "criterion": "gini",
+        "max_depth": 8,
+        "max_features": null,
+        "max_leaf_nodes": null,
+        "min_impurity_decrease": 0.0,
+        "min_samples_leaf": 20,
+        "min_samples_split": 2,
+        "min_weight_fraction_leaf": 0.0,
+        "monotonic_cst": null,
+        "random_state": 42,
+        "splitter": "best"
+      },
+      "threshold": 0.5,
+      "path": "models/decision_tree_baseline_v1/artist_disjoint_partition__decision_tree__audio_only.joblib",
+      "sha256": "c49b67b9280a05d684bc6c795aa7fb34224b9bd9f2c2ce94c14be99c436d9e99"
+    },
+    {
+      "model": "decision_tree",
+      "protocol": "artist_disjoint_partition",
+      "feature_set": "audio_artist_score",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration",
+        "artist_score"
+      ],
+      "estimator_parameters": {
+        "ccp_alpha": 0.0,
+        "class_weight": null,
+        "criterion": "gini",
+        "max_depth": 8,
+        "max_features": null,
+        "max_leaf_nodes": null,
+        "min_impurity_decrease": 0.0,
+        "min_samples_leaf": 20,
+        "min_samples_split": 2,
+        "min_weight_fraction_leaf": 0.0,
+        "monotonic_cst": null,
+        "random_state": 42,
+        "splitter": "best"
+      },
+      "threshold": 0.5,
+      "path": "models/decision_tree_baseline_v1/artist_disjoint_partition__decision_tree__audio_artist_score.joblib",
+      "sha256": "7c7ff948daba24b3ea485d0cb401887f3a55b6878013be38d02c448499dc2a18"
+    },
+    {
+      "model": "svm_linear",
+      "protocol": "stratified_partition",
+      "feature_set": "audio_only",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration"
+      ],
+      "estimator_parameters": {
+        "C": 0.1,
+        "class_weight": null,
+        "dual": false,
+        "fit_intercept": true,
+        "intercept_scaling": 1,
+        "loss": "squared_hinge",
+        "max_iter": 10000,
+        "multi_class": "ovr",
+        "penalty": "l2",
+        "random_state": 42,
+        "tol": 1e-06,
+        "verbose": 0
+      },
+      "threshold": 0.0,
+      "path": "models/linear_svm_baseline_v1/stratified_partition__svm_linear__audio_only.joblib",
+      "sha256": "c2a3dc139049d6a8ee4ad5ada9a75a403d1e281e6c055c00f202bfc30ec4ad7e"
+    },
+    {
+      "model": "svm_linear",
+      "protocol": "stratified_partition",
+      "feature_set": "audio_artist_score",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration",
+        "artist_score"
+      ],
+      "estimator_parameters": {
+        "C": 0.1,
+        "class_weight": null,
+        "dual": false,
+        "fit_intercept": true,
+        "intercept_scaling": 1,
+        "loss": "squared_hinge",
+        "max_iter": 10000,
+        "multi_class": "ovr",
+        "penalty": "l2",
+        "random_state": 42,
+        "tol": 1e-06,
+        "verbose": 0
+      },
+      "threshold": 0.0,
+      "path": "models/linear_svm_baseline_v1/stratified_partition__svm_linear__audio_artist_score.joblib",
+      "sha256": "f4d943a86b1d37f87a9405c778947104bacad5ffb3bc847635a722b3d9fbbe49"
+    },
+    {
+      "model": "svm_linear",
+      "protocol": "artist_disjoint_partition",
+      "feature_set": "audio_only",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration"
+      ],
+      "estimator_parameters": {
+        "C": 0.1,
+        "class_weight": null,
+        "dual": false,
+        "fit_intercept": true,
+        "intercept_scaling": 1,
+        "loss": "squared_hinge",
+        "max_iter": 10000,
+        "multi_class": "ovr",
+        "penalty": "l2",
+        "random_state": 42,
+        "tol": 1e-06,
+        "verbose": 0
+      },
+      "threshold": 0.0,
+      "path": "models/linear_svm_baseline_v1/artist_disjoint_partition__svm_linear__audio_only.joblib",
+      "sha256": "53967fa24e83c8cb3621d443567cffbdbdf30e0f9b3263da9343a48189368d79"
+    },
+    {
+      "model": "svm_linear",
+      "protocol": "artist_disjoint_partition",
+      "feature_set": "audio_artist_score",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration",
+        "artist_score"
+      ],
+      "estimator_parameters": {
+        "C": 1.0,
+        "class_weight": null,
+        "dual": false,
+        "fit_intercept": true,
+        "intercept_scaling": 1,
+        "loss": "squared_hinge",
+        "max_iter": 10000,
+        "multi_class": "ovr",
+        "penalty": "l2",
+        "random_state": 42,
+        "tol": 1e-06,
+        "verbose": 0
+      },
+      "threshold": 0.0,
+      "path": "models/linear_svm_baseline_v1/artist_disjoint_partition__svm_linear__audio_artist_score.joblib",
+      "sha256": "c20873503e21c0ebb62cdfa4dcc8177133611c1807275bdfeaa58ba91de0bc2a"
+    },
+    {
+      "model": "dummy",
+      "protocol": "stratified_partition",
+      "feature_set": "prior",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration",
+        "artist_score"
+      ],
+      "estimator_parameters": {
+        "constant": null,
+        "random_state": 42,
+        "strategy": "prior"
+      },
+      "threshold": 0.5,
+      "path": "models/logistic_regression_baseline_v2/stratified_partition__dummy__prior.joblib",
+      "sha256": "7d4f9a96fb4e33f96c9c4c532344dcf79df3e4091130a09d2847bfb6920593b9"
+    },
+    {
+      "model": "logistic_regression",
+      "protocol": "stratified_partition",
+      "feature_set": "audio_only",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration"
+      ],
+      "estimator_parameters": {
+        "C": 1.0,
+        "class_weight": null,
+        "dual": false,
+        "fit_intercept": true,
+        "intercept_scaling": 1,
+        "l1_ratio": 0.0,
+        "max_iter": 5000,
+        "n_jobs": null,
+        "penalty": "deprecated",
+        "random_state": 42,
+        "solver": "lbfgs",
+        "tol": 1e-06,
+        "verbose": 0,
+        "warm_start": false
+      },
+      "threshold": 0.5,
+      "path": "models/logistic_regression_baseline_v2/stratified_partition__logistic_regression__audio_only.joblib",
+      "sha256": "ce23e3d54eaffcc630f72ea595b4e3f5aba47677c2217beddedaf06f1f1b214d"
+    },
+    {
+      "model": "logistic_regression",
+      "protocol": "stratified_partition",
+      "feature_set": "audio_artist_score",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration",
+        "artist_score"
+      ],
+      "estimator_parameters": {
+        "C": 0.01,
+        "class_weight": null,
+        "dual": false,
+        "fit_intercept": true,
+        "intercept_scaling": 1,
+        "l1_ratio": 0.0,
+        "max_iter": 5000,
+        "n_jobs": null,
+        "penalty": "deprecated",
+        "random_state": 42,
+        "solver": "lbfgs",
+        "tol": 1e-06,
+        "verbose": 0,
+        "warm_start": false
+      },
+      "threshold": 0.5,
+      "path": "models/logistic_regression_baseline_v2/stratified_partition__logistic_regression__audio_artist_score.joblib",
+      "sha256": "a254c80a4a751ad0f6c7357f257def77d28e6e8fc8f98540b57e451094789b4a"
+    },
+    {
+      "model": "dummy",
+      "protocol": "artist_disjoint_partition",
+      "feature_set": "prior",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration",
+        "artist_score"
+      ],
+      "estimator_parameters": {
+        "constant": null,
+        "random_state": 42,
+        "strategy": "prior"
+      },
+      "threshold": 0.5,
+      "path": "models/logistic_regression_baseline_v2/artist_disjoint_partition__dummy__prior.joblib",
+      "sha256": "65473f9dc1399d9ef714df8bb129d9dfd9dff32baeb37145f58db179fafa86c5"
+    },
+    {
+      "model": "logistic_regression",
+      "protocol": "artist_disjoint_partition",
+      "feature_set": "audio_only",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration"
+      ],
+      "estimator_parameters": {
+        "C": 1.0,
+        "class_weight": null,
+        "dual": false,
+        "fit_intercept": true,
+        "intercept_scaling": 1,
+        "l1_ratio": 0.0,
+        "max_iter": 5000,
+        "n_jobs": null,
+        "penalty": "deprecated",
+        "random_state": 42,
+        "solver": "lbfgs",
+        "tol": 1e-06,
+        "verbose": 0,
+        "warm_start": false
+      },
+      "threshold": 0.5,
+      "path": "models/logistic_regression_baseline_v2/artist_disjoint_partition__logistic_regression__audio_only.joblib",
+      "sha256": "ffa1332c17fa97f1883f29ebeb7528a65779ecb4d7c12268dd50983419d35921"
+    },
+    {
+      "model": "logistic_regression",
+      "protocol": "artist_disjoint_partition",
+      "feature_set": "audio_artist_score",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration",
+        "artist_score"
+      ],
+      "estimator_parameters": {
+        "C": 100.0,
+        "class_weight": null,
+        "dual": false,
+        "fit_intercept": true,
+        "intercept_scaling": 1,
+        "l1_ratio": 0.0,
+        "max_iter": 5000,
+        "n_jobs": null,
+        "penalty": "deprecated",
+        "random_state": 42,
+        "solver": "lbfgs",
+        "tol": 1e-06,
+        "verbose": 0,
+        "warm_start": false
+      },
+      "threshold": 0.5,
+      "path": "models/logistic_regression_baseline_v2/artist_disjoint_partition__logistic_regression__audio_artist_score.joblib",
+      "sha256": "de61f3d13ed904ffbcc560d4b4476a31a6dec0b1c2e10778ef989b0e544d5ffe"
+    },
+    {
+      "model": "neural_network",
+      "protocol": "stratified_partition",
+      "feature_set": "audio_only",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration"
+      ],
+      "estimator_parameters": {
+        "activation": "logistic",
+        "alpha": 0.01,
+        "batch_size": "auto",
+        "beta_1": 0.9,
+        "beta_2": 0.999,
+        "early_stopping": false,
+        "epsilon": 1e-08,
+        "hidden_layer_sizes": [
+          6
+        ],
+        "learning_rate": "constant",
+        "learning_rate_init": 0.001,
+        "max_fun": 50000,
+        "max_iter": 5000,
+        "momentum": 0.9,
+        "n_iter_no_change": 10,
+        "nesterovs_momentum": true,
+        "power_t": 0.5,
+        "random_state": 42,
+        "shuffle": true,
+        "solver": "lbfgs",
+        "tol": 1e-05,
+        "validation_fraction": 0.1,
+        "verbose": false,
+        "warm_start": false
+      },
+      "threshold": 0.5,
+      "path": "models/neural_network_baseline_v1/stratified_partition__neural_network__audio_only.joblib",
+      "sha256": "50f12bd0710a11dcf12e7419c1f7099e35b6a2cced1cba88eebf92cf001830de"
+    },
+    {
+      "model": "neural_network",
+      "protocol": "stratified_partition",
+      "feature_set": "audio_artist_score",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration",
+        "artist_score"
+      ],
+      "estimator_parameters": {
+        "activation": "logistic",
+        "alpha": 0.01,
+        "batch_size": "auto",
+        "beta_1": 0.9,
+        "beta_2": 0.999,
+        "early_stopping": false,
+        "epsilon": 1e-08,
+        "hidden_layer_sizes": [
+          6
+        ],
+        "learning_rate": "constant",
+        "learning_rate_init": 0.001,
+        "max_fun": 50000,
+        "max_iter": 5000,
+        "momentum": 0.9,
+        "n_iter_no_change": 10,
+        "nesterovs_momentum": true,
+        "power_t": 0.5,
+        "random_state": 42,
+        "shuffle": true,
+        "solver": "lbfgs",
+        "tol": 1e-05,
+        "validation_fraction": 0.1,
+        "verbose": false,
+        "warm_start": false
+      },
+      "threshold": 0.5,
+      "path": "models/neural_network_baseline_v1/stratified_partition__neural_network__audio_artist_score.joblib",
+      "sha256": "595fefdcdc43074bfe0f208ce7bc533dcb06a3bd9efe9c6e418d4a84409f9168"
+    },
+    {
+      "model": "neural_network",
+      "protocol": "artist_disjoint_partition",
+      "feature_set": "audio_only",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration"
+      ],
+      "estimator_parameters": {
+        "activation": "logistic",
+        "alpha": 0.01,
+        "batch_size": "auto",
+        "beta_1": 0.9,
+        "beta_2": 0.999,
+        "early_stopping": false,
+        "epsilon": 1e-08,
+        "hidden_layer_sizes": [
+          6
+        ],
+        "learning_rate": "constant",
+        "learning_rate_init": 0.001,
+        "max_fun": 50000,
+        "max_iter": 5000,
+        "momentum": 0.9,
+        "n_iter_no_change": 10,
+        "nesterovs_momentum": true,
+        "power_t": 0.5,
+        "random_state": 42,
+        "shuffle": true,
+        "solver": "lbfgs",
+        "tol": 1e-05,
+        "validation_fraction": 0.1,
+        "verbose": false,
+        "warm_start": false
+      },
+      "threshold": 0.5,
+      "path": "models/neural_network_baseline_v1/artist_disjoint_partition__neural_network__audio_only.joblib",
+      "sha256": "76ad3642879710a3b50962b2b5d29f74621fbe0e5edcdc800c7e829ba1a01c94"
+    },
+    {
+      "model": "neural_network",
+      "protocol": "artist_disjoint_partition",
+      "feature_set": "audio_artist_score",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration",
+        "artist_score"
+      ],
+      "estimator_parameters": {
+        "activation": "logistic",
+        "alpha": 0.0001,
+        "batch_size": "auto",
+        "beta_1": 0.9,
+        "beta_2": 0.999,
+        "early_stopping": false,
+        "epsilon": 1e-08,
+        "hidden_layer_sizes": [
+          6
+        ],
+        "learning_rate": "constant",
+        "learning_rate_init": 0.001,
+        "max_fun": 50000,
+        "max_iter": 5000,
+        "momentum": 0.9,
+        "n_iter_no_change": 10,
+        "nesterovs_momentum": true,
+        "power_t": 0.5,
+        "random_state": 42,
+        "shuffle": true,
+        "solver": "lbfgs",
+        "tol": 1e-05,
+        "validation_fraction": 0.1,
+        "verbose": false,
+        "warm_start": false
+      },
+      "threshold": 0.5,
+      "path": "models/neural_network_baseline_v1/artist_disjoint_partition__neural_network__audio_artist_score.joblib",
+      "sha256": "b0f5dd2133510115dded6908518307b9b06f8ed6840a1c569f5f9225286a54f8"
+    },
+    {
+      "model": "random_forest",
+      "protocol": "stratified_partition",
+      "feature_set": "audio_only",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration"
+      ],
+      "estimator_parameters": {
+        "bootstrap": true,
+        "ccp_alpha": 0.0,
+        "class_weight": null,
+        "criterion": "gini",
+        "max_depth": 4,
+        "max_features": "sqrt",
+        "max_leaf_nodes": null,
+        "max_samples": null,
+        "min_impurity_decrease": 0.0,
+        "min_samples_leaf": 5,
+        "min_samples_split": 2,
+        "min_weight_fraction_leaf": 0.0,
+        "monotonic_cst": null,
+        "n_estimators": 300,
+        "n_jobs": 1,
+        "oob_score": false,
+        "random_state": 42,
+        "verbose": 0,
+        "warm_start": false
+      },
+      "threshold": 0.5,
+      "path": "models/random_forest_baseline_v1/stratified_partition__random_forest__audio_only.joblib",
+      "sha256": "b1abec5581453178741abec88b155b86eae0dc1f7eaeccc582c38d92c05dc9ff"
+    },
+    {
+      "model": "random_forest",
+      "protocol": "stratified_partition",
+      "feature_set": "audio_artist_score",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration",
+        "artist_score"
+      ],
+      "estimator_parameters": {
+        "bootstrap": true,
+        "ccp_alpha": 0.0,
+        "class_weight": null,
+        "criterion": "gini",
+        "max_depth": 4,
+        "max_features": "sqrt",
+        "max_leaf_nodes": null,
+        "max_samples": null,
+        "min_impurity_decrease": 0.0,
+        "min_samples_leaf": 5,
+        "min_samples_split": 2,
+        "min_weight_fraction_leaf": 0.0,
+        "monotonic_cst": null,
+        "n_estimators": 300,
+        "n_jobs": 1,
+        "oob_score": false,
+        "random_state": 42,
+        "verbose": 0,
+        "warm_start": false
+      },
+      "threshold": 0.5,
+      "path": "models/random_forest_baseline_v1/stratified_partition__random_forest__audio_artist_score.joblib",
+      "sha256": "2b43ade61165d1cf943d7ee95816b8d4c9b591d71584d02d9d2e1435c65d453d"
+    },
+    {
+      "model": "random_forest",
+      "protocol": "artist_disjoint_partition",
+      "feature_set": "audio_only",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration"
+      ],
+      "estimator_parameters": {
+        "bootstrap": true,
+        "ccp_alpha": 0.0,
+        "class_weight": null,
+        "criterion": "gini",
+        "max_depth": 8,
+        "max_features": "sqrt",
+        "max_leaf_nodes": null,
+        "max_samples": null,
+        "min_impurity_decrease": 0.0,
+        "min_samples_leaf": 5,
+        "min_samples_split": 2,
+        "min_weight_fraction_leaf": 0.0,
+        "monotonic_cst": null,
+        "n_estimators": 300,
+        "n_jobs": 1,
+        "oob_score": false,
+        "random_state": 42,
+        "verbose": 0,
+        "warm_start": false
+      },
+      "threshold": 0.5,
+      "path": "models/random_forest_baseline_v1/artist_disjoint_partition__random_forest__audio_only.joblib",
+      "sha256": "df7c5d9201dbdf8f45739afe842904e70edfbc7b7e832effe7ccd389e8c92301"
+    },
+    {
+      "model": "random_forest",
+      "protocol": "artist_disjoint_partition",
+      "feature_set": "audio_artist_score",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration",
+        "artist_score"
+      ],
+      "estimator_parameters": {
+        "bootstrap": true,
+        "ccp_alpha": 0.0,
+        "class_weight": null,
+        "criterion": "gini",
+        "max_depth": 8,
+        "max_features": "sqrt",
+        "max_leaf_nodes": null,
+        "max_samples": null,
+        "min_impurity_decrease": 0.0,
+        "min_samples_leaf": 5,
+        "min_samples_split": 2,
+        "min_weight_fraction_leaf": 0.0,
+        "monotonic_cst": null,
+        "n_estimators": 300,
+        "n_jobs": 1,
+        "oob_score": false,
+        "random_state": 42,
+        "verbose": 0,
+        "warm_start": false
+      },
+      "threshold": 0.5,
+      "path": "models/random_forest_baseline_v1/artist_disjoint_partition__random_forest__audio_artist_score.joblib",
+      "sha256": "dc868d3b72e1d210d524aaa5130a6e053c5d5f8febd60c8df3235a013b237ddf"
+    },
+    {
+      "model": "svm_polynomial",
+      "protocol": "stratified_partition",
+      "feature_set": "audio_only",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration"
+      ],
+      "estimator_parameters": {
+        "C": 1.0,
+        "break_ties": false,
+        "cache_size": 512,
+        "class_weight": null,
+        "coef0": 1.0,
+        "decision_function_shape": "ovr",
+        "degree": 2,
+        "gamma": "scale",
+        "kernel": "poly",
+        "max_iter": -1,
+        "probability": false,
+        "random_state": 42,
+        "shrinking": true,
+        "tol": 0.001,
+        "verbose": false
+      },
+      "threshold": 0.0,
+      "path": "models/svm_polynomial_baseline_v1/stratified_partition__svm_polynomial__audio_only.joblib",
+      "sha256": "0923db94e16614a08a065c3f3f3420ae53714d8b059e97b284e56e16f2dae42a"
+    },
+    {
+      "model": "svm_polynomial",
+      "protocol": "stratified_partition",
+      "feature_set": "audio_artist_score",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration",
+        "artist_score"
+      ],
+      "estimator_parameters": {
+        "C": 0.1,
+        "break_ties": false,
+        "cache_size": 512,
+        "class_weight": null,
+        "coef0": 1.0,
+        "decision_function_shape": "ovr",
+        "degree": 3,
+        "gamma": 0.01,
+        "kernel": "poly",
+        "max_iter": -1,
+        "probability": false,
+        "random_state": 42,
+        "shrinking": true,
+        "tol": 0.001,
+        "verbose": false
+      },
+      "threshold": 0.0,
+      "path": "models/svm_polynomial_baseline_v1/stratified_partition__svm_polynomial__audio_artist_score.joblib",
+      "sha256": "34dd93e66be64f44056199f0db6a7cb1e34a0539ea70886963e97172d5bc04a0"
+    },
+    {
+      "model": "svm_polynomial",
+      "protocol": "artist_disjoint_partition",
+      "feature_set": "audio_only",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration"
+      ],
+      "estimator_parameters": {
+        "C": 1.0,
+        "break_ties": false,
+        "cache_size": 512,
+        "class_weight": null,
+        "coef0": 1.0,
+        "decision_function_shape": "ovr",
+        "degree": 2,
+        "gamma": "scale",
+        "kernel": "poly",
+        "max_iter": -1,
+        "probability": false,
+        "random_state": 42,
+        "shrinking": true,
+        "tol": 0.001,
+        "verbose": false
+      },
+      "threshold": 0.0,
+      "path": "models/svm_polynomial_baseline_v1/artist_disjoint_partition__svm_polynomial__audio_only.joblib",
+      "sha256": "8719e190b2ee3df79fcbff8d957067f330ce251aadd99da97a551063cfbdbb74"
+    },
+    {
+      "model": "svm_polynomial",
+      "protocol": "artist_disjoint_partition",
+      "feature_set": "audio_artist_score",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration",
+        "artist_score"
+      ],
+      "estimator_parameters": {
+        "C": 0.1,
+        "break_ties": false,
+        "cache_size": 512,
+        "class_weight": null,
+        "coef0": 1.0,
+        "decision_function_shape": "ovr",
+        "degree": 3,
+        "gamma": 0.01,
+        "kernel": "poly",
+        "max_iter": -1,
+        "probability": false,
+        "random_state": 42,
+        "shrinking": true,
+        "tol": 0.001,
+        "verbose": false
+      },
+      "threshold": 0.0,
+      "path": "models/svm_polynomial_baseline_v1/artist_disjoint_partition__svm_polynomial__audio_artist_score.joblib",
+      "sha256": "fa46f265d5fffff9ccf3af31a7e247eba22316852f61e86bd7452bc41bf997f3"
+    },
+    {
+      "model": "svm_rbf",
+      "protocol": "stratified_partition",
+      "feature_set": "audio_only",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration"
+      ],
+      "estimator_parameters": {
+        "C": 10.0,
+        "break_ties": false,
+        "cache_size": 512,
+        "class_weight": null,
+        "coef0": 0.0,
+        "decision_function_shape": "ovr",
+        "degree": 3,
+        "gamma": 0.1,
+        "kernel": "rbf",
+        "max_iter": -1,
+        "probability": false,
+        "random_state": 42,
+        "shrinking": true,
+        "tol": 0.001,
+        "verbose": false
+      },
+      "threshold": 0.0,
+      "path": "models/svm_rbf_baseline_v1/stratified_partition__svm_rbf__audio_only.joblib",
+      "sha256": "6cbe737870d9f2c33353961653102ae9ae918df344a911af8e8056d2cac4c501"
+    },
+    {
+      "model": "svm_rbf",
+      "protocol": "stratified_partition",
+      "feature_set": "audio_artist_score",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration",
+        "artist_score"
+      ],
+      "estimator_parameters": {
+        "C": 0.1,
+        "break_ties": false,
+        "cache_size": 512,
+        "class_weight": null,
+        "coef0": 0.0,
+        "decision_function_shape": "ovr",
+        "degree": 3,
+        "gamma": 0.01,
+        "kernel": "rbf",
+        "max_iter": -1,
+        "probability": false,
+        "random_state": 42,
+        "shrinking": true,
+        "tol": 0.001,
+        "verbose": false
+      },
+      "threshold": 0.0,
+      "path": "models/svm_rbf_baseline_v1/stratified_partition__svm_rbf__audio_artist_score.joblib",
+      "sha256": "5210769c3164060246e4ee33535babe969d7f2cccc677c6c6c5eb14a46ef668a"
+    },
+    {
+      "model": "svm_rbf",
+      "protocol": "artist_disjoint_partition",
+      "feature_set": "audio_only",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration"
+      ],
+      "estimator_parameters": {
+        "C": 0.1,
+        "break_ties": false,
+        "cache_size": 512,
+        "class_weight": null,
+        "coef0": 0.0,
+        "decision_function_shape": "ovr",
+        "degree": 3,
+        "gamma": 1.0,
+        "kernel": "rbf",
+        "max_iter": -1,
+        "probability": false,
+        "random_state": 42,
+        "shrinking": true,
+        "tol": 0.001,
+        "verbose": false
+      },
+      "threshold": 0.0,
+      "path": "models/svm_rbf_baseline_v1/artist_disjoint_partition__svm_rbf__audio_only.joblib",
+      "sha256": "a7cf99ea996f537ebfde92f3cfb5913212a82967689c77d4663b45ab65b31cfe"
+    },
+    {
+      "model": "svm_rbf",
+      "protocol": "artist_disjoint_partition",
+      "feature_set": "audio_artist_score",
+      "features": [
+        "tempo",
+        "loudness",
+        "duration",
+        "artist_score"
+      ],
+      "estimator_parameters": {
+        "C": 0.1,
+        "break_ties": false,
+        "cache_size": 512,
+        "class_weight": null,
+        "coef0": 0.0,
+        "decision_function_shape": "ovr",
+        "degree": 3,
+        "gamma": 0.01,
+        "kernel": "rbf",
+        "max_iter": -1,
+        "probability": false,
+        "random_state": 42,
+        "shrinking": true,
+        "tol": 0.001,
+        "verbose": false
+      },
+      "threshold": 0.0,
+      "path": "models/svm_rbf_baseline_v1/artist_disjoint_partition__svm_rbf__audio_artist_score.joblib",
+      "sha256": "42fdc693e4e6aa53d20d03373b8d99278ab4b375ca04c1ebb7bae85af5ca0ac6"
+    }
+  ]
+}

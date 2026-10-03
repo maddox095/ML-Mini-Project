@@ -1,0 +1,60 @@
+{
+  "bundles": [
+    {
+      "model": "decision_tree",
+      "run_id": "decision_tree_baseline_v1",
+      "setting_records": 432,
+      "bundle": "models/reproducibility/decision_tree",
+      "archive": "models/reproducibility/decision_tree.zip",
+      "archive_sha256": "3b45cfdf9c592271beea0f61ba89648d814823211277dca275e082352e9fbe4a"
+    },
+    {
+      "model": "logistic_regression",
+      "run_id": "logistic_regression_baseline_v2",
+      "setting_records": 180,
+      "bundle": "models/reproducibility/logistic_regression",
+      "archive": "models/reproducibility/logistic_regression.zip",
+      "archive_sha256": "2f621b1cfb7629dcec37cb92b68f46c11481fd76fddac370bf1e67fca1ee0605"
+    },
+    {
+      "model": "neural_network",
+      "run_id": "neural_network_baseline_v1",
+      "setting_records": 144,
+      "bundle": "models/reproducibility/neural_network",
+      "archive": "models/reproducibility/neural_network.zip",
+      "archive_sha256": "adb18f72207a19ce699c384078bcc485c1cbe5d4ace9fa4c501616a634206007"
+    },
+    {
+      "model": "random_forest",
+      "run_id": "random_forest_baseline_v1",
+      "setting_records": 216,
+      "bundle": "models/reproducibility/random_forest",
+      "archive": "models/reproducibility/random_forest.zip",
+      "archive_sha256": "7b2ff196224100b289f5e135a1aad32e8a7ded90483e01a5b40cf3b6b5336795"
+    },
+    {
+      "model": "svm_linear",
+      "run_id": "linear_svm_baseline_v1",
+      "setting_records": 144,
+      "bundle": "models/reproducibility/svm_linear",
+      "archive": "models/reproducibility/svm_linear.zip",
+      "archive_sha256": "cc636b80e7023c42f2a941e4c2a831a3544bf505ebeed32fb52e1a090b5cc816"
+    },
+    {
+      "model": "svm_polynomial",
+      "run_id": "svm_polynomial_baseline_v1",
+      "setting_records": 432,
+      "bundle": "models/reproducibility/svm_polynomial",
+      "archive": "models/reproducibility/svm_polynomial.zip",
+      "archive_sha256": "c8051933746a0827a44d9625292937311aaf09c2b00bc9dbec674382a1f895a7"
+    },
+    {
+      "model": "svm_rbf",
+      "run_id": "svm_rbf_baseline_v1",
+      "setting_records": 576,
+      "bundle": "models/reproducibility/svm_rbf",
+      "archive": "models/reproducibility/svm_rbf.zip",
+      "archive_sha256": "e273b8d7e7c56f64afedab8c6c163582d1e96c072b8252fe3ed6dcfd8eb0bf73"
+    }
+  ]
+}

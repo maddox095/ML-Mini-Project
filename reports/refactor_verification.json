@@ -1,0 +1,158 @@
+{
+  "models": [
+    {
+      "model": "logistic_regression",
+      "refactored_inner_fit_metric_differences": {
+        "accuracy": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "roc_auc": 0.0,
+        "average_precision": 0.0
+      },
+      "refactored_outer_evaluation_metric_differences": {
+        "accuracy": 0.0,
+        "precision": 1.1102230246251565e-16,
+        "recall": 0.0,
+        "f1": 0.0,
+        "roc_auc": 0.0,
+        "average_precision": 0.0,
+        "log_loss": 5.551115123125783e-17,
+        "brier_score": 9.71445146547012e-17
+      }
+    },
+    {
+      "model": "polynomial_logistic",
+      "refactored_inner_fit_metric_differences": {
+        "accuracy": 0.0,
+        "precision": 1.1102230246251565e-16,
+        "recall": 0.0,
+        "f1": 0.0,
+        "roc_auc": 0.0,
+        "average_precision": 0.0
+      },
+      "refactored_outer_evaluation_metric_differences": {
+        "accuracy": 0.0,
+        "precision": 1.1102230246251565e-16,
+        "recall": 0.0,
+        "f1": 0.0,
+        "roc_auc": 0.0,
+        "average_precision": 0.0,
+        "log_loss": 5.551115123125783e-17,
+        "brier_score": 6.938893903907228e-17
+      }
+    },
+    {
+      "model": "decision_tree",
+      "refactored_inner_fit_metric_differences": {
+        "accuracy": 0.0,
+        "precision": 1.1102230246251565e-16,
+        "recall": 0.0,
+        "f1": 0.0,
+        "roc_auc": 0.0,
+        "average_precision": 0.0
+      },
+      "refactored_outer_evaluation_metric_differences": {
+        "accuracy": 0.0,
+        "precision": 1.1102230246251565e-16,
+        "recall": 0.0,
+        "f1": 0.0,
+        "roc_auc": 0.0,
+        "average_precision": 0.0,
+        "log_loss": 5.551115123125783e-17,
+        "brier_score": 8.326672684688674e-17
+      }
+    },
+    {
+      "model": "bagged_trees",
+      "refactored_inner_fit_metric_differences": {
+        "accuracy": 0.0,
+        "precision": 1.1102230246251565e-16,
+        "recall": 0.0,
+        "f1": 0.0,
+        "roc_auc": 0.0,
+        "average_precision": 0.0
+      },
+      "refactored_outer_evaluation_metric_differences": {
+        "accuracy": 0.0,
+        "precision": 1.1102230246251565e-16,
+        "recall": 0.0,
+        "f1": 0.0,
+        "roc_auc": 1.1102230246251565e-16,
+        "average_precision": 1.1102230246251565e-16,
+        "log_loss": 5.551115123125783e-17,
+        "brier_score": 5.551115123125783e-17
+      }
+    },
+    {
+      "model": "random_forest",
+      "refactored_inner_fit_metric_differences": {
+        "accuracy": 0.0,
+        "precision": 1.1102230246251565e-16,
+        "recall": 0.0,
+        "f1": 0.0,
+        "roc_auc": 0.0,
+        "average_precision": 0.0
+      },
+      "refactored_outer_evaluation_metric_differences": {
+        "accuracy": 0.0,
+        "precision": 1.1102230246251565e-16,
+        "recall": 0.0,
+        "f1": 0.0,
+        "roc_auc": 0.0,
+        "average_precision": 0.0,
+        "log_loss": 5.551115123125783e-17,
+        "brier_score": 8.326672684688674e-17
+      }
+    },
+    {
+      "model": "adaboost",
+      "refactored_inner_fit_metric_differences": {
+        "accuracy": 0.0,
+        "precision": 1.1102230246251565e-16,
+        "recall": 0.0,
+        "f1": 0.0,
+        "roc_auc": 0.0,
+        "average_precision": 0.0
+      },
+      "refactored_outer_evaluation_metric_differences": {
+        "accuracy": 0.0,
+        "precision": 1.1102230246251565e-16,
+        "recall": 0.0,
+        "f1": 0.0,
+        "roc_auc": 0.0,
+        "average_precision": 0.0,
+        "log_loss": 5.551115123125783e-17,
+        "brier_score": 8.326672684688674e-17
+      }
+    },
+    {
+      "model": "gradient_boosting",
+      "refactored_inner_fit_metric_differences": {
+        "accuracy": 0.0,
+        "precision": 1.1102230246251565e-16,
+        "recall": 0.0,
+        "f1": 0.0,
+        "roc_auc": 0.0,
+        "average_precision": 0.0
+      },
+      "refactored_outer_evaluation_metric_differences": {
+        "accuracy": 0.0,
+        "precision": 1.1102230246251565e-16,
+        "recall": 0.0,
+        "f1": 0.0,
+        "roc_auc": 0.0,
+        "average_precision": 0.0,
+        "log_loss": 5.551115123125783e-17,
+        "brier_score": 5.551115123125783e-17
+      }
+    }
+  ],
+  "test_rows_loaded": false,
+  "published_inference_example": {
+    "predicted_hit": 1,
+    "probability": 0.9403508771929825,
+    "model": "decision_tree",
+    "version": "final_suite_v1"
+  }
+}

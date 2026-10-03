@@ -45,3 +45,16 @@ Correlations are descriptive only and must not be interpreted as causal effects.
 | duration     |  -0.026 |     -0.02  |      1     |          0.02  |  0.038 |
 | artist_score |  -0.049 |      0.221 |      0.02  |          1     |  0.662 |
 | hit          |  -0.059 |      0.297 |      0.038 |          0.662 |  1     |
+
+## Descriptive outlier review
+
+Pooled 1.5-IQR fences flag unusual values for inspection, not automatic removal.
+Any fitted clipping or transformation must use training data only.
+
+| Feature | Minimum | Maximum | Rows outside 1.5-IQR fences |
+| --- | ---: | ---: | ---: |
+| tempo | 10.456 | 248.640 | 55 |
+| loudness | -48.671 | -0.678 | 168 |
+| duration | 13.009 | 2513.162 | 331 |
+
+No rows were removed or clipped by this descriptive report.

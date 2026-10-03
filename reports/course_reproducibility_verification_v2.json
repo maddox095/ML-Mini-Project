@@ -1,0 +1,166 @@
+{
+  "models": [
+    {
+      "model": "logistic_regression",
+      "zip_crc_verified": true,
+      "all_file_hashes_verified": true,
+      "copied_inner_fit_metric_differences": {
+        "accuracy": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "roc_auc": 0.0,
+        "average_precision": 0.0
+      },
+      "saved_outer_models_metric_differences": {
+        "accuracy": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "roc_auc": 0.0,
+        "average_precision": 0.0
+      },
+      "round_trip_verified": true,
+      "settings_count": 36
+    },
+    {
+      "model": "polynomial_logistic",
+      "zip_crc_verified": true,
+      "all_file_hashes_verified": true,
+      "copied_inner_fit_metric_differences": {
+        "accuracy": 0.0,
+        "precision": 1.1102230246251565e-16,
+        "recall": 0.0,
+        "f1": 0.0,
+        "roc_auc": 0.0,
+        "average_precision": 0.0
+      },
+      "saved_outer_models_metric_differences": {
+        "accuracy": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "roc_auc": 0.0,
+        "average_precision": 0.0
+      },
+      "round_trip_verified": true,
+      "settings_count": 36
+    },
+    {
+      "model": "decision_tree",
+      "zip_crc_verified": true,
+      "all_file_hashes_verified": true,
+      "copied_inner_fit_metric_differences": {
+        "accuracy": 0.0,
+        "precision": 1.1102230246251565e-16,
+        "recall": 0.0,
+        "f1": 0.0,
+        "roc_auc": 0.0,
+        "average_precision": 0.0
+      },
+      "saved_outer_models_metric_differences": {
+        "accuracy": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "roc_auc": 0.0,
+        "average_precision": 0.0
+      },
+      "round_trip_verified": true,
+      "settings_count": 108
+    },
+    {
+      "model": "bagged_trees",
+      "zip_crc_verified": true,
+      "all_file_hashes_verified": true,
+      "copied_inner_fit_metric_differences": {
+        "accuracy": 0.0,
+        "precision": 1.1102230246251565e-16,
+        "recall": 0.0,
+        "f1": 0.0,
+        "roc_auc": 0.0,
+        "average_precision": 0.0
+      },
+      "saved_outer_models_metric_differences": {
+        "accuracy": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "roc_auc": 0.0,
+        "average_precision": 0.0
+      },
+      "round_trip_verified": true,
+      "settings_count": 48
+    },
+    {
+      "model": "random_forest",
+      "zip_crc_verified": true,
+      "all_file_hashes_verified": true,
+      "copied_inner_fit_metric_differences": {
+        "accuracy": 0.0,
+        "precision": 1.1102230246251565e-16,
+        "recall": 0.0,
+        "f1": 0.0,
+        "roc_auc": 0.0,
+        "average_precision": 0.0
+      },
+      "saved_outer_models_metric_differences": {
+        "accuracy": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "roc_auc": 0.0,
+        "average_precision": 0.0
+      },
+      "round_trip_verified": true,
+      "settings_count": 72
+    },
+    {
+      "model": "adaboost",
+      "zip_crc_verified": true,
+      "all_file_hashes_verified": true,
+      "copied_inner_fit_metric_differences": {
+        "accuracy": 0.0,
+        "precision": 1.1102230246251565e-16,
+        "recall": 0.0,
+        "f1": 0.0,
+        "roc_auc": 0.0,
+        "average_precision": 0.0
+      },
+      "saved_outer_models_metric_differences": {
+        "accuracy": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "roc_auc": 0.0,
+        "average_precision": 0.0
+      },
+      "round_trip_verified": true,
+      "settings_count": 48
+    },
+    {
+      "model": "gradient_boosting",
+      "zip_crc_verified": true,
+      "all_file_hashes_verified": true,
+      "copied_inner_fit_metric_differences": {
+        "accuracy": 0.0,
+        "precision": 1.1102230246251565e-16,
+        "recall": 0.0,
+        "f1": 0.0,
+        "roc_auc": 0.0,
+        "average_precision": 0.0
+      },
+      "saved_outer_models_metric_differences": {
+        "accuracy": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "roc_auc": 0.0,
+        "average_precision": 0.0
+      },
+      "round_trip_verified": true,
+      "settings_count": 72
+    }
+  ],
+  "all_original_test_sets_unloaded": true
+}

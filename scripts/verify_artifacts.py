@@ -4,6 +4,7 @@ Run from any folder: python scripts/verify_artifacts.py
 This never fits models, reads test rows or changes previous artifacts.
 """
 
+import hashlib
 import json
 from pathlib import Path
 import sys
@@ -30,7 +31,13 @@ def verify_run(folder, *, course=False):
         verify_file(ROOT / artifact["path"], artifact["sha256"])
     if course:
         verify_file(ROOT / "data/interim/model_table.parquet", manifest["source_sha256"])
-        verify_file(ROOT / "data/processed/user2_splits.csv", manifest["splits_sha256"])
+        splits = (ROOT / "data/processed/user2_splits.csv").read_bytes()
+        if hashlib.sha256(splits).hexdigest() != manifest["splits_sha256"]:
+            # Historical runs hashed CRLF bytes. Require identical assignments
+            # after the repository's LF migration; retain original run records.
+            original = splits.replace(b"\r\n", b"\n").replace(b"\n", b"\r\n")
+            if hashlib.sha256(original).hexdigest() != manifest["splits_sha256"]:
+                raise ValueError("Saved split assignments changed")
     else:
         verify_file(ROOT / "models/best_pipeline.joblib", manifest["best_pipeline_sha256"])
         verify_file(folder / "selection.json", manifest["selection_sha256"])
@@ -44,20 +51,27 @@ def verify_bundles(index_path):
         with zipfile.ZipFile(archive) as saved:
             if saved.testzip() is not None:
                 raise ValueError(f"Corrupt archive: {archive}")
-        bundle = archive.with_suffix("")
-        record = json.loads((bundle / "bundle_manifest.json").read_text(encoding="utf-8"))
-        for name, expected in record["file_hashes"].items():
-            verify_file(bundle / name, expected)
+            record = json.loads(saved.read("bundle_manifest.json"))
+            for name, expected in record["file_hashes"].items():
+                if hashlib.sha256(saved.read(name)).hexdigest() != expected:
+                    raise ValueError(f"Saved bundle member checksum changed: {archive}/{name}")
+            original_splits = saved.read("data/processed/user2_splits.csv")
+            current_splits = (ROOT / "data/processed/user2_splits.csv").read_bytes()
+            if original_splits.replace(b"\r\n", b"\n") != current_splits:
+                raise ValueError(f"Saved bundle split assignments changed: {archive}")
         print(f"Verified {entry['model']}: complete ZIP and recorded files", flush=True)
     return len(index["bundles"])
 
 
 def main():
-    verify_run(ROOT / "reports/runs/final_suite_v1")
-    verify_run(ROOT / "reports/runs/course_accuracy_v2", course=True)
+    # Expanded run directories are optional; their records are also in ZIPs.
+    for run_id, course in [("final_suite_v1", False), ("course_accuracy_v2", True)]:
+        folder = ROOT / "reports/runs" / run_id
+        if folder.is_dir():
+            verify_run(folder, course=course)
     count = verify_bundles(ROOT / "models/reproducibility/index.json")
     count += verify_bundles(ROOT / "models/reproducibility_v2/course_accuracy_v2/index.json")
-    print(f"Verified original/final runs, inputs and all {count} saved bundles.")
+    print(f"Verified all {count} saved bundles, split assignments and available local runs.")
 
 
 if __name__ == "__main__":

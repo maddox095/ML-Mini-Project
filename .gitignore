@@ -4,7 +4,15 @@ __pycache__/
 .pytest_cache/
 .env
 .tools/
-/models/
+/models/**
+!/models/**/
+!/models/**/*.joblib
+!/models/**/metadata.json
+!/models/**/index.json
+!/models/**/*.zip
+# Expanded bundles duplicate the published ZIPs and preserve historical bytes.
+/models/reproducibility/*/
+/models/reproducibility_v2/course_accuracy_v2/*/
 
 # Raw and generated data are intentionally local; manifests and documentation are tracked.
 data/raw/*
@@ -20,6 +28,9 @@ reports/*.csv
 reports/*.json
 reports/*.png
 reports/*.parquet
+!reports/model_comparison.csv
+!reports/frozen_hyperparameters.json
+!reports/*verification*.json
 reports/figures/*
 reports/runs/
 !reports/figures/.gitkeep
