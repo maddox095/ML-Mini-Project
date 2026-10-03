@@ -104,6 +104,22 @@ The new forest is saved separately as a development candidate. The browser
 demo and final submission report remain pending.
 [User 2 workflow](docs/USER2_PLAN.md).
 
+## Streamlit demo and deployment
+
+The assignment-aligned browser app is `app/app.py`. It loads the published v1
+decision tree, verifies its checksum, and shows the model version, predicted
+class, balanced-sample probability and artist-disjoint held-out evidence.
+
+```bash
+python -m pip install -r app/requirements.txt
+streamlit run app/app.py
+```
+
+For public deployment, use Streamlit Community Cloud with repository
+`maddox095/ML-Mini-Project`, branch `main`, and entry point `app/app.py`.
+The model artifacts use Git LFS, which Community Cloud supports. See
+[`app/README.md`](app/README.md) for the complete deployment steps.
+
 ## Code layout
 
 | Path | Responsibility |

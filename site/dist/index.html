@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Interactive demo of the HitPredict research classifier." />
+    <title>HitPredict — model demo</title>
+    <style>
+      :root { --ink:#10233e; --muted:#5a6880; --paper:#f7f8fc; --card:#fff; --line:#dce2ed; --blue:#3458db; --aqua:#00a6a6; --warn:#b45309; }
+      * { box-sizing:border-box; } body { margin:0; background:var(--paper); color:var(--ink); font:16px/1.5 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+      main { width:min(980px,calc(100% - 32px)); margin:0 auto; padding:56px 0 72px; }
+      .eyebrow { color:var(--blue); font-size:.78rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase; }
+      h1 { max-width:700px; font-size:clamp(2.3rem,6vw,4.5rem); letter-spacing:-.055em; line-height:1; margin:.3rem 0 1.1rem; }
+      .intro { max-width:720px; color:var(--muted); font-size:1.1rem; } .grid { display:grid; grid-template-columns:minmax(0,1fr) minmax(280px,.82fr); gap:22px; margin-top:32px; }
+      .card { background:var(--card); border:1px solid var(--line); border-radius:18px; padding:26px; box-shadow:0 10px 30px rgba(28,45,85,.05); }
+      h2 { margin:0 0 14px; font-size:1.2rem; } label { display:block; font-weight:700; margin:17px 0 6px; } .hint { color:var(--muted); font-size:.84rem; font-weight:400; }
+      input { width:100%; border:1px solid #bac5d8; border-radius:9px; padding:11px; font:inherit; color:var(--ink); } input:focus { outline:3px solid #b9c8ff; border-color:var(--blue); }
+      fieldset { border:0; padding:0; margin:17px 0 0; } legend { font-weight:700; margin-bottom:8px; } .choices { display:flex; gap:10px; } .choice { flex:1; border:1px solid #bac5d8; border-radius:9px; padding:10px; cursor:pointer; text-align:center; } .choice:has(input:checked) { background:#edf0ff; border-color:var(--blue); } .choice input { width:auto; margin-right:6px; }
+      button { margin-top:24px; width:100%; border:0; border-radius:9px; background:var(--blue); color:#fff; cursor:pointer; font:700 1rem inherit; padding:13px; } button:hover { background:#2748bd; }
+      .placeholder { color:var(--muted); } .result { display:none; } .result.visible { display:block; } .badge { display:inline-block; border-radius:99px; padding:5px 10px; font-size:.78rem; font-weight:800; text-transform:uppercase; letter-spacing:.05em; } .badge.hit { background:#d8f5ed; color:#047857; } .badge.nonhit { background:#fff0df; color:var(--warn); }
+      .probability { font-size:3.2rem; font-weight:800; letter-spacing:-.06em; margin:8px 0; } .metric { border-top:1px solid var(--line); margin-top:20px; padding-top:17px; color:var(--muted); font-size:.92rem; } details { margin-top:23px; } summary { cursor:pointer; font-weight:700; } .notice { margin-top:22px; padding:15px 17px; border-left:4px solid var(--aqua); background:#eefafa; color:#25475b; border-radius:0 10px 10px 0; font-size:.91rem; }
+      footer { color:var(--muted); font-size:.86rem; margin-top:26px; } @media (max-width:720px) { main { padding-top:34px; } .grid { grid-template-columns:1fr; } }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="eyebrow">HitPredict · research demo</div>
+      <h1>Explore a song’s model prediction.</h1>
+      <p class="intro">Enter four published inputs to run the frozen v1 decision-tree classifier directly in your browser. This is a demonstration of the project model, not a forecast of real-world commercial success.</p>
+      <section class="grid" aria-label="Prediction tool">
+        <form class="card" id="prediction-form">
+          <h2>Song inputs</h2>
+          <label for="tempo">Tempo <span class="hint">beats per minute</span></label><input id="tempo" name="tempo" type="number" min="1" max="300" step="0.1" value="120" required />
+          <label for="loudness">Loudness <span class="hint">dB</span></label><input id="loudness" name="loudness" type="number" min="-60" max="0" step="0.1" value="-8" required />
+          <label for="duration">Duration <span class="hint">seconds</span></label><input id="duration" name="duration" type="number" min="1" max="3600" step="1" value="210" required />
+          <fieldset><legend>Prior-hit Artist Score</legend><div class="choices"><label class="choice"><input name="artist-score" type="radio" value="0" checked /> No prior hit</label><label class="choice"><input name="artist-score" type="radio" value="1" /> Prior hit</label></div></fieldset>
+          <button type="submit">Run prediction</button>
+        </form>
+        <section class="card" aria-live="polite">
+          <div id="placeholder" class="placeholder"><h2>Your result</h2><p>Set the inputs and run the model.</p></div>
+          <div id="result" class="result"><span id="badge" class="badge"></span><div id="probability" class="probability"></div><h2 id="outcome"></h2><p id="explanation"></p><div class="metric">Published evaluation: <strong>79.20% accuracy</strong> on 976 artist-disjoint held-out songs.</div></div>
+          <details><summary>How to interpret this</summary><p>“Artist Score” is 1 only if the normalized artist had a chart event before this song’s reference date. The displayed percentage is the tree’s probability within a deliberately balanced research sample. It does not estimate a song’s commercial-success probability.</p></details>
+        </section>
+      </section>
+      <div class="notice">Model: <strong>final_suite_v1 decision tree</strong> · Inputs: tempo, loudness, duration, Artist Score · The app does not upload or retain your values.</div>
+      <footer>HitPredict uses Million Song Dataset descriptors and historical Billboard labels. Exact matching and finite chart history may leave label noise.</footer>
+    </main>
+    <script>
+      const form = document.querySelector('#prediction-form');
+      const result = document.querySelector('#result');
+      const placeholder = document.querySelector('#placeholder');
+      let model;
+      function score(values) {
+        let node = 0;
+        while (model.nodes[node].feature >= 0) {
+          const current = model.nodes[node];
+          node = values[current.feature] <= current.threshold ? current.left : current.right;
+        }
+        return model.nodes[node].hit_probability;
+      }
+      fetch('./model.json').then(response => response.json()).then(data => { model = data; }).catch(() => { document.querySelector('button').disabled = true; });
+      form.addEventListener('submit', event => {
+        event.preventDefault();
+        if (!model || !form.reportValidity()) return;
+        const values = [Number(form.tempo.value), Number(form.loudness.value), Number(form.duration.value), Number(form.querySelector('input[name="artist-score"]:checked').value)];
+        const probability = score(values); const isHit = probability >= model.threshold;
+        document.querySelector('#probability').textContent = `${(probability * 100).toFixed(1)}%`;
+        document.querySelector('#outcome').textContent = isHit ? 'Predicted hit candidate' : 'Predicted non-hit candidate';
+        document.querySelector('#explanation').textContent = `The frozen decision tree assigned this input a ${isHit ? 'hit' : 'non-hit'} class at its fixed 0.50 threshold.`;
+        const badge = document.querySelector('#badge'); badge.textContent = isHit ? 'Hit candidate' : 'Non-hit candidate'; badge.className = `badge ${isHit ? 'hit' : 'nonhit'}`;
+        placeholder.hidden = true; result.classList.add('visible');
+      });
+    </script>
+  </body>
+</html>
