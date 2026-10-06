@@ -54,19 +54,23 @@ def choose_candidate(results, config):
         & ~results.feature_set.isin(config["diagnostic_feature_sets"])].copy()
     if eligible.empty:
         raise ValueError("No eligible training-validation candidate")
-    best = float(eligible.cv_roc_auc_mean.max())
-    eligible = eligible.loc[eligible.cv_roc_auc_mean >= best - config["simplicity_auc_margin"]]
-    eligible["simplicity"] = eligible.model.map({model: i for i, model in enumerate(config["model_simplicity_order"])})
-    if eligible.simplicity.isna().any():
-        raise ValueError("Missing predefined model simplicity rank")
-    eligible["features"] = eligible.feature_set.map(lambda name: len(config["feature_sets"][name]))
-    choice = eligible.sort_values(["simplicity", "features", "cv_roc_auc_mean"],
-                                 ascending=[True, True, False]).iloc[0]
+    best_auc = float(eligible.cv_roc_auc_mean.max())
+    deployment_model = config.get("deployment_model")
+    if deployment_model is not None:
+        if deployment_model not in MODELS:
+            raise ValueError("Unknown configured deployment model")
+        eligible = eligible.loc[eligible.model.eq(deployment_model)]
+        if eligible.empty:
+            raise ValueError("Configured deployment model has no completed validation results")
+    choice = eligible.sort_values(["cv_accuracy_mean", "cv_roc_auc_mean", "model", "feature_set"],
+                                 ascending=[False, False, True, True]).iloc[0]
     return {"model": choice.model, "feature_set": choice.feature_set,
         "protocol": choice.protocol, "run_id": choice.run_id, "artifact": choice.artifact,
-        "cv_roc_auc_mean": float(choice.cv_roc_auc_mean), "best_cv_roc_auc_mean": best,
-        "policy": f"Artist-disjoint nested CV ROC-AUC within {config['simplicity_auc_margin']} of best; predefined family simplicity order, then fewer inputs, then larger CV AUC.",
-        "simplicity_order": config["model_simplicity_order"]}
+        "cv_roc_auc_mean": float(choice.cv_roc_auc_mean), "best_cv_roc_auc_mean": best_auc,
+        "cv_accuracy_mean": float(choice.cv_accuracy_mean),
+        "policy": "Highest training nested-CV accuracy" +
+                  (f" within the configured deployment family {deployment_model}" if deployment_model else " across eligible families") +
+                  "; CV AUC resolves accuracy ties. Test scores and model simplicity are not selection criteria."}
 
 
 def evaluate_frozen(selection, output, *, models=None):

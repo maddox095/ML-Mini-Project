@@ -8,7 +8,7 @@ and ensembles only.
 
 The original decision tree was selected using ROC-AUC and a simplicity rule,
 then achieved 79.20% on the original artist-disjoint test set. The original
-forest achieved 82.48% on that test set. Those results remain the v1 benchmark.
+forest achieved 82.48% on that test set. Those results remain the v1 benchmark. The saved original forest is now the selected deployment model for the CLI and demo source, version `random_forest_v1_deployment`. Its promotion followed review of the completed comparison; it is not a fresh independent test. The original tree selection is preserved as historical evidence.
 
 `configs/accuracy_v2.yaml` declares seven allowed model families:
 

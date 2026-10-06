@@ -39,7 +39,9 @@ def verify_run(folder, *, course=False):
             if hashlib.sha256(original).hexdigest() != manifest["splits_sha256"]:
                 raise ValueError("Saved split assignments changed")
     else:
-        verify_file(ROOT / "models/best_pipeline.joblib", manifest["best_pipeline_sha256"])
+        archived = ROOT / "models/deployments" / folder.name / "best_pipeline.joblib"
+        verify_file(archived if archived.exists() else ROOT / "models/best_pipeline.joblib",
+                    manifest["best_pipeline_sha256"])
         verify_file(folder / "selection.json", manifest["selection_sha256"])
 
 
@@ -64,6 +66,9 @@ def verify_bundles(index_path):
 
 
 def main():
+    active = json.loads((ROOT / "models/metadata.json").read_text(encoding="utf-8"))
+    verify_file(ROOT / "models/best_pipeline.joblib", active["sha256"])
+    verify_file(ROOT / active["selection"]["artifact"], active["sha256"])
     # Expanded run directories are optional; their records are also in ZIPs.
     for run_id, course in [("final_suite_v1", False), ("course_accuracy_v2", True)]:
         folder = ROOT / "reports/runs" / run_id

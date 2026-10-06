@@ -258,16 +258,15 @@ def run(*, config_path: str = "configs/models.yaml", run_id: str | None = None,
             eligible = results.loc[(results.protocol == config["primary_protocol"])
                 & (results.model == config["model"])
                 & ~results.feature_set.isin(config["diagnostic_feature_sets"])].copy()
-            best_auc = eligible.cv_roc_auc_mean.max()
-            eligible = eligible.loc[eligible.cv_roc_auc_mean >= best_auc - config["simplicity_auc_margin"]]
-            eligible["feature_count"] = eligible.feature_set.map(lambda label: len(config["feature_sets"][label]))
-            candidate = eligible.sort_values(["feature_count", "cv_roc_auc_mean"], ascending=[True, False]).iloc[0]
+            candidate = eligible.sort_values(["cv_accuracy_mean", "cv_roc_auc_mean", "feature_set"],
+                                             ascending=[False, False, True]).iloc[0]
             manifest["candidate"] = {"feature_set": candidate.feature_set, "artifact": candidate.artifact,
                 "selected_C": None if pd.isna(candidate.selected_C) else float(candidate.selected_C),
                 "selected_parameters": json.loads(candidate.selected_parameters),
                 "selection_protocol": config["primary_protocol"],
                 "cv_roc_auc_mean": float(candidate.cv_roc_auc_mean),
-                "selection_policy": f"Within {config['simplicity_auc_margin']} of best nested CV ROC-AUC, prefer fewer features; baseline candidate only."}
+                "cv_accuracy_mean": float(candidate.cv_accuracy_mean),
+                "selection_policy": "Highest nested CV accuracy within this model family; CV AUC resolves accuracy ties. Training-only candidate."}
             X, y, metadata = loaded_training[config["primary_protocol"]]
             robustness = robustness_checks(joblib.load(repo_path(candidate.artifact)), X, y, metadata,
                                           config["primary_protocol"], config)

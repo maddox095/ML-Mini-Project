@@ -1,12 +1,13 @@
 # Default model plus implemented alternatives. Final test partitions stay reserved.
-model: logistic_regression
+model: random_forest
+deployment_model: random_forest
 seed: 42
 protocols: [stratified_partition, artist_disjoint_partition]
 primary_protocol: artist_disjoint_partition
 cv:
   outer_folds: 5
   inner_folds: 5
-  selection_metric: roc_auc
+  selection_metric: accuracy
   n_jobs: 1
 feature_sets:
   audio_only: [tempo, loudness, duration]
@@ -65,6 +66,4 @@ neural_network:
   tol: 0.00001
   alpha_grid: [0.00001, 0.0001, 0.001, 0.01]
 decision_threshold: 0.5
-simplicity_auc_margin: 0.01
 robustness_seeds: [42, 7, 123]
-model_simplicity_order: [logistic_regression, svm_linear, decision_tree, random_forest, svm_rbf, svm_polynomial, neural_network]

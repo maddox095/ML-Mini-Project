@@ -16,4 +16,4 @@ Total: 2,124 setting/stage records, each with JSON parameters and runnable train
 
 [Reuse instructions](../docs/MODEL_REPRODUCIBILITY.md). [Final results](final_model_results.md).
 
-The selected pipeline is `models/best_pipeline.joblib`; complete frozen parameters are in `reports/frozen_hyperparameters.json`. ZIP bundles and fitted checkpoints are published with Git LFS; run `git lfs pull` after cloning. Expanded bundles and run directories remain local, with experiment records preserved inside the ZIPs.
+The selected deployment pipeline is the original random forest at `models/best_pipeline.joblib`; current configuration, metrics and checksum are in `models/metadata.json`. Original experiment parameters and the historical pre-test selection remain in `reports/frozen_hyperparameters.json`. The forest was promoted after reviewing the completed comparison and records 82.48% primary test accuracy. The original ZIP bundles are preserved unchanged. ZIP bundles and fitted checkpoints are published with Git LFS; run `git lfs pull` after cloning. Expanded bundles and run directories remain local, with experiment records preserved inside the ZIPs.

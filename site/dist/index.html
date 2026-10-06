@@ -26,7 +26,7 @@
     <main>
       <div class="eyebrow">HitPredict · research demo</div>
       <h1>Explore a song’s model prediction.</h1>
-      <p class="intro">Enter four published inputs to run the frozen v1 decision-tree classifier directly in your browser. This is a demonstration of the project model, not a forecast of real-world commercial success.</p>
+      <p class="intro">Enter four published inputs to run the selected 300-tree random forest directly in your browser. Its scores describe the project’s balanced historical research sample.</p>
       <section class="grid" aria-label="Prediction tool">
         <form class="card" id="prediction-form">
           <h2>Song inputs</h2>
@@ -38,11 +38,11 @@
         </form>
         <section class="card" aria-live="polite">
           <div id="placeholder" class="placeholder"><h2>Your result</h2><p>Set the inputs and run the model.</p></div>
-          <div id="result" class="result"><span id="badge" class="badge"></span><div id="probability" class="probability"></div><h2 id="outcome"></h2><p id="explanation"></p><div class="metric">Published evaluation: <strong>79.20% accuracy</strong> on 976 artist-disjoint held-out songs.</div></div>
-          <details><summary>How to interpret this</summary><p>“Artist Score” is 1 only if the normalized artist had a chart event before this song’s reference date. The displayed percentage is the tree’s probability within a deliberately balanced research sample. It does not estimate a song’s commercial-success probability.</p></details>
+          <div id="result" class="result"><span id="badge" class="badge"></span><div id="probability" class="probability"></div><h2 id="outcome"></h2><p id="explanation"></p><div class="metric">Recorded evaluation: <strong id="accuracy">82.48% accuracy</strong> on 976 artist-disjoint held-out songs.</div></div>
+          <details><summary>How to interpret this</summary><p>“Artist Score” is 1 only if the normalized artist had a chart event before this song’s reference date. The percentage averages the 300 trees’ probabilities within a balanced research sample. It does not estimate a song’s commercial-success probability. The forest had the highest observed accuracy in the original comparison and was chosen for deployment after reviewing those results.</p></details>
         </section>
       </section>
-      <div class="notice">Model: <strong>final_suite_v1 decision tree</strong> · Inputs: tempo, loudness, duration, Artist Score · The app does not upload or retain your values.</div>
+      <div class="notice">Model: <strong id="model-version">random_forest_v1_deployment random forest</strong> · Inputs: tempo, loudness, duration, Artist Score · The app does not upload or retain your values.</div>
       <footer>HitPredict uses Million Song Dataset descriptors and historical Billboard labels. Exact matching and finite chart history may leave label noise.</footer>
     </main>
     <script>
@@ -51,22 +51,37 @@
       const placeholder = document.querySelector('#placeholder');
       let model;
       function score(values) {
-        let node = 0;
-        while (model.nodes[node].feature >= 0) {
-          const current = model.nodes[node];
-          node = values[current.feature] <= current.threshold ? current.left : current.right;
+        const prepared = values.map((value, index) => Math.fround(
+          value == null && index < 3 ? model.imputer_medians[index] : value
+        ));
+        let total = 0;
+        for (const nodes of model.trees) {
+          let node = 0;
+          while (nodes[node].feature >= 0) {
+            const current = nodes[node];
+            node = prepared[current.feature] <= current.threshold ? current.left : current.right;
+          }
+          total += nodes[node].hit_probability;
         }
-        return model.nodes[node].hit_probability;
+        return total / model.trees.length;
       }
-      fetch('./model.json').then(response => response.json()).then(data => { model = data; }).catch(() => { document.querySelector('button').disabled = true; });
+      fetch('./model.json', {cache:'no-store'}).then(response => {
+        if (!response.ok) throw new Error('Model unavailable');
+        return response.json();
+      }).then(data => {
+        if (data.model !== 'random_forest' || !data.trees?.length) throw new Error('Unexpected model');
+        model = data;
+        document.querySelector('#accuracy').textContent = `${(100 * data.test_metrics.accuracy).toFixed(2)}% accuracy`;
+        document.querySelector('#model-version').textContent = `${data.version} random forest`;
+      }).catch(() => { document.querySelector('button').disabled = true; });
       form.addEventListener('submit', event => {
         event.preventDefault();
         if (!model || !form.reportValidity()) return;
         const values = [Number(form.tempo.value), Number(form.loudness.value), Number(form.duration.value), Number(form.querySelector('input[name="artist-score"]:checked').value)];
-        const probability = score(values); const isHit = probability >= model.threshold;
+        const probability = score(values); const isHit = probability > model.threshold;
         document.querySelector('#probability').textContent = `${(probability * 100).toFixed(1)}%`;
         document.querySelector('#outcome').textContent = isHit ? 'Predicted hit candidate' : 'Predicted non-hit candidate';
-        document.querySelector('#explanation').textContent = `The frozen decision tree assigned this input a ${isHit ? 'hit' : 'non-hit'} class at its fixed 0.50 threshold.`;
+        document.querySelector('#explanation').textContent = `The random forest assigned this input a ${isHit ? 'hit' : 'non-hit'} class by averaging ${model.tree_count} trees. Its fixed threshold is 0.50.`;
         const badge = document.querySelector('#badge'); badge.textContent = isHit ? 'Hit candidate' : 'Non-hit candidate'; badge.className = `badge ${isHit ? 'hit' : 'nonhit'}`;
         placeholder.hidden = true; result.classList.add('visible');
       });

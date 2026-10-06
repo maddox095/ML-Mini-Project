@@ -41,3 +41,11 @@ reports/runs/
 !reports/msd_summary_quality.json
 !data/processed/user2_splits.csv
 !data/processed/user2_split_manifest.json
+
+.codex-build/
+~$*
+!/models/deployments/**/promotion.json
+!reports/figures/random_forest_v1_deployment/
+!reports/figures/random_forest_v1_deployment/*.png
+
+.chart-data-*/

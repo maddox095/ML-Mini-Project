@@ -10,7 +10,9 @@ ensembles**. Seven families are trained: logistic regression, degree-two
 polynomial logistic regression, decision trees, bagged trees, random forests,
 AdaBoost and gradient boosting.
 
-The best development result is **random forest: 82.77% +/- 0.92%** across five
+The selected inference model is the **original random forest**, with **82.48% recorded artist-disjoint held-out accuracy**, **92.64% precision**, **70.25% recall** and **0.8767 ROC-AUC**. It uses 300 trees, maximum depth 8 and minimum leaf size 5. It was chosen for deployment after reviewing the original comparison; this is not a fresh independent test. The CLI and demo source load the same hash-verified pipeline.
+
+The separate best development result is **random forest: 82.77% +/- 0.92%** across five
 artist-disjoint validation folds. None reached 85%. These scores are training
 cross-validation results, not a fresh final test score.
 [Results](reports/course_accuracy_v2.md) and
@@ -87,27 +89,30 @@ natural-release commercial-success probabilities.
 [verification](reports/user1_verification.md), and
 [accuracy improvement plan](docs/ACCURACY_IMPROVEMENT_PLAN.md).
 
-## Earlier published benchmark and inference
+## Selected random forest and inference
 
 The original v1 benchmark and its complete code bundles remain preserved.
-Its CV-selected decision tree achieved **79.20% held-out accuracy** on unseen
-artist keys. [Published v1 results](reports/final_model_results.md) and
+The selected random forest achieved **82.48% recorded held-out accuracy** on unseen
+artist keys. The historical pre-test tree selection remains preserved in the original run records. [Published v1 results](reports/final_model_results.md) and
 [v1 bundles](reports/model_artifacts.md).
 
-The existing CLI still uses that frozen decision tree:
+The CLI now uses the selected random forest:
 
 ```powershell
 .\.venv\Scripts\python.exe -m src.inference --tempo 120 --loudness -8 --duration 210 --artist-score 1
 ```
 
-The new forest is saved separately as a development candidate. The browser
-demo and final submission report remain pending.
+The later v2 forest remains a separate development candidate. It is not the original forest used for inference. The complete
+project report covers the dataset, preprocessing, features, all implemented
+methods and both experiment stages:
+[Word report](reports/HitPredict_Project_Report.docx) and
+[Markdown report](reports/project_report.md), [two-page Random Forest PDF](reports/HitPredict_Concise_Report_Random_Forest.pdf) and [11-slide Random Forest presentation](presentations/HitPredict_Final_Presentation.pptx). The Streamlit demo uses the selected original random forest and displays its recorded metrics.
 [User 2 workflow](docs/USER2_PLAN.md).
 
 ## Streamlit demo and deployment
 
 The assignment-aligned browser app is `app/app.py`. It loads the published v1
-decision tree, verifies its checksum, and shows the model version, predicted
+random forest, verifies its checksum, and shows the model version, predicted
 class, balanced-sample probability and artist-disjoint held-out evidence.
 
 ```bash
@@ -134,9 +139,11 @@ The model artifacts use Git LFS, which Community Cloud supports. See
 | `src/models/course_replay.py` | Replay settings and evaluate saved validation models |
 | `src/models/course_learning_curve.py` | Fixed-setting artist-group learning curves |
 | `src/models/export_course.py` | Complete per-family reproducibility bundles |
-| `src/inference.py` | Frozen v1 prediction CLI |
+| `src/inference.py` | Selected random forest prediction CLI |
 | `scripts/verify_artifacts.py` | Read-only saved-artifact verification |
 | `tests/` | Data, leakage boundaries, replay and serialization checks |
+
+The forest is published by `scripts/promote_random_forest.py` using the already trained checkpoint and saved test metrics, without fitting or rewriting historical selections. Original deployment bytes are archived under `models/deployments/final_suite_v1/`. Future training defaults to the random forest and ranks its feature sets by validation accuracy.
 
 Earlier v1 training, comparison and finalization commands remain compatible.
 Original PDFs and author data are references under `docs/` and

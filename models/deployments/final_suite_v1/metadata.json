@@ -1,0 +1,66 @@
+{
+  "selection": {
+    "model": "decision_tree",
+    "feature_set": "audio_artist_score",
+    "protocol": "artist_disjoint_partition",
+    "run_id": "decision_tree_baseline_v1",
+    "artifact": "models/decision_tree_baseline_v1/artist_disjoint_partition__decision_tree__audio_artist_score.joblib",
+    "cv_roc_auc_mean": 0.8795495240199867,
+    "best_cv_roc_auc_mean": 0.8847631519462096,
+    "policy": "Artist-disjoint nested CV ROC-AUC within 0.01 of best; predefined family simplicity order, then fewer inputs, then larger CV AUC.",
+    "simplicity_order": [
+      "logistic_regression",
+      "svm_linear",
+      "decision_tree",
+      "random_forest",
+      "svm_rbf",
+      "svm_polynomial",
+      "neural_network"
+    ]
+  },
+  "features": [
+    "tempo",
+    "loudness",
+    "duration",
+    "artist_score"
+  ],
+  "threshold": 0.5,
+  "units": {
+    "tempo": "beats per minute",
+    "loudness": "dB",
+    "duration": "seconds",
+    "artist_score": "binary 0/1"
+  },
+  "probability_interpretation": "Balanced research-sample probability; does not estimate natural-release commercial success.",
+  "estimator_parameters": {
+    "ccp_alpha": 0.0,
+    "class_weight": null,
+    "criterion": "gini",
+    "max_depth": 8,
+    "max_features": null,
+    "max_leaf_nodes": null,
+    "min_impurity_decrease": 0.0,
+    "min_samples_leaf": 20,
+    "min_samples_split": 2,
+    "min_weight_fraction_leaf": 0.0,
+    "monotonic_cst": null,
+    "random_state": 42,
+    "splitter": "best"
+  },
+  "source_sha256": "fe9dd0b5c6e5683e2ca1bd9c3dba69cc9bdef55a987052039cdc7a45e68541a7",
+  "splits_sha256": "bccaf24876a5914e2afc03ce3388fcdd0cc8fa6052f9ea52f6c5d38964e29a20",
+  "final_run_id": "final_suite_v1",
+  "training_rows": 3024,
+  "test_metrics": {
+    "accuracy": 0.7920081967213115,
+    "precision": 0.8171557562076749,
+    "recall": 0.7479338842975206,
+    "f1": 0.7810140237324703,
+    "roc_auc": 0.8746661459383189,
+    "average_precision": 0.8666555634476332
+  },
+  "sha256": "eab7054cac2527297386ddc95a0abf536d4e6c348cc856224594a5df11591ceb",
+  "round_trip_verified": true,
+  "score_kind": "probability",
+  "max_probability_difference": 0.0
+}

@@ -71,8 +71,8 @@ source snapshot is also retained under the training run's reports folder.
 Finalization requires all seven compatible completed families. It freezes
 model/feature/parameter/threshold choices before loading either test set and
 refuses to overwrite an existing final evaluation. The final inference
-checkpoint is `models/best_pipeline.joblib` with `models/metadata.json`.
-Readable frozen parameters are also saved in `reports/frozen_hyperparameters.json`.
+checkpoint is the selected random forest at `models/best_pipeline.joblib` with `models/metadata.json`. Its version is `random_forest_v1_deployment`; the original checkpoint is `models/random_forest_baseline_v1/artist_disjoint_partition__random_forest__audio_artist_score.joblib`. The published test accuracy is 82.48%. The forest was promoted after review of the recorded comparison, without refitting or a fresh test. Original pre-test selection files and ZIP contents remain historical evidence; the former deployed tree is archived under `models/deployments/final_suite_v1/`. Run `python scripts/promote_random_forest.py` to reproduce the promotion.
+Current deployment parameters are in `models/metadata.json`; `reports/frozen_hyperparameters.json` preserves the original experiment parameters and pre-test selection.
 The final run records a recovery from a tuple/list JSON comparison failure;
 the original selection was preserved and no test data was accessed before the
 correction. Both the initial and corrected testing source files are retained.

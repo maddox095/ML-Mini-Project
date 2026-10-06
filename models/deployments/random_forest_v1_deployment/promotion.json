@@ -1,0 +1,66 @@
+{
+  "version": "random_forest_v1_deployment",
+  "source_artifact": {
+    "protocol": "artist_disjoint_partition",
+    "model": "random_forest",
+    "feature_set": "audio_artist_score",
+    "path": "models/random_forest_baseline_v1/artist_disjoint_partition__random_forest__audio_artist_score.joblib",
+    "features": [
+      "tempo",
+      "loudness",
+      "duration",
+      "artist_score"
+    ],
+    "estimator_parameters": {
+      "bootstrap": true,
+      "ccp_alpha": 0.0,
+      "class_weight": null,
+      "criterion": "gini",
+      "max_depth": 8,
+      "max_features": "sqrt",
+      "max_leaf_nodes": null,
+      "max_samples": null,
+      "min_impurity_decrease": 0.0,
+      "min_samples_leaf": 5,
+      "min_samples_split": 2,
+      "min_weight_fraction_leaf": 0.0,
+      "monotonic_cst": null,
+      "n_estimators": 300,
+      "n_jobs": 1,
+      "oob_score": false,
+      "random_state": 42,
+      "verbose": 0,
+      "warm_start": false
+    },
+    "optimizer_iterations": null,
+    "optimizer_loss": null,
+    "training_rows": 3024,
+    "threshold": 0.5,
+    "sha256": "dc868d3b72e1d210d524aaa5130a6e053c5d5f8febd60c8df3235a013b237ddf",
+    "round_trip_verified": true,
+    "score_kind": "probability",
+    "max_probability_difference": 0.0,
+    "run_id": "random_forest_baseline_v1"
+  },
+  "source_selection": "reports/runs/final_suite_v1/selection.json",
+  "source_metrics": "reports/runs/final_suite_v1/test_metrics.csv",
+  "historical_selection_unchanged": true,
+  "fitting_performed": false,
+  "fresh_test_performed": false,
+  "selected_before_test": false,
+  "active_sha256": "dc868d3b72e1d210d524aaa5130a6e053c5d5f8febd60c8df3235a013b237ddf",
+  "metrics": {
+    "accuracy": 0.8247950819672131,
+    "precision": 0.9264305177111716,
+    "recall": 0.7024793388429752,
+    "f1": 0.799059929494712,
+    "roc_auc": 0.8767133642410804,
+    "average_precision": 0.8637279732142691
+  },
+  "confusion_matrix": {
+    "tn": 465,
+    "fp": 27,
+    "fn": 144,
+    "tp": 340
+  }
+}

@@ -13,18 +13,33 @@ from src.models.train import write_json
 from src.data.common import load_config, sha256
 
 
-def test_candidate_uses_cv_and_predefined_simplicity_not_test_scores():
+def test_candidate_uses_highest_cv_accuracy_not_simplicity_or_test_scores():
     config = load_config("configs/models.yaml")
+    config.pop("deployment_model")
     rows = []
     for model, auc in [("logistic_regression", .875), ("neural_network", .880)]:
         for feature_set, penalty in [("audio_only", .1), ("audio_artist_score", 0)]:
             rows.append({"model": model, "protocol": "artist_disjoint_partition", "feature_set": feature_set,
                 "cv_roc_auc_mean": auc - penalty, "run_id": model, "artifact": model,
-                "test_accuracy": 1 if model == "neural_network" else 0})
+                "cv_accuracy_mean": (.80 if model == "logistic_regression" else .84) - penalty,
+                "test_accuracy": 1 if model == "logistic_regression" else 0})
     choice = finalize.choose_candidate(pd.DataFrame(rows), config)
-    assert choice["model"] == "logistic_regression"
+    assert choice["model"] == "neural_network"
     assert choice["feature_set"] == "audio_artist_score"
     assert choice["best_cv_roc_auc_mean"] == .880
+
+
+def test_deployment_family_selects_best_validation_feature_set():
+    config = load_config("configs/models.yaml")
+    rows = pd.DataFrame([
+        {"model": "random_forest", "feature_set": "audio_only", "cv_accuracy_mean": .65},
+        {"model": "random_forest", "feature_set": "audio_artist_score", "cv_accuracy_mean": .82},
+        {"model": "decision_tree", "feature_set": "audio_artist_score", "cv_accuracy_mean": .81},
+    ]).assign(protocol="artist_disjoint_partition", cv_roc_auc_mean=.88, run_id="test", artifact="test")
+    selected = finalize.choose_candidate(rows, config)
+    assert selected["model"] == "random_forest"
+    assert selected["feature_set"] == "audio_artist_score"
+    assert selected["cv_accuracy_mean"] == .82
 
 
 def test_no_test_access_without_exact_frozen_file(tmp_path, monkeypatch):

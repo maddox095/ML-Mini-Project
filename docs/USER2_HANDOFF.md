@@ -16,6 +16,10 @@ Use `data/interim/model_table.parquet`: 4,000 songs, with 2,000 hits and
 | Target | `hit` (0/1) |
 | Metadata only | All other columns, including IDs, names, keys, year and dates |
 
+## Selected inference model
+
+The CLI and Streamlit demo source now load the original random forest, version `random_forest_v1_deployment`. Its recorded primary held-out accuracy is 82.48%. This deployment choice was made after reviewing the v1 comparison and does not change the saved dataset, splits, fitted checkpoint or historical evaluation records.
+
 ## Reproduce the partitions
 
 From the repository root, after building the dataset:

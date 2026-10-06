@@ -10,6 +10,21 @@ from sklearn.metrics import ConfusionMatrixDisplay, roc_curve, precision_recall_
 from src.data.common import repo_path
 
 
+def plot_deployment(metadata):
+    """Plot the deployed model's recorded confusion matrix without evaluation."""
+    output = repo_path(f"reports/figures/{metadata['final_run_id']}")
+    output.mkdir(parents=True, exist_ok=True)
+    values = metadata["confusion_matrix"]
+    fig, ax = plt.subplots(figsize=(5, 4))
+    ConfusionMatrixDisplay(np.array([[values["tn"], values["fp"]],
+                                    [values["fn"], values["tp"]]], dtype=int),
+        display_labels=["Non-hit candidate", "Hit"]).plot(ax=ax, colorbar=False)
+    ax.set_title("Selected random forest\nRecorded artist-disjoint evaluation")
+    fig.tight_layout()
+    fig.savefig(output / "selected_confusion_matrix.png", dpi=180)
+    plt.close(fig)
+
+
 def plot_final(selection, results, predictions):
     output = repo_path(f"reports/figures/{selection['run_id']}")
     output.mkdir(parents=True, exist_ok=True)

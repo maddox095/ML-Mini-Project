@@ -4,6 +4,10 @@ The active scope is regression, decision trees and ensembles. The earlier v1
 benchmark is preserved separately; its historical model list does not define
 new work.
 
+## Current deployed-model choice
+
+The selected model for the CLI and demo source is the original random forest, version `random_forest_v1_deployment`, with 82.48% recorded artist-disjoint test accuracy. It was promoted after reviewing the original comparison, without retraining or a fresh independent test. The separate v2 forest below remains development evidence. The Streamlit entry point loads the same selected forest checkpoint and metadata as the CLI.
+
 ## Current progress
 
 | Stage | Status | Evidence |
@@ -45,7 +49,7 @@ The shared implementation is described in [model setup](../src/models/README.md)
 ## Remaining delivery work
 
 1. Run `streamlit run app/app.py` to use the local browser demo. It uses the
-   published v1 tree, verifies its saved checksum and displays held-out model
+   selected original random forest, verifies its saved checksum and displays held-out model
    evidence. Deploy it on Streamlit Community Cloud if a public URL is wanted.
 2. Show predicted class, research-sample probability, model version and the
    corresponding test or validation evidence. Verify example predictions.
